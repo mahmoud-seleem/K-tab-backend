@@ -1,5 +1,8 @@
 package com.example.Backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -7,6 +10,9 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "author_comment")
+//@JsonIdentityInfo(
+//        generator = ObjectIdGenerators.PropertyGenerator.class,
+//        property = "authorCommentId")
 public class AuthorComment {
 
     @Id
@@ -20,8 +26,9 @@ public class AuthorComment {
     @Column(name = "date",  nullable = false)
     private LocalDateTime localDateTime;
 
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "author_id")
+   // @JsonBackReference
     private Author author;
 
     public AuthorComment() {

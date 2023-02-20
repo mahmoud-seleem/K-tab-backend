@@ -14,20 +14,10 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("authorComment/")
 public class AuthorCommentController {
     @Autowired
     private AuthorRepository authorRepository;
-    @Autowired
-    private AuthorCommentRepository authorCommentRepository;
 
-    @GetMapping("/newComment/{id}")
-    public AuthorComment saveNewAuthorComment(@PathVariable UUID id){
-        AuthorComment authorComment = new AuthorComment("blablabla");
-        AuthorComment ac = authorCommentRepository.save(authorComment);
-        Author a = authorRepository.findById(id).get();
-        ac.setAuthor(a);
-        a.addAuthorComment(ac);
-        return ac;
-    }
+
+
 }

@@ -1,4 +1,8 @@
 package com.example.Backend.model;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -7,6 +11,10 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "author")
+//@JsonIdentityInfo(
+//        generator = ObjectIdGenerators.PropertyGenerator.class,
+//        property = "authorName")
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler","authorCommentList"})
 public class Author {
 
     @Id
@@ -29,7 +37,8 @@ public class Author {
     @Column(name = "contact", nullable = false)
     private String contact;
 
-    @OneToMany(mappedBy = "author")
+    @OneToMany(mappedBy = "author" , cascade = CascadeType.ALL)
+    //@JsonManagedReference
     private List<AuthorComment> authorCommentList;
 
     public Author() {
@@ -119,5 +128,11 @@ public class Author {
 
     public void addAuthorComment(AuthorComment authorComment){
         this.getAuthorCommentList().add(authorComment);
+        authorComment.setAuthor(this);
+    }
+
+    public void removeAuthorComment(AuthorComment authorComment){
+        this.getAuthorCommentList().remove(authorComment);
+        authorComment.setAuthor(null);
     }
 }

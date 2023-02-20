@@ -1,5 +1,6 @@
 package com.example.Backend.controller;
 
+import com.example.Backend.Repository.AuthorCommentRepository;
 import com.example.Backend.Repository.AuthorRepository;
 import com.example.Backend.model.Author;
 import com.example.Backend.model.AuthorComment;
@@ -19,18 +20,28 @@ public class AuthorController {
 
     @Autowired
     private AuthorRepository authorRepository;
-
+    @Autowired
+    private AuthorCommentRepository authorCommentRepository;
     @GetMapping("/new")
     public Author saveNewAuthor(){
         Author author = new Author("mahmoud");
         AuthorComment comment1 = new AuthorComment("blablabla");
+        author.addAuthorComment(comment1);
         Author a = authorRepository.save(author);
         return a;
     }
     @GetMapping("/get/{id}")
-    public Author getAuthor(@PathVariable UUID id){
-         return authorRepository.findById(id).get();
+    public List<AuthorComment> getAuthor(@PathVariable UUID id){
+         return authorRepository.findById(id).get().getAuthorCommentList();
     }
 
+    @GetMapping("/newcomment/{id}")
+    public AuthorComment saveNewAuthorComment(@PathVariable UUID id){
+        AuthorComment authorComment = new AuthorComment("blablablablablabalbala");
+        Author a = authorRepository.findById(id).get();
+        a.addAuthorComment(authorComment);
+        AuthorComment ac = authorCommentRepository.save(authorComment);
+        return ac;
+    }
 
 }
