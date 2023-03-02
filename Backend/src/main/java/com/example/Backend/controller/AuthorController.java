@@ -32,7 +32,7 @@ public class AuthorController {
     }
     @GetMapping("/get/{id}")
     public List<AuthorComment> getAuthor(@PathVariable UUID id){
-         return authorRepository.findById(id).get().getAuthorCommentList();
+        return authorRepository.findById(id).get().getAuthorCommentList();
     }
 
     @GetMapping("/newcomment/{id}")
