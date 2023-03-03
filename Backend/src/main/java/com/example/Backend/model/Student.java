@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "student")
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler","studentCommentList"})
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler","studentCommentList","disabilityList"})
 public class Student {
 
     @Id
@@ -32,9 +32,17 @@ public class Student {
     @Column(name = "contact", nullable = false)
     private String contact;
 
+    @Column(name = "education_level" , nullable = false)
+    private String educationLevel;
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<StudentComment> studentCommentList;
 
+    @ManyToMany()
+    @JoinTable(
+            name = "student_disabilities",
+            joinColumns = @JoinColumn(name = "student_id"),
+            inverseJoinColumns = @JoinColumn(name = "disability_id"))
+    private List<Disability> disabilityList;
     public Student() {
     }
 
@@ -46,13 +54,25 @@ public class Student {
         this.contact = contact;
     }
 
+    public Student(String studentName, String studentEmail, String password, String profilePhoto, String contact, String educationLevel, List<StudentComment> studentCommentList) {
+        this.studentName = studentName;
+        this.studentEmail = studentEmail;
+        this.password = password;
+        this.profilePhoto = profilePhoto;
+        this.contact = contact;
+        this.educationLevel = educationLevel;
+        this.studentCommentList = studentCommentList;
+    }
+
     public Student(String studentName) {
         this.studentName = studentName;
         this.studentEmail = "mahmoudsaleem522@gmail.com";
         this.contact = "01061424231";
         this.password = "12345678";
         this.profilePhoto = "profile_photo_link";
+        this.educationLevel = "3rd secondary";
         this.studentCommentList = new ArrayList<>();
+        this.disabilityList = new ArrayList<>();
     }
 
     public UUID getStudentId() {
@@ -103,6 +123,14 @@ public class Student {
         this.contact = contact;
     }
 
+    public String getEducationLevel() {
+        return educationLevel;
+    }
+
+    public void setEducationLevel(String educationLevel) {
+        this.educationLevel = educationLevel;
+    }
+
     public void addStudentComment(StudentComment studentComment) {
         this.getStudentCommentList().add(studentComment);
         studentComment.setStudent(this);
@@ -119,5 +147,21 @@ public class Student {
 
     public void setStudentCommentList(List<StudentComment> studentCommentList) {
         this.studentCommentList = studentCommentList;
+    }
+
+    public List<Disability> getDisabilityList() {
+        return disabilityList;
+    }
+
+    public void addDisability(Disability disability){
+        this.disabilityList.add(disability);
+        //disability.getStudentList().add(this);
+    }
+    public void removeDisability(Disability disability){
+        this.disabilityList.remove(disability);
+        //disability.getStudentList().remove(this);
+    }
+    public void setDisabilityList(List<Disability> disabilityList) {
+        this.disabilityList = disabilityList;
     }
 }

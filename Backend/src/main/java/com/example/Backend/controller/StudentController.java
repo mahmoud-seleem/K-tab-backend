@@ -1,7 +1,9 @@
 package com.example.Backend.controller;
 
+import com.example.Backend.Repository.DisabilityRepository;
 import com.example.Backend.Repository.StudentCommentRepository;
 import com.example.Backend.Repository.StudentRepository;
+import com.example.Backend.model.Disability;
 import com.example.Backend.model.Student;
 import com.example.Backend.model.StudentComment;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,17 +24,36 @@ public class StudentController {
     @Autowired
     private StudentCommentRepository studentCommentRepository;
 
+    @Autowired
+    private DisabilityRepository disabilityRepository;
     @GetMapping("/new")
     public Student saveNewStudent(){
         Student student = new Student("mahmoud");
-        StudentComment comment1 = new StudentComment("blablabla");
-        student.addStudentComment(comment1);
+        //StudentComment comment1 = new StudentComment("blablabla");
+        //Disability disability = new Disability("Dyslexia");
+        //student.addDisability(disability);
+        //student.addStudentComment(comment1);
+        //student.getDisabilityList().add(disability);
+        Disability d = disabilityRepository.findAll().get(0);
+        student.addDisability(d);
         Student a = studentRepository.save(student);
         return a;
     }
-    @GetMapping("/get/{id}")
-    public List<StudentComment> getStudent(@PathVariable UUID id){
-        return studentRepository.findById(id).get().getStudentCommentList();
+    @GetMapping("/getallstudents")
+    public List<Student> getStudent(){
+        return studentRepository.findAll();
+    }
+    @GetMapping("/getalldis")
+    public List<Disability> getAllDis(){
+        return disabilityRepository.findAll();
+    }
+//    @GetMapping("/get/{id}")
+//    public List<StudentComment> getStudent(@PathVariable UUID id){
+//        return studentRepository.findById(id).get().getStudentCommentList();
+//    }
+    @GetMapping("/getstudentdis/{id}")
+    public List<Disability> getStudentdis(@PathVariable UUID id){
+        return studentRepository.findById(id).get().getDisabilityList();
     }
 
     @GetMapping("/newcomment/{id}")
@@ -43,4 +64,16 @@ public class StudentController {
         StudentComment ac = studentCommentRepository.save(studentComment);
         return ac;
     }
+    @GetMapping("/newdis/{dis}")
+    public Disability saveNewdis(@PathVariable String dis){
+        Disability disability = new Disability(dis);
+        Disability d = disabilityRepository.save(disability);
+        return d;
+    }
+    @GetMapping("/getdisstudents/{id}")
+    public List<Student> getstudents(@PathVariable UUID id){
+        Disability d = disabilityRepository.findById(id).get();
+        return d.getStudentList();
+    }
+
 }
