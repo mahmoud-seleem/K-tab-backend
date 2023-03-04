@@ -1,11 +1,12 @@
 package com.example.Backend.Repository;
 
-import com.example.Backend.model.StudentComment;
+import com.example.Backend.model.Book;
+import com.example.Backend.model.Rating;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
 @Repository
-public interface StudentCommentRepository extends JpaRepository<StudentComment, UUID> {
+public interface RatingRepository extends JpaRepository<Rating, UUID> {
 }

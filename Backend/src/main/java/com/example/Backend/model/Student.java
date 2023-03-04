@@ -37,6 +37,10 @@ public class Student {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<StudentComment> studentCommentList;
 
+//    @OneToMany
+//    @JoinColumn(name = "rating_id")
+//    private Rating rating;
+
     @ManyToMany()
     @JoinTable(
             name = "student_disabilities",
