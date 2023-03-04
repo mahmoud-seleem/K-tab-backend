@@ -31,6 +31,9 @@ public class AuthorComment {
    // @JsonBackReference
     private Author author;
 
+    @ManyToOne
+    @JoinColumn(name = "chapter_id")
+    private Chapter chapter;
     public AuthorComment() {
     }
 
@@ -75,5 +78,13 @@ public class AuthorComment {
 
     public void setAuthor(Author author) {
         this.author = author;
+    }
+
+    public Chapter getChapter() {
+        return chapter;
+    }
+
+    public void setChapter(Chapter chapter) {
+        this.chapter = chapter;
     }
 }

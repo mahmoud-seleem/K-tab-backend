@@ -24,6 +24,9 @@ public class StudentComment {
     @JoinColumn(name = "student_id")
     private Student student;
 
+    @ManyToOne
+    @JoinColumn(name = "chapter_id")
+    private Chapter chapter;
     public StudentComment() {
     }
 
@@ -71,4 +74,11 @@ public class StudentComment {
         this.localDateTime = localDateTime;
     }
 
+    public Chapter getChapter() {
+        return chapter;
+    }
+
+    public void setChapter(Chapter chapter) {
+        this.chapter = chapter;
+    }
 }
