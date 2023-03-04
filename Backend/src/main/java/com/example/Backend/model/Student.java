@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "student")
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler","studentCommentList","disabilityList"})
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler","studentCommentList","disabilityList","studentNotificationList"})
 public class Student {
 
     @Id
@@ -43,6 +43,9 @@ public class Student {
             joinColumns = @JoinColumn(name = "student_id"),
             inverseJoinColumns = @JoinColumn(name = "disability_id"))
     private List<Disability> disabilityList;
+
+    @OneToMany(mappedBy = "destinationStudent")
+    private List<StudentNotification> studentNotificationList;
     public Student() {
     }
 
@@ -73,6 +76,8 @@ public class Student {
         this.educationLevel = "3rd secondary";
         this.studentCommentList = new ArrayList<>();
         this.disabilityList = new ArrayList<>();
+        this.studentNotificationList = new ArrayList<>();
+
     }
 
     public UUID getStudentId() {
@@ -148,11 +153,6 @@ public class Student {
     public void setStudentCommentList(List<StudentComment> studentCommentList) {
         this.studentCommentList = studentCommentList;
     }
-
-    public List<Disability> getDisabilityList() {
-        return disabilityList;
-    }
-
     public void addDisability(Disability disability){
         this.disabilityList.add(disability);
         //disability.getStudentList().add(this);
@@ -161,7 +161,27 @@ public class Student {
         this.disabilityList.remove(disability);
         //disability.getStudentList().remove(this);
     }
+    public List<Disability> getDisabilityList() {
+        return disabilityList;
+    }
     public void setDisabilityList(List<Disability> disabilityList) {
         this.disabilityList = disabilityList;
+    }
+
+    public List<StudentNotification> getStudentNotificationList() {
+        return studentNotificationList;
+    }
+
+    public void setStudentNotificationList(List<StudentNotification> studentNotificationList) {
+        this.studentNotificationList = studentNotificationList;
+    }
+
+    public void addStudentNotification(StudentNotification studentNotification){
+        this.getStudentNotificationList().add(studentNotification);
+        studentNotification.setDestinationStudent(this);
+    }
+    public void removeStudentNotification(StudentNotification studentNotification){
+        this.getStudentNotificationList().remove(studentNotification);
+        studentNotification.setDestinationStudent(null);
     }
 }

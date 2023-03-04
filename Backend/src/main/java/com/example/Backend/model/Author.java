@@ -14,7 +14,7 @@ import java.util.UUID;
 //@JsonIdentityInfo(
 //        generator = ObjectIdGenerators.PropertyGenerator.class,
 //        property = "authorName")
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler","authorCommentList"})
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler","authorCommentList","authorNotificationList"})
 public class Author {
 
     @Id
@@ -41,6 +41,9 @@ public class Author {
     //@JsonManagedReference
     private List<AuthorComment> authorCommentList;
 
+    @OneToMany(mappedBy = "destinationAuthor")
+    //@JsonManagedReference
+    private List<AuthorNotification> authorNotificationList;
     public Author() {
     }
 
@@ -51,6 +54,7 @@ public class Author {
         this.password = "12345678";
         this.profilePhoto = "profile_photo_link";
         this.authorCommentList = new ArrayList<>();
+        this.authorNotificationList = new ArrayList<>();
     }
 
     public Author(String authorName, String authorEmail, String password, String profilePhoto, String contact) {
@@ -61,13 +65,14 @@ public class Author {
         this.contact = contact;
     }
 
-    public Author(String authorName, String authorEmail, String password, String profilePhoto, String contact, List<AuthorComment> authorCommentList) {
+    public Author(String authorName, String authorEmail, String password, String profilePhoto, String contact, List<AuthorComment> authorCommentList, List<AuthorNotification> authorNotificationList) {
         this.authorName = authorName;
         this.authorEmail = authorEmail;
         this.password = password;
         this.profilePhoto = profilePhoto;
         this.contact = contact;
         this.authorCommentList = authorCommentList;
+        this.authorNotificationList = authorNotificationList;
     }
 
     public UUID getAuthorId() {
@@ -126,6 +131,23 @@ public class Author {
         this.authorCommentList = authorCommentList;
     }
 
+    public List<AuthorNotification> getAuthorNotificationList() {
+        return authorNotificationList;
+    }
+
+    public void setAuthorNotificationList(List<AuthorNotification> authorNotificationList) {
+        this.authorNotificationList = authorNotificationList;
+    }
+
+    public void addAuthorNotification(AuthorNotification authorNotification){
+        this.getAuthorNotificationList().add(authorNotification);
+        authorNotification.setDestinationAuthor(this);
+    }
+
+    public void removeAuthorNotification(AuthorNotification authorNotification){
+        this.getAuthorNotificationList().remove(authorNotification);
+        authorNotification.setDestinationAuthor(null);
+    }
     public void addAuthorComment(AuthorComment authorComment){
         this.getAuthorCommentList().add(authorComment);
         authorComment.setAuthor(this);

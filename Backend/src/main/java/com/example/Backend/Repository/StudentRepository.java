@@ -1,9 +1,15 @@
 package com.example.Backend.Repository;
 
+import com.example.Backend.model.Author;
 import com.example.Backend.model.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.UUID;
 
 public interface StudentRepository extends JpaRepository<Student, UUID> {
+    @Query(
+            value = "SELECT * FROM student WHERE student.student_name = ?1",
+            nativeQuery = true)
+    Student findByName(String userName);
 }
