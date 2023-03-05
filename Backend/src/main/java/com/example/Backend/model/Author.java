@@ -14,7 +14,7 @@ import java.util.UUID;
 //@JsonIdentityInfo(
 //        generator = ObjectIdGenerators.PropertyGenerator.class,
 //        property = "authorName")
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler","authorCommentList","authorNotificationList"})
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler","authorCommentList","authorNotificationList","chaptersList"})
 public class Author {
 
     @Id
@@ -44,6 +44,9 @@ public class Author {
     @OneToMany(mappedBy = "destinationAuthor")
     //@JsonManagedReference
     private List<AuthorNotification> authorNotificationList;
+
+    @OneToMany(mappedBy = "author")
+    private List<Writing> chaptersList;
     public Author() {
     }
 
@@ -55,6 +58,7 @@ public class Author {
         this.profilePhoto = "profile_photo_link";
         this.authorCommentList = new ArrayList<>();
         this.authorNotificationList = new ArrayList<>();
+        this.chaptersList = new ArrayList<>();
     }
 
     public Author(String authorName, String authorEmail, String password, String profilePhoto, String contact) {
@@ -139,6 +143,22 @@ public class Author {
         this.authorNotificationList = authorNotificationList;
     }
 
+    public List<Writing> getChaptersList() {
+        return chaptersList;
+    }
+
+    public void setChaptersList(List<Writing> chaptersList) {
+        this.chaptersList = chaptersList;
+    }
+
+    public void addWriting(Writing writing){
+        this.getChaptersList().add(writing);
+        writing.setAuthor(this);
+    }
+    public void removeWriting(Writing writing){
+        this.getChaptersList().remove(writing);
+        writing.setAuthor(null);
+    }
     public void addAuthorNotification(AuthorNotification authorNotification){
         this.getAuthorNotificationList().add(authorNotification);
         authorNotification.setDestinationAuthor(this);

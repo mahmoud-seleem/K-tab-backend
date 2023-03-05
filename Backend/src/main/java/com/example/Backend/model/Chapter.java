@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "chapter")
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler","authorCommentList","studentCommentList"})
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler","authorCommentList","studentCommentList","authorList"})
 public class Chapter {
 
     @Id
@@ -39,6 +39,8 @@ public class Chapter {
     @OneToMany(mappedBy = "chapter")
     private List<StudentComment> studentCommentList;
 
+    @OneToMany(mappedBy = "chapter")
+    private List<Writing> authorList;
     public Chapter() {
     }
 
@@ -59,8 +61,7 @@ public class Chapter {
         this.lastModified = LocalDateTime.now();
         this.authorCommentList = new ArrayList<>();
         this.studentCommentList = new ArrayList<>();
-
-
+        this.authorList = new ArrayList<>();
     }
     public UUID getChapterId() {
         return chapterId;
@@ -124,6 +125,23 @@ public class Chapter {
 
     public void setStudentCommentList(List<StudentComment> studentCommentList) {
         this.studentCommentList = studentCommentList;
+    }
+
+    public List<Writing> getAuthorList() {
+        return authorList;
+    }
+
+    public void setAuthorList(List<Writing> authorList) {
+        this.authorList = authorList;
+    }
+
+    public void addWriting(Writing writing){
+        this.getAuthorList().add(writing);
+        writing.setChapter(this);
+    }
+    public void removeWriting(Writing writing){
+        this.getAuthorList().remove(writing);
+        writing.setChapter(null);
     }
     public void addStudentComment(StudentComment studentComment){
         this.getStudentCommentList().add(studentComment);
