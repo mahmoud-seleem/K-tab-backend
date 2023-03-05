@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "chapter")
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler","authorCommentList","studentCommentList","authorList"})
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler","authorCommentList","studentCommentList","authorList","tags"})
 public class Chapter {
 
     @Id
@@ -41,6 +41,13 @@ public class Chapter {
 
     @OneToMany(mappedBy = "chapter")
     private List<Writing> authorList;
+
+    @ManyToMany()
+    @JoinTable(
+            name = "chapter_tags",
+            joinColumns = @JoinColumn(name = "chapter_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private List<Tag> tags;
     public Chapter() {
     }
 
@@ -52,6 +59,8 @@ public class Chapter {
         this.lastModified = lastModified;
         this.authorCommentList = authorCommentList;
         this.studentCommentList = studentCommentList;
+        this.authorList = new ArrayList<>();
+        this.tags = new ArrayList<>();
     }
     public Chapter(String title) {
         this.title = title;
@@ -62,6 +71,7 @@ public class Chapter {
         this.authorCommentList = new ArrayList<>();
         this.studentCommentList = new ArrayList<>();
         this.authorList = new ArrayList<>();
+        this.tags = new ArrayList<>();
     }
     public UUID getChapterId() {
         return chapterId;
@@ -135,6 +145,23 @@ public class Chapter {
         this.authorList = authorList;
     }
 
+    public List<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
+    }
+
+    public void addTag(Tag tag){
+        this.getTags().add(tag);
+        //tag.getChapterList().add(this);
+    }
+    public void removeTag(Tag tag){
+        this.getTags().remove(tag);
+       // tag.getChapterList().remove(this);
+
+    }
     public void addWriting(Writing writing){
         this.getAuthorList().add(writing);
         writing.setChapter(this);

@@ -14,7 +14,7 @@ import java.util.UUID;
 //@JsonIdentityInfo(
 //        generator = ObjectIdGenerators.PropertyGenerator.class,
 //        property = "authorName")
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler","authorCommentList","authorNotificationList","chaptersList"})
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler","authorCommentList","authorNotificationList","chaptersList  "})
 public class Author {
 
     @Id
