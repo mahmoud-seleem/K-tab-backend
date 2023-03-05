@@ -29,4 +29,9 @@ public class BookController {
     public Book updateBookInfo(@RequestBody Book book){
         return bookService.updateBookInfo(book);
     }
+
+    @GetMapping("/add/specificBook")
+    public Book insertSpecificBook(){
+        return bookService.insertSpecificBook();
+    }
 }

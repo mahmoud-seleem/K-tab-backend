@@ -1,8 +1,12 @@
 package com.example.Backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -13,7 +17,7 @@ public class Book {
     @Id
     @GeneratedValue
     @Column(name = "book_id", nullable = false)
-    private UUID id;
+    private UUID bookId;
 
     @Column(name = "book_title", nullable = false)
     private String title;
@@ -24,28 +28,38 @@ public class Book {
     @Column(name = "abstract")
     private String bookAbstract;
 
-//    @OneToMany
-//    @JoinColumn(name = "ratings_id")
-//    private Rating ratings;
+//    @ManyToMany
+//    @JoinTable(name = "rating",
+//            joinColumns = @JoinColumn(name = "book_id")
+//            , inverseJoinColumns = @JoinColumn(name = "student_id"))
+//    // TODO: 05-Mar-23 convert it to  hash set
+//    private List<Rating> ratings = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "book")
+    Set<Rating> ratings;
 
     public Book() {
     }
 
-    public Book(String title, float price, String bookAbstract, Rating ratings) {
+    public Book(UUID bookId, String title, float price, String bookAbstract, Set<Rating> ratings) {
+        this.bookId = bookId;
         this.title = title;
         this.price = price;
         this.bookAbstract = bookAbstract;
-//        this.ratings = ratings;
+        this.ratings = ratings;
     }
 
-//
-//    public float getBookRating(){
-////        this.getRatings()
-//    }
+    public Book(String title) {
+        this.title = title;
+    }
 
+    public void setBookId(UUID bookId) {
+        this.bookId = bookId;
+    }
 
-    public UUID getId() {
-        return id;
+    public UUID getBookId() {
+        return bookId;
     }
 
     public String getTitle() {
@@ -72,15 +86,11 @@ public class Book {
         this.bookAbstract = bookAbstract;
     }
 
-//    public Rating getRatings() {
-//        return ratings;
-//    }
-//
-//    public void setRatings(Rating ratings) {
-//        this.ratings = ratings;
-//    }
+    public Set<Rating> getRatings() {
+        return ratings;
+    }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public void setRatings(Set<Rating> ratings) {
+        this.ratings = ratings;
     }
 }

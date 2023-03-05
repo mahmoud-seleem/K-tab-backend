@@ -6,39 +6,40 @@ import java.util.UUID;
 
 
 @Entity
-@Table(name = "ratings")
 public class Rating {
 
-    @Id
-    @GeneratedValue
-    @Column(name = "rating_id", nullable = false)
-    private UUID id;
+    @EmbeddedId
+    RatingKey id;
+
+
+    @ManyToOne
+    @MapsId("bookId")
+    @JoinColumn(name = "book_id")
+    Book book;
+
+    @ManyToOne
+    @MapsId("studentId")
+    @JoinColumn(name = "student_id")
+    Student student;
 
     @Column(name = "rating_value", nullable = false)
     private int ratingValue;
 
-    @ManyToOne
-    @JoinColumn(name = "book_id")
-    private Book book;
+    public Rating() {
+    }
 
-    @ManyToOne
-    @JoinColumn(name = "student_id")
-    private Student student;
+    public Rating(Book book, Student student, int ratingValue) {
+        this.book = book;
+        this.student = student;
+        this.ratingValue = ratingValue;
+    }
 
-    public UUID getId() {
+    public RatingKey getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(RatingKey id) {
         this.id = id;
-    }
-
-    public int getRatingValue() {
-        return ratingValue;
-    }
-
-    public void setRatingValue(int ratingValue) {
-        this.ratingValue = ratingValue;
     }
 
     public Book getBook() {
@@ -55,5 +56,13 @@ public class Rating {
 
     public void setStudent(Student student) {
         this.student = student;
+    }
+
+    public int getRatingValue() {
+        return ratingValue;
+    }
+
+    public void setRatingValue(int ratingValue) {
+        this.ratingValue = ratingValue;
     }
 }

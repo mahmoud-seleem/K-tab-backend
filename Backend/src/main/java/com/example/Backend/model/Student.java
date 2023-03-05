@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -37,9 +38,8 @@ public class Student {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<StudentComment> studentCommentList;
 
-//    @OneToMany
-//    @JoinColumn(name = "rating_id")
-//    private Rating rating;
+    @OneToMany(mappedBy = "student")
+    Set<Rating> ratings;
 
     @ManyToMany()
     @JoinTable(
