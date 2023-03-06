@@ -6,7 +6,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "student_settings")
-public class StudentSettings {
+public class AuthorSettings {
 
     @Id
     @GeneratedValue
@@ -31,18 +31,9 @@ public class StudentSettings {
     @Column(name = "grayscale")
     boolean grayscale;
 
-    @Column(name = "symbols_text")
-    boolean switchTextToSymbols;
-
-    @Column(name = "play_lesson")
-    Boolean playLesson;
-
-    @Column(name = "text_highlight")
-    Boolean highlightTextOfAudioTranscript;
-
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "student_id")
-    private Student student;
+    @JoinColumn(name = "author_id")
+    private Author author;
 
     public UUID getSettingId() {
         return settingId;
@@ -100,35 +91,11 @@ public class StudentSettings {
         this.grayscale = grayscale;
     }
 
-    public boolean isSwitchTextToSymbols() {
-        return switchTextToSymbols;
+    public Author getAuthor() {
+        return author;
     }
 
-    public void setSwitchTextToSymbols(boolean switchTextToSymbols) {
-        this.switchTextToSymbols = switchTextToSymbols;
-    }
-
-    public Boolean getPlayLesson() {
-        return playLesson;
-    }
-
-    public void setPlayLesson(Boolean playLesson) {
-        this.playLesson = playLesson;
-    }
-
-    public Boolean getHighlightTextOfAudioTranscript() {
-        return highlightTextOfAudioTranscript;
-    }
-
-    public void setHighlightTextOfAudioTranscript(Boolean highlightTextOfAudioTranscript) {
-        this.highlightTextOfAudioTranscript = highlightTextOfAudioTranscript;
-    }
-
-    public Student getStudent() {
-        return student;
-    }
-
-    public void setStudent(Student student) {
-        this.student = student;
+    public void setAuthor(Author author) {
+        this.author = author;
     }
 }

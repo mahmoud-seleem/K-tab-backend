@@ -49,6 +49,9 @@ public class Author {
     @OneToMany(mappedBy = "author")
     private List<Book> authorBooksList;;
 
+    @OneToOne(mappedBy = "author")
+    private AuthorSettings authorSettings;
+
     public Author() {
     }
 
@@ -188,5 +191,13 @@ public class Author {
     public void removeAuthorComment(AuthorComment authorComment){
         this.getAuthorCommentList().remove(authorComment);
         authorComment.setAuthor(null);
+    }
+
+    public AuthorSettings getAuthorSettings() {
+        return authorSettings;
+    }
+
+    public void setAuthorSettings(AuthorSettings authorSettings) {
+        this.authorSettings = authorSettings;
     }
 }

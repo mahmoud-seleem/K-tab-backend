@@ -39,6 +39,9 @@ public class Student {
     @OneToMany(mappedBy = "student")
     Set<Rating> ratings = new HashSet<>();
 
+    @OneToOne(mappedBy = "student")
+    private StudentSettings studentSettings;
+
     @ManyToMany()
     @JoinTable(
             name = "student_disabilities",
@@ -154,6 +157,16 @@ public class Student {
 
     public void setRatings(Set<Rating> ratings) {
         this.ratings = ratings;
+    }
+
+    public StudentSettings getStudentSettings() {
+        return studentSettings;
+    }
+
+
+
+    public void setStudentSettings(StudentSettings studentSettings) {
+        this.studentSettings = studentSettings;
     }
 
     public List<StudentComment> getStudentCommentList() {
