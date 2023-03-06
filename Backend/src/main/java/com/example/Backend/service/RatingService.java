@@ -3,7 +3,6 @@ package com.example.Backend.service;
 import com.example.Backend.Repository.RatingRepository;
 import com.example.Backend.model.Book;
 import com.example.Backend.model.Rating;
-import com.example.Backend.model.RatingKey;
 import com.example.Backend.model.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

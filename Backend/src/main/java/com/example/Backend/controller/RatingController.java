@@ -1,10 +1,7 @@
 package com.example.Backend.controller;
 
 
-import com.example.Backend.model.Book;
 import com.example.Backend.model.Rating;
-import com.example.Backend.model.RatingKey;
-import com.example.Backend.model.Student;
 import com.example.Backend.service.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -33,18 +30,5 @@ public class RatingController {
     public Rating insertSpecificRating(){
         return ratingService.insertSpecificRating();
     }
-
-//    @PutMapping
-//    public Rating updateRatingInfo(@RequestBody Rating rating){
-//        return ratingService.updateRatingInfo(rating);
-//    }
-
-//    if (id == null) {
-//        Rating rating = new Rating();
-//        UUID studentId = rating.getStudent().getStudentId();
-//        UUID bookID = rating.getBook().getBookId();
-//        RatingKey id = new RatingKey(studentId, bookID);
-//        rating.setId(id);
-//    }
 
 }

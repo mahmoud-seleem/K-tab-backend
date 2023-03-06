@@ -4,41 +4,29 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "book")
-
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler","bookRating"})
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler","ratings"})
 public class Book {
     @Id
     @GeneratedValue
     @Column(name = "book_id", nullable = false)
     private UUID bookId;
 
-    @Column(name = "book_title", nullable = false)
+    @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "book_price")
+    @Column(name = "price")
     private float price;
 
-    @Column(name = "abstract")
+    @Column(name = "book_abstract")
     private String bookAbstract;
 
-//    @ManyToMany
-//    @JoinTable(name = "rating",
-//            joinColumns = @JoinColumn(name = "book_id")
-//            , inverseJoinColumns = @JoinColumn(name = "student_id"))
-//    // TODO: 05-Mar-23 convert it to  hash set
-//    private List<Rating> ratings = new ArrayList<>();
 
-
-    @JsonIgnore
     @OneToMany(mappedBy = "book")
-    Set<Rating> ratings;
+    Set<Rating> ratings = new HashSet<>();
 
     public Book() {
     }
@@ -93,5 +81,14 @@ public class Book {
 
     public void setRatings(Set<Rating> ratings) {
         this.ratings = ratings;
+    }
+
+    public void addRating(Rating rating){
+        this.getRatings().add(rating);
+        rating.setBook(this);
+    }
+    public void removeRating(Rating rating){
+        this.getRatings().remove(rating);
+        rating.setBook(null);
     }
 }

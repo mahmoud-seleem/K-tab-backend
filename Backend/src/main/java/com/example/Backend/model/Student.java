@@ -151,6 +151,14 @@ public class Student {
         studentComment.setStudent(null);
     }
 
+    public Set<Rating> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(Set<Rating> ratings) {
+        this.ratings = ratings;
+    }
+
     public List<StudentComment> getStudentCommentList() {
         return studentCommentList;
     }
@@ -188,5 +196,13 @@ public class Student {
     public void removeStudentNotification(StudentNotification studentNotification){
         this.getStudentNotificationList().remove(studentNotification);
         studentNotification.setDestinationStudent(null);
+    }
+    public void addRating(Rating rating){
+        this.getRatings().add(rating);
+        rating.setStudent(this);
+    }
+    public void removeRating(Rating rating){
+        this.getRatings().remove(rating);
+        rating.setStudent(null);
     }
 }
