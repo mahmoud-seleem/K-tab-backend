@@ -3,9 +3,7 @@ package com.example.Backend.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer","handler","chapterList"})
@@ -25,6 +23,15 @@ public class Tag{
             joinColumns = @JoinColumn(name = "tag_id"),
             inverseJoinColumns = @JoinColumn(name = "chapter_id"))
     private List<Chapter> chapterList;
+
+    @ManyToMany()
+    @JoinTable(
+            name = "book_tags",
+            joinColumns = @JoinColumn(name = "tag_id"),
+            inverseJoinColumns = @JoinColumn(name = "book_id"))
+    private Set<Book> bookList = new HashSet<>();
+
+
 
     public Tag() {
     }
@@ -62,12 +69,21 @@ public class Tag{
     public void setChapterList(List<Chapter> chapterList) {
         this.chapterList = chapterList;
     }
+
+    public Set<Book> getBookList() {
+        return bookList;
+    }
+
+    public void setBookList(Set<Book> bookList) {
+        this.bookList = bookList;
+    }
+
     public void addChapter(Chapter chapter){
         this.getChapterList().add(chapter);
        // chapter.getTags().add(this);
     }
     public void removeChapter(Chapter chapter){
         this.getChapterList().remove(chapter);
-        //chapter.getTags().remove(this);
+        chapter.getTags().remove(this);
     }
 }

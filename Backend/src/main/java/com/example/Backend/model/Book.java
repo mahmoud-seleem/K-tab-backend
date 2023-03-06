@@ -26,7 +26,17 @@ public class Book {
 
 
     @OneToMany(mappedBy = "book")
-    Set<Rating> ratings = new HashSet<>();
+    private Set<Rating> ratings = new HashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "author_id", nullable = false)
+    private Author author;
+
+    @ManyToMany
+    @JoinTable(name = "book_tags"
+            , joinColumns = @JoinColumn(name = "book_id")
+            , inverseJoinColumns = @JoinColumn(name = "tag_id") )
+    private Set<Tag> tags = new HashSet<>();
 
     public Book() {
     }
@@ -83,6 +93,22 @@ public class Book {
         this.ratings = ratings;
     }
 
+    public Author getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(Author author) {
+        this.author = author;
+    }
+
+    public Set<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
+    }
+
     public void addRating(Rating rating){
         this.getRatings().add(rating);
         rating.setBook(this);
@@ -91,4 +117,13 @@ public class Book {
         this.getRatings().remove(rating);
         rating.setBook(null);
     }
+
+    public void addTags(Tag tag){
+        this.getTags().add(tag);
+        Set bookList = tag.getBookList();
+        bookList.add(this);
+        tag.setBookList(bookList);
+    }
+
+
 }

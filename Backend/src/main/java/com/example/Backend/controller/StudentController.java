@@ -3,14 +3,10 @@ package com.example.Backend.controller;
 import com.example.Backend.Repository.DisabilityRepository;
 import com.example.Backend.Repository.StudentCommentRepository;
 import com.example.Backend.Repository.StudentRepository;
-import com.example.Backend.model.Disability;
-import com.example.Backend.model.Student;
-import com.example.Backend.model.StudentComment;
+import com.example.Backend.model.*;
+import com.example.Backend.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -22,6 +18,9 @@ public class StudentController {
     private StudentRepository studentRepository;
 
     @Autowired
+    private StudentService studentService;
+
+    @Autowired
     private StudentCommentRepository studentCommentRepository;
 
     @Autowired
@@ -29,13 +28,17 @@ public class StudentController {
     @GetMapping("/new")
     public Student saveNewStudent(){
         Student student = new Student("mahmoud");
-        //StudentComment comment1 = new StudentComment("blablabla");
-        //Disability disability = new Disability("Dyslexia");
-        //student.addDisability(disability);
-        //student.addStudentComment(comment1);
-        //student.getDisabilityList().add(disability);
-        Disability d = disabilityRepository.findAll().get(0);
-        student.addDisability(d);
+        StudentComment comment1 = new StudentComment("blablabla");
+//        Disability disability = new Disability("Dyslexia");
+//        student.addDisability(disability);
+        student.addStudentComment(comment1);
+        comment1.addStudent(student);
+        Book book = new Book("Mahmoud book");
+        Rating rating = new Rating(book, student,4 );
+        student.addRating(rating);
+//        student.getDisabilityList().add(disability);
+//        Disability d = disabilityRepository.findAll().get(0);
+//        student.addDisability(d);
         Student a = studentRepository.save(student);
         return a;
     }
@@ -76,6 +79,16 @@ public class StudentController {
         return d.getStudentList();
     }
 
+    @GetMapping("get/{id}")
+    public Student getStudentById(@PathVariable UUID id){
+        return studentService.findById(id);
+
+    }
+
+    @PostMapping
+    public Student addStudent(@RequestBody Student student){
+        return studentService.addStudent(student);
+    }
 
 
 }

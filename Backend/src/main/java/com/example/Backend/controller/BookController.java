@@ -2,10 +2,12 @@ package com.example.Backend.controller;
 
 
 import com.example.Backend.model.Book;
+import com.example.Backend.model.Tag;
 import com.example.Backend.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -33,5 +35,10 @@ public class BookController {
     @GetMapping("/add/specificBook")
     public Book insertSpecificBook(){
         return bookService.insertSpecificBook();
+    }
+
+    @GetMapping("/get/tags/{id}")
+    public Set<Tag> getBookTags(@PathVariable UUID id){
+        return bookService.getBookTags(id);
     }
 }

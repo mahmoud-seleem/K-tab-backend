@@ -5,9 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "author")
@@ -47,8 +45,14 @@ public class Author {
 
     @OneToMany(mappedBy = "author")
     private List<Writing> chaptersList;
+
+    @OneToMany(mappedBy = "author")
+    private List<Book> authorBooksList;;
+
     public Author() {
     }
+
+
 
     public Author(String authorName) {
         this.authorName = authorName;
@@ -141,6 +145,14 @@ public class Author {
 
     public void setAuthorNotificationList(List<AuthorNotification> authorNotificationList) {
         this.authorNotificationList = authorNotificationList;
+    }
+
+    public List<Book> getAuthorBooksList() {
+        return authorBooksList;
+    }
+
+    public void setAuthorBooksList(List<Book> authorBooksList) {
+        this.authorBooksList = authorBooksList;
     }
 
     public List<Writing> getChaptersList() {

@@ -3,6 +3,7 @@ package com.example.Backend.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -80,5 +81,12 @@ public class StudentComment {
 
     public void setChapter(Chapter chapter) {
         this.chapter = chapter;
+    }
+
+    public void addStudent(Student student){
+        this.setStudent(student);
+        List currentCommentsList = student.getStudentCommentList();
+        currentCommentsList.add(this);
+        student.setStudentCommentList(currentCommentsList);
     }
 }

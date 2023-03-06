@@ -4,14 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "student")
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler","studentCommentList","disabilityList","studentNotificationList"})
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler","studentCommentList","disabilityList","studentNotificationList", "ratings"})
 public class Student {
 
     @Id
@@ -40,7 +37,7 @@ public class Student {
     private List<StudentComment> studentCommentList;
 
     @OneToMany(mappedBy = "student")
-    Set<Rating> ratings;
+    Set<Rating> ratings = new HashSet<>();
 
     @ManyToMany()
     @JoinTable(

@@ -4,6 +4,8 @@ import com.example.Backend.service.RatingService;
 import jakarta.persistence.*;
 import org.springframework.lang.NonNull;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -39,13 +41,6 @@ public class Rating {
         this.ratingValue = ratingValue;
     }
 
-//    public RatingKey getId() {
-//        return id;
-//    }
-//
-//    public void setId(RatingKey id) {
-//        this.id = id;
-//    }
 
 
     public UUID getRatingId() {
@@ -78,5 +73,29 @@ public class Rating {
 
     public void setRatingValue(int ratingValue) {
         this.ratingValue = ratingValue;
+    }
+
+
+
+    public void addBookRating(Book book){
+        this.setBook(book);
+        Set currentBookRatingsSet = book.getRatings();
+        currentBookRatingsSet.add(this);
+        book.setRatings(currentBookRatingsSet);
+    }
+
+    public void removeBookRating(Book book){
+        this.setBook(null);
+        Set currentBookRatingsSet = book.getRatings();
+        currentBookRatingsSet.remove(this);
+        book.setRatings(currentBookRatingsSet);
+    }
+
+    public void addStudentRating(Student student){
+        this.setStudent(student);
+        Set currentStudentRatingsSet = student.getRatings();
+        currentStudentRatingsSet.add(this);
+        book.setRatings(currentStudentRatingsSet);
+
     }
 }
