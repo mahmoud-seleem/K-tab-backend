@@ -4,9 +4,11 @@ import com.example.Backend.model.Author;
 import com.example.Backend.model.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
+@Repository
 public interface StudentRepository extends JpaRepository<Student, UUID> {
     @Query(
             value = "SELECT * FROM student WHERE student.student_name = ?1",

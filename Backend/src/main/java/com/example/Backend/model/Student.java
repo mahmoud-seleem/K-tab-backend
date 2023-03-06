@@ -1,10 +1,12 @@
 package com.example.Backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -36,6 +38,9 @@ public class Student {
     private String educationLevel;
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<StudentComment> studentCommentList;
+
+    @OneToMany(mappedBy = "student")
+    Set<Rating> ratings;
 
     @ManyToMany()
     @JoinTable(
