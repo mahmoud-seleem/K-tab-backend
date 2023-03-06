@@ -3,12 +3,10 @@ package com.example.Backend.controller;
 import com.example.Backend.Repository.*;
 import com.example.Backend.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
+import org.json.JSONObject;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -24,6 +22,9 @@ public class ChapterController {
     private AuthorCommentRepository authorCommentRepository;
     @Autowired
     private ChapterRepository chapterRepository;
+
+    @Autowired
+    private InteractionRepository interactionRepository;
     @GetMapping("/newchapter")
     public Chapter creatNewChapter(){
         Chapter chapter = new Chapter("chapter one");
@@ -62,8 +63,8 @@ public class ChapterController {
         StudentComment studentComment = new StudentComment("blablablablabla");
         chapterRepository.findById(id).get().addStudentComment(studentComment);
         studentCommentRepository.save(studentComment);
+        //studentRepository.findBy()
         return studentComment;
     }
-
 
 }

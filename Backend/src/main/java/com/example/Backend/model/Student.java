@@ -11,7 +11,9 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "student")
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler","studentCommentList","disabilityList","studentNotificationList"})
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler",
+        "studentCommentList","disabilityList",
+        "studentNotificationList","interactions","ratings"})
 public class Student {
 
     @Id
@@ -51,6 +53,10 @@ public class Student {
 
     @OneToMany(mappedBy = "destinationStudent")
     private List<StudentNotification> studentNotificationList;
+
+    @OneToMany(mappedBy = "student")
+    private List<Interaction> interactions;
+
     public Student() {
     }
 
@@ -82,7 +88,7 @@ public class Student {
         this.studentCommentList = new ArrayList<>();
         this.disabilityList = new ArrayList<>();
         this.studentNotificationList = new ArrayList<>();
-
+        this.interactions = new ArrayList<>();
     }
 
     public UUID getStudentId() {
@@ -139,6 +145,14 @@ public class Student {
 
     public void setEducationLevel(String educationLevel) {
         this.educationLevel = educationLevel;
+    }
+
+    public List<Interaction> getInteractions() {
+        return interactions;
+    }
+
+    public void setInteractions(List<Interaction> interactions) {
+        this.interactions = interactions;
     }
 
     public void addStudentComment(StudentComment studentComment) {
@@ -204,5 +218,13 @@ public class Student {
     public void removeRating(Rating rating){
         this.getRatings().remove(rating);
         rating.setStudent(null);
+    }
+    public void addInteraction(Interaction interaction){
+        this.getInteractions().add(interaction);
+        interaction.setStudent(this);
+    }
+    public void removeInteraction(Interaction interaction){
+        this.getInteractions().remove(interaction);
+        interaction.setStudent(null);
     }
 }
