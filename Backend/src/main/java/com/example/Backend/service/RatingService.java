@@ -19,17 +19,20 @@ public class RatingService {
 
 
 
-    public Rating findRatingById(RatingKey id){
-        if (ratingRepository.findById(id) == null) {
-            Rating rating = new Rating();
-            UUID studentId = rating.getStudent().getStudentId();
-            UUID bookID = rating.getBook().getBookId();
-            RatingKey Nid = new RatingKey(studentId, bookID);
-            rating.setId(Nid);
-        }
+//    public Rating findRatingById(RatingKey id){
+//        if (ratingRepository.findById(id) == null) {
+//            Rating rating = new Rating();
+//            UUID studentId = rating.getStudent().getStudentId();
+//            UUID bookID = rating.getBook().getBookId();
+//            RatingKey Nid = new RatingKey(studentId, bookID);
+//            rating.setId(Nid);
+//        }
+//        return ratingRepository.findById(id).orElseThrow();
+//    }
+
+    public Rating findRatingById(UUID id){
         return ratingRepository.findById(id).orElseThrow();
     }
-
     public Rating insertRating(Rating rating){
         return ratingRepository.save(rating);
     }

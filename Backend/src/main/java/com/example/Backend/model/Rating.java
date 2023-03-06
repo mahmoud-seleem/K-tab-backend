@@ -10,8 +10,11 @@ import java.util.UUID;
 @Entity
 public class Rating {
 
-    @EmbeddedId
-    RatingKey id;
+//    @EmbeddedId
+//    RatingKey id;
+    @Id
+    @GeneratedValue
+    UUID ratingId;
 
 
     @ManyToOne
@@ -36,12 +39,21 @@ public class Rating {
         this.ratingValue = ratingValue;
     }
 
-    public RatingKey getId() {
-        return id;
+//    public RatingKey getId() {
+//        return id;
+//    }
+//
+//    public void setId(RatingKey id) {
+//        this.id = id;
+//    }
+
+
+    public UUID getRatingId() {
+        return ratingId;
     }
 
-    public void setId(RatingKey id) {
-        this.id = id;
+    public void setRatingId(UUID ratingId) {
+        this.ratingId = ratingId;
     }
 
     public Book getBook() {

@@ -20,7 +20,7 @@ public class RatingController {
 
 
     @GetMapping("/{id}")
-    public Rating findRatingById(@PathVariable RatingKey id){
+    public Rating findRatingById(@PathVariable UUID id){
         return ratingService.findRatingById(id);
     }
 
