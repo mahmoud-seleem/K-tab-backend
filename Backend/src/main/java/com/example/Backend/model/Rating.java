@@ -1,6 +1,8 @@
 package com.example.Backend.model;
 
+import com.example.Backend.service.RatingService;
 import jakarta.persistence.*;
+import org.springframework.lang.NonNull;
 
 import java.util.UUID;
 

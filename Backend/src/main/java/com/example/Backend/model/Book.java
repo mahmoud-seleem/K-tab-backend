@@ -35,6 +35,7 @@ public class Book {
 //    // TODO: 05-Mar-23 convert it to  hash set
 //    private List<Rating> ratings = new ArrayList<>();
 
+
     @JsonIgnore
     @OneToMany(mappedBy = "book")
     Set<Rating> ratings;

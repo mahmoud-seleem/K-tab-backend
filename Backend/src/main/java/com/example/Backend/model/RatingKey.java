@@ -15,4 +15,8 @@ public class RatingKey implements Serializable {
     @JoinColumn(name = "student_id")
     private UUID studentID;
 
+    public RatingKey(UUID bookID, UUID studentID) {
+        this.bookID = bookID;
+        this.studentID = studentID;
+    }
 }
