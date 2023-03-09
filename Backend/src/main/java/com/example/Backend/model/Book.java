@@ -125,5 +125,15 @@ public class Book {
         tag.setBookList(bookList);
     }
 
+    public void addAuthor(Author author){
+        this.setAuthor(author);
+        author.getAuthorBooksList().add(this);
+    }
+
+    public void removeAuthor(Author author){
+        this.setAuthor(null);
+        author.getAuthorBooksList().remove(this);
+    }
+
 
 }

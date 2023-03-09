@@ -12,7 +12,7 @@ import java.util.*;
 //@JsonIdentityInfo(
 //        generator = ObjectIdGenerators.PropertyGenerator.class,
 //        property = "authorName")
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler","authorCommentList","authorNotificationList","chaptersList  "})
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler","authorCommentList","authorNotificationList","chaptersList", "authorBooksList"})
 public class Author {
 
     @Id
@@ -47,7 +47,7 @@ public class Author {
     private List<Writing> chaptersList;
 
     @OneToMany(mappedBy = "author")
-    private List<Book> authorBooksList;;
+    private List<Book> authorBooksList = new ArrayList<>();
 
     @OneToOne(mappedBy = "author")
     private AuthorSettings authorSettings;
@@ -188,6 +188,7 @@ public class Author {
         authorComment.setAuthor(this);
     }
 
+
     public void removeAuthorComment(AuthorComment authorComment){
         this.getAuthorCommentList().remove(authorComment);
         authorComment.setAuthor(null);
@@ -200,4 +201,14 @@ public class Author {
     public void setAuthorSettings(AuthorSettings authorSettings) {
         this.authorSettings = authorSettings;
     }
+
+    public void addAuthorBook(Book book){
+        this.getAuthorBooksList().add(book);
+        book.setAuthor(this);
+    }
+    public void removeAuthorBook(Book book){
+        this.getAuthorBooksList().remove(book);
+        book.setAuthor(null);
+    }
+
 }

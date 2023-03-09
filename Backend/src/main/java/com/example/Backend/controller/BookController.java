@@ -7,6 +7,7 @@ import com.example.Backend.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -40,5 +41,16 @@ public class BookController {
     @GetMapping("/get/tags/{id}")
     public Set<Tag> getBookTags(@PathVariable UUID id){
         return bookService.getBookTags(id);
+    }
+
+
+    @GetMapping("/get/all")
+    public List getAllBooks(){
+        return bookService.getAllBooks();
+    }
+
+    @GetMapping("get/author/books/{id}")
+    public List getAllAuthorBooks(@PathVariable UUID id){
+        return bookService.getAllAuthorBooks(id);
     }
 }

@@ -4,6 +4,7 @@ import com.example.Backend.Repository.AuthorCommentRepository;
 import com.example.Backend.Repository.AuthorRepository;
 import com.example.Backend.model.Author;
 import com.example.Backend.model.AuthorComment;
+import com.example.Backend.model.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +25,8 @@ public class AuthorController {
         Author author = new Author("mahmoud");
         AuthorComment comment1 = new AuthorComment("blablabla");
         author.addAuthorComment(comment1);
+        Book newBook = new Book("MMMMMMMariam");
+        author.addAuthorBook(newBook);
         Author a = authorRepository.save(author);
         return a;
     }
@@ -45,5 +48,13 @@ public class AuthorController {
     public Author addNewAuthor(@RequestBody Author a){
        return authorRepository.save(a);
     }
+
+//    @GetMapping("get/books/{id}")
+//    public List getAllAuthorBooks(@PathVariable UUID id){
+//
+////        return authorRepository.save();
+//    }
+
+
 
 }
