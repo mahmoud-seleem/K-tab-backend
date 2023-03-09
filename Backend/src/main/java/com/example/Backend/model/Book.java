@@ -8,7 +8,7 @@ import java.util.*;
 
 @Entity
 @Table(name = "book")
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler","ratings"})
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler","ratings","chapters"})
 public class Book {
     @Id
     @GeneratedValue
@@ -28,6 +28,8 @@ public class Book {
     @OneToMany(mappedBy = "book")
     Set<Rating> ratings = new HashSet<>();
 
+    @OneToMany(mappedBy = "book")
+    private List<Chapter> chapters = new ArrayList<>();
     public Book() {
     }
 
@@ -37,6 +39,7 @@ public class Book {
         this.price = price;
         this.bookAbstract = bookAbstract;
         this.ratings = ratings;
+        this.chapters = new ArrayList<>();
     }
 
     public Book(String title) {
@@ -83,6 +86,22 @@ public class Book {
         this.ratings = ratings;
     }
 
+    public List<Chapter> getChapters() {
+        return chapters;
+    }
+
+    public void setChapters(List<Chapter> chapters) {
+        this.chapters = chapters;
+    }
+
+    public void addChapter(Chapter chapter){
+        this.chapters.add(chapter);
+        chapter.setBook(this);
+    }
+    public void removeChapter(Chapter chapter){
+        this.chapters.remove(chapter);
+        chapter.setBook(null);
+    }
     public void addRating(Rating rating){
         this.getRatings().add(rating);
         rating.setBook(this);

@@ -24,11 +24,21 @@ public class ChapterController {
     private ChapterRepository chapterRepository;
 
     @Autowired
+    private BookRepository bookRepository;
+    @Autowired
     private InteractionRepository interactionRepository;
     @GetMapping("/newchapter")
     public Chapter creatNewChapter(){
+        Book book = bookRepository.findByTitle("JAVA");
         Chapter chapter = new Chapter("chapter one");
+        book.addChapter(chapter);
         return  chapterRepository.save(chapter);
+    }
+    @GetMapping("/newbook")
+    public Book creatNewBook(){
+        //Chapter chapter = new Chapter("chapter one");
+        Book book = new Book("JAVA");
+        return  bookRepository.save(book);
     }
     @GetMapping("/newstudent")
     public Student creatNewStudent(){
@@ -51,6 +61,20 @@ public class ChapterController {
         return authorRepository.findAll();
     }
 
+    @GetMapping("/getallchapters")
+    public List<Chapter> getAllChapters() {return chapterRepository.findAll();}
+
+    @GetMapping("/getallbooks")
+    public List<Book> getAllBooks(){return bookRepository.findAll();}
+
+    @GetMapping("/getbookchapters")
+    public List<Chapter> getbookChapters(){
+        return bookRepository.findByTitle("JAVA").getChapters();
+    }
+    @GetMapping("/getchapterbook")
+    public Book getChapterBook(){
+        return chapterRepository.findByTitle("chapter one").getBook();
+    }
     @GetMapping("/newauthorcomment/{id}")
     public AuthorComment createNewAuthorComment(@PathVariable UUID id){
         AuthorComment authorComment = new AuthorComment("blablabla");

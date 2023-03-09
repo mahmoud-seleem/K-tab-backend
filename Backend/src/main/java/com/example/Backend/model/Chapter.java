@@ -55,6 +55,10 @@ public class Chapter {
 
     @OneToMany(mappedBy = "chapter")
     private List<Interaction> interactions;
+
+    @ManyToOne
+    @JoinColumn(name = "book_id")
+    private Book book;
     public Chapter() {
     }
 
@@ -163,6 +167,14 @@ public class Chapter {
 
     public List<Interaction> getInteractions() {
         return interactions;
+    }
+
+    public Book getBook() {
+        return book;
+    }
+
+    public void setBook(Book book) {
+        this.book = book;
     }
 
     public void setInteractions(List<Interaction> interactions) {
