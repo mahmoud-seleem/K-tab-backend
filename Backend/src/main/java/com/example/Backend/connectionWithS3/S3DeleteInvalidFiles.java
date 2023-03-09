@@ -12,7 +12,7 @@ public class S3DeleteInvalidFiles {
     final AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion(Regions.DEFAULT_REGION).build();
 
 
-    public void deleteFile(String bucketName, String[] objectsKeys){
+    public void deleteFilesFromS3(String bucketName, String[] objectsKeys){
 
         try
 
