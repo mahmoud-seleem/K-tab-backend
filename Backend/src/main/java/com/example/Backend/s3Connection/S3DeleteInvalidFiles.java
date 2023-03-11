@@ -1,10 +1,9 @@
-package com.example.Backend.connectionWithS3;
+package com.example.Backend.s3Connection;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest;
 
 public class S3DeleteInvalidFiles {
