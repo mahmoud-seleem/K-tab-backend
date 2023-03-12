@@ -1,13 +1,35 @@
 package com.example.Backend.controller;
 
+import com.amazonaws.HttpMethod;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.client.builder.AwsClientBuilder;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectResult;
 import com.example.Backend.Repository.*;
+import com.example.Backend.jsonConversion.JsonToMapConverter;
 import com.example.Backend.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.json.JSONObject;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import org.springframework.web.client.RestTemplate;
+
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.time.Instant;
+import java.util.*;
 
 @RestController
 @RequestMapping("/chapter")
@@ -23,6 +45,17 @@ public class ChapterController {
     @Autowired
     private ChapterRepository chapterRepository;
 
+    @Value("${ACCESS_KEY}")
+    private  String ACCESS_KEY;
+
+    @Value("${SECRET_KEY}")
+    private  String SECRET_KEY;
+
+    @Value("${REGION}")
+    private  String REGION;
+
+    @Value("${BUCKET_NAME}")
+    private  String BUCKET_NAME;
     @Autowired
     private BookRepository bookRepository;
     @Autowired
@@ -89,6 +122,60 @@ public class ChapterController {
         studentCommentRepository.save(studentComment);
         //studentRepository.findBy()
         return studentComment;
+    }
+    public URL generatePreSignedForReadOnly(AmazonS3 amazonS3,String fileName){
+        java.util.Date expiration = new java.util.Date();
+        long expTimeMillis = Instant.now().toEpochMilli();
+        expTimeMillis += 1000 * 0.5 * 60;
+        expiration.setTime(expTimeMillis);
+        GeneratePresignedUrlRequest generatePresignedUrlRequest =
+                new GeneratePresignedUrlRequest(BUCKET_NAME, fileName)
+                        .withMethod(HttpMethod.GET)
+                        .withExpiration(expiration);
+        URL url = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
+        return url;
+    }
+    @GetMapping("/s3")
+    public String s3() throws URISyntaxException {
+        AWSCredentials awsCredentials = new BasicAWSCredentials(ACCESS_KEY,SECRET_KEY);
+        AmazonS3 amazonS3 = AmazonS3ClientBuilder.standard().withRegion(REGION).withCredentials(new AWSStaticCredentialsProvider(awsCredentials)).build();
+        //amazonS3.putObject("content-pwd-aat","test/img.png",new File("C:\\Users\\Mahmoud Seleem\\OneDrive\\Pictures\\killua_zoldyck___hunter_x_hunter_by_klydetheslayer_d8ggzlo.png"));
+//        amazonS3.deleteObjects(  )
+        return generatePreSignedForWrite(amazonS3,"test/temp.png").toString();
+    }
+
+    public URL generatePreSignedForWrite(AmazonS3 amazonS3,String fileName){
+        java.util.Date expiration = new java.util.Date();
+        long expTimeMillis = Instant.now().toEpochMilli();
+        expTimeMillis += 1000 * 2 * 60;
+        expiration.setTime(expTimeMillis);
+        GeneratePresignedUrlRequest generatePresignedUrlRequest =
+                new GeneratePresignedUrlRequest(BUCKET_NAME, fileName)
+                        .withMethod(HttpMethod.PUT)
+                        .withExpiration(expiration);
+        URL url = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
+        return url;
+    }
+
+    @GetMapping("/api")
+    public Map<String,Object> api(){
+        RestTemplate restTemplate = new RestTemplateBuilder().build();
+        String endPoint = "http://localhost:8000/imagedesc";
+        String url = "https://catfact.ninja/fact";
+        HttpHeaders headers = new HttpHeaders();
+        // set `content-type` header
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        // set `accept` header
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+
+        // create a map for post parameters
+        Map<String, Object> map = new HashMap<>();
+        map.put("image_url", url);
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map, headers);
+
+        // send POST request
+        ResponseEntity<Map> response = restTemplate.postForEntity(endPoint, entity, Map.class);
+        return response.getBody();
     }
 
 }
