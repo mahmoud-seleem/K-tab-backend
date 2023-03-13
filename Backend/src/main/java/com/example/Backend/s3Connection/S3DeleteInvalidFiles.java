@@ -1,15 +1,16 @@
 package com.example.Backend.s3Connection;
 
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.List;
 import java.util.Random;
 import software.amazon.awssdk.core.waiters.WaiterResponse;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.paginators.ListObjectsV2Iterable;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -37,48 +38,32 @@ import software.amazon.awssdk.services.s3.model.HeadBucketResponse;
 public class S3DeleteInvalidFiles {
 
 
+    public static void deleteFilesFromS3(String s3BucketName, List<String> keys){
 
-    public static String deleteFilesFromS3(String bucketName, String objectsKeys){
+        Region region = Region.US_EAST_1;
 
-        final AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion(Regions.US_EAST_1).build();
+        AmazonS3 s3Client = AmazonS3ClientBuilder.defaultClient();
 
-        try
+        String[] keysArray = keys.toArray(new String[keys.size()]);
+        DeleteObjectsRequest request = new DeleteObjectsRequest(s3BucketName).withKeys(keysArray);
 
-        {
-            DeleteObjectsRequest dor = new DeleteObjectsRequest(bucketName)
-                    .withKeys(objectsKeys);
-            s3.deleteObjects(dor);
-        } catch(
-                AmazonServiceException e)
+        System.out.println("Deleting the following Amazon S3 objects created by Amazon Pinpoint:");
 
-        {
+        for (String key : keys) {
+            System.out.println("\t- " + key);
+        }
+
+        try {
+            s3Client.deleteObjects(request);
+        } catch (AmazonServiceException e) {
             System.err.println(e.getErrorMessage());
             System.exit(1);
         }
 
-        return "Done";
-
-
-    }
-
-
-    public void uploadFilesToS3(String bucketName, String objectKey){
-
-//        Region region = Region.US_WEST_2;
-//        s3 = S3Client.builder()
-//                .region(region)
-//                .build();
-//
-//        createBucket(s3, bucketName, region);
-//
-//        PutObjectRequest objectRequest = PutObjectRequest.builder()
-//                .bucket(bucketName)
-//                .key(objectKey)
-//                .build();
-//
-//        s3.putObject(objectRequest, RequestBody.fromByteBuffer(getRandomByteBuffer(10_000)));
-
-
+        System.out.println("Finished deleting objects.");
 
     }
+
+
+
 }

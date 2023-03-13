@@ -4,6 +4,7 @@ import com.example.Backend.s3Connection.S3DeleteInvalidFiles;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,8 +18,12 @@ public class BackendApplication {
 
 //		System.out.println(createFileSystemLibrary("content-pwd-aat", UUID.randomUUID(), UUID.randomUUID()));
 
-		String [] objectKeys = {"books/13365979-bf51-445f-81bd-e924e0857dee", "00a098e2-6f93-44d5-9f7d-5fac994078ad"};
-		System.out.println(deleteFilesFromS3("content-pwd-aat", "books/13365979-bf51-445f-81bd-e924e0857dee/"));
+		List<String>objectKeys = new ArrayList<>();
+
+//		objectKeys.add("00a098e2-6f93-44d5-9f7d-5fac994078ad/6894a52e-c768-40e5-a473-da5d11d49d8b/");
+		objectKeys.add("books/13365979-bf51-445f-81bd-e924e0857dee/5f18de82-3571-48a7-ae51-dbbf08ec4ac6/");
+
+//		deleteFilesFromS3("content-pwd-aat", objectKeys);
 	}
 
 }
