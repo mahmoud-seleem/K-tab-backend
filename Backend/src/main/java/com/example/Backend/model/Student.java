@@ -8,13 +8,9 @@ import java.util.*;
 
 @Entity
 @Table(name = "student")
-<<<<<<< HEAD
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler","studentCommentList","disabilityList","studentNotificationList", "ratings"})
-=======
 @JsonIgnoreProperties({"hibernateLazyInitializer","handler",
         "studentCommentList","disabilityList",
         "studentNotificationList","interactions","ratings"})
->>>>>>> origin
 public class Student {
 
     @Id

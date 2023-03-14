@@ -10,16 +10,13 @@ import java.util.UUID;
 
 @Repository
 public interface BookRepository extends JpaRepository<Book, UUID> {
-<<<<<<< HEAD
 
 //    @Query(
 //            value = "SELECT * FROM book WHERE book.title = ?1",
 //            nativeQuery = true)
 //    Book findByTitle(String title);
-=======
     @Query(
             value = "SELECT * FROM book WHERE book.title = ?1",
             nativeQuery = true)
     Book findByTitle(String title);
->>>>>>> origin
 }

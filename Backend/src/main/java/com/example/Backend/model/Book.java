@@ -29,13 +29,13 @@ public class Book {
     private Set<Rating> ratings = new HashSet<>();
 
     @ManyToOne
-    @JoinColumn(name = "author_id", nullable = false)
+    @JoinColumn(name = "author_id")
     private Author author;
 
     @ManyToMany
     @JoinTable(name = "book_tags"
-            , joinColumns = @JoinColumn(name = "book_id")
-            , inverseJoinColumns = @JoinColumn(name = "tag_id") )
+            ,joinColumns = @JoinColumn(name = "book_id")
+            ,inverseJoinColumns = @JoinColumn(name = "tag_id") )
     private Set<Tag> tags = new HashSet<>();
 
     @OneToMany(mappedBy = "book")
@@ -96,7 +96,6 @@ public class Book {
         this.ratings = ratings;
     }
 
-<<<<<<< HEAD
     public Author getAuthor() {
         return author;
     }
@@ -113,7 +112,6 @@ public class Book {
         this.tags = tags;
     }
 
-=======
     public List<Chapter> getChapters() {
         return chapters;
     }
@@ -130,7 +128,6 @@ public class Book {
         this.chapters.remove(chapter);
         chapter.setBook(null);
     }
->>>>>>> origin
     public void addRating(Rating rating){
         this.getRatings().add(rating);
         rating.setBook(this);

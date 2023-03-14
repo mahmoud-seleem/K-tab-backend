@@ -1,6 +1,10 @@
 package com.example.Backend.s3Connection;
 
+import ch.qos.logback.core.joran.action.AppenderRefAction;
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
@@ -9,57 +13,30 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Random;
-import software.amazon.awssdk.core.waiters.WaiterResponse;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.paginators.ListObjectsV2Iterable;
-import software.amazon.awssdk.core.sync.RequestBody;
-import software.amazon.awssdk.services.s3.model.S3Exception;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
-import software.amazon.awssdk.services.s3.model.S3Object;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
-import software.amazon.awssdk.services.s3.model.DeleteBucketRequest;
-import software.amazon.awssdk.services.s3.model.CreateMultipartUploadRequest;
-import software.amazon.awssdk.services.s3.model.CreateMultipartUploadResponse;
-import software.amazon.awssdk.services.s3.model.CompletedMultipartUpload;
-import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
-import software.amazon.awssdk.services.s3.model.CompletedPart;
-import software.amazon.awssdk.services.s3.model.CreateBucketConfiguration;
-import software.amazon.awssdk.services.s3.model.UploadPartRequest;
-import software.amazon.awssdk.services.s3.model.CompleteMultipartUploadRequest;
-import software.amazon.awssdk.services.s3.waiters.S3Waiter;
-import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
-import software.amazon.awssdk.services.s3.model.HeadBucketResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+@Component
 public class S3DeleteInvalidFiles {
+    @Autowired
+    private S3Utils s3Utils;
 
-
-    public static void deleteFilesFromS3(String s3BucketName, List<String> keys){
-
-        Region region = Region.US_EAST_1;
-
-        AmazonS3 s3Client = AmazonS3ClientBuilder.defaultClient();
-
+    public  void deleteInvalidFiles(List<String> keys){
+        s3Utils.initializeTheClient();
         String[] keysArray = keys.toArray(new String[keys.size()]);
-        DeleteObjectsRequest request = new DeleteObjectsRequest(s3BucketName).withKeys(keysArray);
-
+        DeleteObjectsRequest request = new DeleteObjectsRequest(s3Utils.getBucketName()).withKeys(keysArray);
         System.out.println("Deleting the following Amazon S3 objects created by Amazon Pinpoint:");
-
         for (String key : keys) {
             System.out.println("\t- " + key);
         }
-
         try {
-            s3Client.deleteObjects(request);
+            s3Utils.getAmazonS3().deleteObjects(request);
         } catch (AmazonServiceException e) {
             System.err.println(e.getErrorMessage());
             System.exit(1);
         }
-
         System.out.println("Finished deleting objects.");
 
     }
