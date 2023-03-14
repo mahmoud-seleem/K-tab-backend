@@ -2,6 +2,7 @@ package com.example.Backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import org.springframework.data.relational.core.sql.In;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -10,7 +11,9 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "chapter")
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler","authorCommentList","studentCommentList","authorList","tags"})
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler",
+        "authorCommentList","studentCommentList"
+        ,"authorList","tags","interactions"})
 public class Chapter {
 
     @Id
@@ -48,6 +51,14 @@ public class Chapter {
             joinColumns = @JoinColumn(name = "chapter_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private List<Tag> tags;
+
+
+    @OneToMany(mappedBy = "chapter")
+    private List<Interaction> interactions;
+
+    @ManyToOne
+    @JoinColumn(name = "book_id")
+    private Book book;
     public Chapter() {
     }
 
@@ -72,6 +83,7 @@ public class Chapter {
         this.studentCommentList = new ArrayList<>();
         this.authorList = new ArrayList<>();
         this.tags = new ArrayList<>();
+        this.interactions = new ArrayList<>();
     }
     public UUID getChapterId() {
         return chapterId;
@@ -153,6 +165,29 @@ public class Chapter {
         this.tags = tags;
     }
 
+    public List<Interaction> getInteractions() {
+        return interactions;
+    }
+
+    public Book getBook() {
+        return book;
+    }
+
+    public void setBook(Book book) {
+        this.book = book;
+    }
+
+    public void setInteractions(List<Interaction> interactions) {
+        this.interactions = interactions;
+    }
+    public void addInteraction(Interaction interaction){
+        this.getInteractions().add(interaction);
+        interaction.setChapter(this);
+    }
+    public void removeInteraction(Interaction interaction){
+        this.getInteractions().remove(interaction);
+        interaction.setChapter(null);
+    }
     public void addTag(Tag tag){
         this.getTags().add(tag);
         //tag.getChapterList().add(this);
