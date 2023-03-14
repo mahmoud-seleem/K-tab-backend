@@ -24,10 +24,8 @@ public class S3fileSystem {
 
     @Autowired
     private S3Utils s3Utils;
-//    private static final S3Utils s3Utils = s3Utils0;
-
     public  String createChapterFolder(UUID bookId, UUID chapterId) {
-        //s3Utils.initializeTheClient();
+        s3Utils.initializeTheClient();
         String bookFolder = bookId.toString();
         String chapterFolder = chapterId.toString();
         String folderName = "books/" + bookFolder + "/" + chapterFolder + "/";
