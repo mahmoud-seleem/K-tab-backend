@@ -9,10 +9,9 @@ import java.util.*;
 
 @Entity
 @Table(name = "author")
-//@JsonIdentityInfo(
-//        generator = ObjectIdGenerators.PropertyGenerator.class,
-//        property = "authorName")
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler","authorCommentList","authorNotificationList","chaptersList", "authorBooksList"})
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler",
+        "authorCommentList","authorNotificationList","chaptersList",
+        "authorBooksList","authorSettings"})
 public class Author {
 
     @Id
@@ -35,28 +34,23 @@ public class Author {
     @Column(name = "contact", nullable = false)
     private String contact;
 
-    @OneToMany(mappedBy = "author" , cascade = CascadeType.ALL)
-    //@JsonManagedReference
+    @OneToMany(mappedBy = "author")
     private List<AuthorComment> authorCommentList;
 
     @OneToMany(mappedBy = "destinationAuthor")
-    //@JsonManagedReference
     private List<AuthorNotification> authorNotificationList;
 
     @OneToMany(mappedBy = "author")
     private List<Writing> chaptersList;
 
     @OneToMany(mappedBy = "author")
-    private List<Book> authorBooksList = new ArrayList<>();
+    private List<Book> authorBooksList;
 
     @OneToOne(mappedBy = "author")
     private AuthorSettings authorSettings;
 
     public Author() {
     }
-
-
-
     public Author(String authorName) {
         this.authorName = authorName;
         this.authorEmail = "mahmoudsaleem522@gmail.com";
@@ -74,18 +68,11 @@ public class Author {
         this.password = password;
         this.profilePhoto = profilePhoto;
         this.contact = contact;
+        this.authorCommentList = new ArrayList<>();
+        this.authorNotificationList = new ArrayList<>();
+        this.chaptersList = new ArrayList<>();
+        this.authorBooksList = new ArrayList<>();
     }
-
-    public Author(String authorName, String authorEmail, String password, String profilePhoto, String contact, List<AuthorComment> authorCommentList, List<AuthorNotification> authorNotificationList) {
-        this.authorName = authorName;
-        this.authorEmail = authorEmail;
-        this.password = password;
-        this.profilePhoto = profilePhoto;
-        this.contact = contact;
-        this.authorCommentList = authorCommentList;
-        this.authorNotificationList = authorNotificationList;
-    }
-
     public UUID getAuthorId() {
         return authorId;
     }
@@ -200,6 +187,7 @@ public class Author {
 
     public void setAuthorSettings(AuthorSettings authorSettings) {
         this.authorSettings = authorSettings;
+        authorSettings.setAuthor(this);
     }
 
     public void addAuthorBook(Book book){
@@ -210,5 +198,4 @@ public class Author {
         this.getAuthorBooksList().remove(book);
         book.setAuthor(null);
     }
-
 }

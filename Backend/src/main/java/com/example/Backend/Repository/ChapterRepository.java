@@ -13,4 +13,5 @@ public interface ChapterRepository extends JpaRepository<Chapter, UUID> {
             value = "SELECT * FROM chapter WHERE chapter.title = ?1",
             nativeQuery = true)
     Chapter findByTitle(String title);
+
 }

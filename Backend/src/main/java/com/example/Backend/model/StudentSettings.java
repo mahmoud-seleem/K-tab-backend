@@ -10,46 +10,61 @@ public class StudentSettings {
 
     @Id
     @GeneratedValue
-    @Column(name = "setting_id")
-    UUID settingId;
+    @Column(name = "student_settings_id")
+    private UUID studentSettingsId;
 
     @Column(name = "brightness_level")
-    int brightnessLevel;
+    private int brightnessLevel;
 
     @Column(name = "contrast_level")
-    int contrastLevel;
+    private int contrastLevel;
 
     @Column(name = "font_size")
-    int fontSize;
+    private int fontSize;
 
     @Column(name = "font_style")
-    String fontStyle;
+    private String fontStyle;
 
     @Column(name = "invert_color")
-    Boolean invertColor;
+    private boolean invertColor;
 
     @Column(name = "grayscale")
-    boolean grayscale;
+    private boolean grayscale;
 
-    @Column(name = "symbols_text")
-    boolean switchTextToSymbols;
+    @Column(name = "switch_text_to_symbols")
+    private boolean switchTextToSymbols;
 
     @Column(name = "play_lesson")
-    Boolean playLesson;
+    private boolean playLesson;
 
-    @Column(name = "text_highlight")
-    Boolean highlightTextOfAudioTranscript;
+    @Column(name = "audio_transcript_highlighting")
+    private boolean audioTranscriptHighLighting;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "student_id")
     private Student student;
 
-    public UUID getSettingId() {
-        return settingId;
+    public StudentSettings() {
     }
 
-    public void setSettingId(UUID settingId) {
-        this.settingId = settingId;
+    public StudentSettings(int brightnessLevel, int contrastLevel, int fontSize, String fontStyle, boolean invertColor, boolean grayscale, boolean switchTextToSymbols, boolean playLesson, boolean audioTranscriptHighLighting) {
+        this.brightnessLevel = brightnessLevel;
+        this.contrastLevel = contrastLevel;
+        this.fontSize = fontSize;
+        this.fontStyle = fontStyle;
+        this.invertColor = invertColor;
+        this.grayscale = grayscale;
+        this.switchTextToSymbols = switchTextToSymbols;
+        this.playLesson = playLesson;
+        this.audioTranscriptHighLighting = audioTranscriptHighLighting;
+    }
+
+    public UUID getStudentSettingsId() {
+        return studentSettingsId;
+    }
+
+    public void setStudentSettingsId(UUID studentSettingsId) {
+        this.studentSettingsId = studentSettingsId;
     }
 
     public int getBrightnessLevel() {
@@ -84,11 +99,11 @@ public class StudentSettings {
         this.fontStyle = fontStyle;
     }
 
-    public Boolean getInvertColor() {
+    public boolean isInvertColor() {
         return invertColor;
     }
 
-    public void setInvertColor(Boolean invertColor) {
+    public void setInvertColor(boolean invertColor) {
         this.invertColor = invertColor;
     }
 
@@ -108,20 +123,20 @@ public class StudentSettings {
         this.switchTextToSymbols = switchTextToSymbols;
     }
 
-    public Boolean getPlayLesson() {
+    public boolean isPlayLesson() {
         return playLesson;
     }
 
-    public void setPlayLesson(Boolean playLesson) {
+    public void setPlayLesson(boolean playLesson) {
         this.playLesson = playLesson;
     }
 
-    public Boolean getHighlightTextOfAudioTranscript() {
-        return highlightTextOfAudioTranscript;
+    public boolean isAudioTranscriptHighLighting() {
+        return audioTranscriptHighLighting;
     }
 
-    public void setHighlightTextOfAudioTranscript(Boolean highlightTextOfAudioTranscript) {
-        this.highlightTextOfAudioTranscript = highlightTextOfAudioTranscript;
+    public void setAudioTranscriptHighLighting(boolean audioTranscriptHighLighting) {
+        this.audioTranscriptHighLighting = audioTranscriptHighLighting;
     }
 
     public Student getStudent() {

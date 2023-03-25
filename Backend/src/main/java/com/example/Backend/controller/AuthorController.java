@@ -46,15 +46,6 @@ public class AuthorController {
 
     @PostMapping
     public Author addNewAuthor(@RequestBody Author a){
-       return authorRepository.save(a);
+        return authorRepository.save(a);
     }
-
-//    @GetMapping("get/books/{id}")
-//    public List getAllAuthorBooks(@PathVariable UUID id){
-//
-////        return authorRepository.save();
-//    }
-
-
-
 }

@@ -181,6 +181,7 @@ public class Student {
 
     public void setStudentSettings(StudentSettings studentSettings) {
         this.studentSettings = studentSettings;
+        studentSettings.setStudent(this);
     }
 
     public List<StudentComment> getStudentCommentList() {

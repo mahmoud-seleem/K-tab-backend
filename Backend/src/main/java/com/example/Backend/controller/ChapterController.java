@@ -156,26 +156,4 @@ public class ChapterController {
         URL url = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
         return url;
     }
-
-    @GetMapping("/api")
-    public Map<String,Object> api(){
-        RestTemplate restTemplate = new RestTemplateBuilder().build();
-        String endPoint = "http://localhost:8000/imagedesc";
-        String url = "https://catfact.ninja/fact";
-        HttpHeaders headers = new HttpHeaders();
-        // set `content-type` header
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        // set `accept` header
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-
-        // create a map for post parameters
-        Map<String, Object> map = new HashMap<>();
-        map.put("image_url", url);
-        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map, headers);
-
-        // send POST request
-        ResponseEntity<Map> response = restTemplate.postForEntity(endPoint, entity, Map.class);
-        return response.getBody();
-    }
-
 }

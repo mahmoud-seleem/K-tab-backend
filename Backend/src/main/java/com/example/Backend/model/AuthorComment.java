@@ -10,9 +10,6 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "author_comment")
-//@JsonIdentityInfo(
-//        generator = ObjectIdGenerators.PropertyGenerator.class,
-//        property = "authorCommentId")
 public class AuthorComment {
 
     @Id
@@ -28,7 +25,6 @@ public class AuthorComment {
 
     @ManyToOne
     @JoinColumn(name = "author_id")
-   // @JsonBackReference
     private Author author;
 
     @ManyToOne

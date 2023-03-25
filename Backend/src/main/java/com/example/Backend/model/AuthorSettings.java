@@ -10,37 +10,49 @@ public class AuthorSettings {
 
     @Id
     @GeneratedValue
-    @Column(name = "setting_id")
-    UUID settingId;
+    @Column(name = "author_settings_id")
+    private UUID authorSettingsId;
 
     @Column(name = "brightness_level")
-    int brightnessLevel;
+    private int brightnessLevel;
 
     @Column(name = "contrast_level")
-    int contrastLevel;
+    private int contrastLevel;
 
     @Column(name = "font_size")
-    int fontSize;
+    private int fontSize;
 
     @Column(name = "font_style")
-    String fontStyle;
+    private String fontStyle;
 
     @Column(name = "invert_color")
-    Boolean invertColor;
+    private boolean invertColor;
 
     @Column(name = "grayscale")
-    boolean grayscale;
+    private boolean grayscale;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "author_id")
     private Author author;
 
-    public UUID getSettingId() {
-        return settingId;
+    public AuthorSettings() {
     }
 
-    public void setSettingId(UUID settingId) {
-        this.settingId = settingId;
+    public AuthorSettings(int brightnessLevel, int contrastLevel, int fontSize, String fontStyle, Boolean invertColor, boolean grayscale) {
+        this.brightnessLevel = brightnessLevel;
+        this.contrastLevel = contrastLevel;
+        this.fontSize = fontSize;
+        this.fontStyle = fontStyle;
+        this.invertColor = invertColor;
+        this.grayscale = grayscale;
+    }
+
+    public UUID getAuthorSettingsId() {
+        return authorSettingsId;
+    }
+
+    public void setAuthorSettingsId(UUID authorSettingsId) {
+        this.authorSettingsId = authorSettingsId;
     }
 
     public int getBrightnessLevel() {
@@ -75,11 +87,11 @@ public class AuthorSettings {
         this.fontStyle = fontStyle;
     }
 
-    public Boolean getInvertColor() {
+    public boolean getInvertColor() {
         return invertColor;
     }
 
-    public void setInvertColor(Boolean invertColor) {
+    public void setInvertColor(boolean invertColor) {
         this.invertColor = invertColor;
     }
 
