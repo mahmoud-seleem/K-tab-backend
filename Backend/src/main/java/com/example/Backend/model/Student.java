@@ -60,6 +60,11 @@ public class Student {
     public Student() {
     }
 
+    public Student(String studentName, String studentEmail) {
+        this.studentName = studentName;
+        this.studentEmail = studentEmail;
+    }
+
     public Student(String studentName, String studentEmail, String password, String profilePhoto, String contact) {
         this.studentName = studentName;
         this.studentEmail = studentEmail;

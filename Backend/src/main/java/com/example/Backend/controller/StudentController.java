@@ -85,6 +85,7 @@ public class StudentController {
 
     }
 
+    @CrossOrigin
     @PostMapping
     public Student addStudent(@RequestBody Student student){
         return studentService.addStudent(student);
