@@ -44,6 +44,12 @@ public class AuthorController {
         return ac;
     }
 
+    @GetMapping("/get/all")
+    public List<Author> getAllAuthors(){
+        return authorRepository.findAll();
+    }
+
+    @CrossOrigin
     @PostMapping
     public Author addNewAuthor(@RequestBody Author a){
         return authorRepository.save(a);
