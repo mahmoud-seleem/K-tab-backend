@@ -21,4 +21,9 @@ public class StudentService {
         studentRepository.save(student);
         return student;
     }
+
+    public Student findByEmail(String email){
+       return studentRepository.findByStudentEmail(email);
+    }
+
 }

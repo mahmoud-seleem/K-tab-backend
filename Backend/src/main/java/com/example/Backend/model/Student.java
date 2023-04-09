@@ -21,7 +21,7 @@ public class Student {
     @Column(name = "student_name", nullable = false)
     private String studentName;
 
-    @Column(name = "student_email", nullable = false)
+    @Column(name = "student_email", nullable = false, unique = true)
     private String studentEmail;
 
     @Column(name = "password", nullable = false)

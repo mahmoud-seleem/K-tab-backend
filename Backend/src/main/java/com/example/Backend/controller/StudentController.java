@@ -91,5 +91,21 @@ public class StudentController {
         return studentService.addStudent(student);
     }
 
+    @GetMapping("/get")
+    public Student getByEmail(@RequestParam(value="email") String email){
+        return studentService.findByEmail(email);
+    }
+
+
+//    @GetMapping("check/{email}")
+//    public String existByEmail(@PathVariable String email){
+//         if(studentService.existByEmail(email)){
+//             return "student";
+//
+//         }
+//         else{
+//             return "none";
+//         }
+//    }
 
 }
