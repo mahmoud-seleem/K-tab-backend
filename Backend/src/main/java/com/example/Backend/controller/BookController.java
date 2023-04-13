@@ -39,7 +39,7 @@ public class BookController {
     }
 
     @GetMapping("/get/tags/{id}")
-    public Set<Tag> getBookTags(@PathVariable UUID id){
+    public List<Tag> getBookTags(@PathVariable UUID id){
         return bookService.getBookTags(id);
     }
 

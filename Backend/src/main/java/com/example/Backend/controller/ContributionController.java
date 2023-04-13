@@ -2,11 +2,11 @@ package com.example.Backend.controller;
 
 import com.example.Backend.Repository.AuthorRepository;
 import com.example.Backend.Repository.ChapterRepository;
-import com.example.Backend.Repository.WritingRepository;
-import com.example.Backend.compositeKeys.WritingKey;
+import com.example.Backend.Repository.ContributionRepository;
+import com.example.Backend.compositeKeys.ContributionKey;
 import com.example.Backend.model.Author;
 import com.example.Backend.model.Chapter;
-import com.example.Backend.model.Writing;
+import com.example.Backend.model.Contribution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,13 +17,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/writing")
-public class WritingController {
+public class ContributionController {
     @Autowired
     private AuthorRepository authorRepository;
     @Autowired
     private ChapterRepository chapterRepository;
     @Autowired
-    private WritingRepository writingRepository;
+    private ContributionRepository writingRepository;
     @GetMapping("/newchapter")
     public Chapter creatNewChapter(){
         Chapter chapter = new Chapter("chapter one");
@@ -43,22 +43,22 @@ public class WritingController {
     public List<Chapter> getAllChapters(){return chapterRepository.findAll();}
 
     @GetMapping("/getauthorwritings")
-    public List<Writing> getAllAuthorWritings(){
+    public List<Contribution> getAllAuthorWritings(){
         Author author = authorRepository.findByName("mohamed");
         return author.getChaptersList();
     }
     @GetMapping("/getchapterwritings")
-    public List<Writing> getAllChapterWritings(){
+    public List<Contribution> getAllChapterWritings(){
         Chapter chapter = chapterRepository.findByTitle("chapter one");
         return chapter.getAuthorList();
     }
     @GetMapping("/newwriting")
-    public Writing createNewWriting(){
+    public Contribution createNewWriting(){
         Author author = authorRepository.findByName("mohamed");
         Chapter chapter = chapterRepository.findByTitle("chapter one");
-        Writing writing = new Writing(new WritingKey(author.getAuthorId(),chapter.getChapterId()),author,chapter, LocalDateTime.now());
-        author.addWriting(writing);
-        chapter.addWriting(writing);
-        return writingRepository.save(writing);
+        Contribution contribution = new Contribution(new ContributionKey(author.getAuthorId(),chapter.getChapterId()),author,chapter, LocalDateTime.now());
+        author.addContribution(contribution);
+        chapter.addWriting(contribution);
+        return writingRepository.save(contribution);
     }
 }

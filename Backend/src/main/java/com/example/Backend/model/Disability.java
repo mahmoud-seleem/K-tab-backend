@@ -27,7 +27,7 @@ public class Disability {
             name = "student_disabilities",
             joinColumns = @JoinColumn(name = "disability_id"),
             inverseJoinColumns = @JoinColumn(name = "student_id"))
-    private List<Student> studentList;
+    private List<Student> studentList = new ArrayList<>();
 
     public Disability() {
     }
@@ -39,7 +39,6 @@ public class Disability {
     public Disability(String disabilityName) {
         this.disabilityName = disabilityName;
         this.disabilityDetails = "none";
-        this.studentList = new ArrayList<>();
     }
 
     public UUID getDisabilityId() {
@@ -72,5 +71,11 @@ public class Disability {
 
     public void setStudentList(List<Student> studentList) {
         this.studentList = studentList;
+    }
+    public void addStudent(Student student){
+        this.getStudentList().add(student);
+    }
+    public void removeStudent(Student student){
+        this.getStudentList().remove(student);
     }
 }

@@ -43,14 +43,14 @@ public class RatingService {
 //        return ratingRepository.save(currentRating);
 //    }
 
-    public Rating insertSpecificRating(){
-        Book book = new Book("Mariam's fav book");
-        Student student = new Student("Mariam");
-        Rating rating = new Rating(book, student, 5);
-        book.addRating(rating);
-        student.addRating(rating);
-        rating.addStudentRating(student);
-        rating.addBookRating(book);
-        return ratingRepository.save(rating);
-    }
+//    public Rating insertSpecificRating(){
+//        Book book = new Book("Mariam's fav book");
+//        Student student = new Student("Mariam");
+//        Rating rating = new Rating(book, student, 5);
+//        book.addRating(rating);
+//        student.addRating(rating);
+//        rating.addStudentRating(student);
+//        rating.addBookRating(book);
+//        return ratingRepository.save(rating);
+//    }
 }

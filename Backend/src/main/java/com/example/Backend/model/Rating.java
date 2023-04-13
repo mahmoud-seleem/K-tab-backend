@@ -16,18 +16,18 @@ public class Rating {
 //    RatingKey id;
     @Id
     @GeneratedValue
-    UUID ratingId;
+    private UUID ratingId;
 
 
     @ManyToOne
     @MapsId("bookId")
     @JoinColumn(name = "book_id")
-    Book book;
+    private Book book;
 
     @ManyToOne
     @MapsId("studentId")
     @JoinColumn(name = "student_id")
-    Student student;
+    private Student student;
 
     @Column(name = "rating_value", nullable = false)
     private int ratingValue;
@@ -38,6 +38,9 @@ public class Rating {
     public Rating(Book book, Student student, int ratingValue) {
         this.book = book;
         this.student = student;
+        this.ratingValue = ratingValue;
+    }
+    public Rating(int ratingValue) {
         this.ratingValue = ratingValue;
     }
 
@@ -77,25 +80,25 @@ public class Rating {
 
 
 
-    public void addBookRating(Book book){
-        this.setBook(book);
-        Set currentBookRatingsSet = book.getRatings();
-        currentBookRatingsSet.add(this);
-        book.setRatings(currentBookRatingsSet);
-    }
-
-    public void removeBookRating(Book book){
-        this.setBook(null);
-        Set currentBookRatingsSet = book.getRatings();
-        currentBookRatingsSet.remove(this);
-        book.setRatings(currentBookRatingsSet);
-    }
-
-    public void addStudentRating(Student student){
-        this.setStudent(student);
-        Set currentStudentRatingsSet = student.getRatings();
-        currentStudentRatingsSet.add(this);
-        book.setRatings(currentStudentRatingsSet);
-
-    }
+//    public void addBookRating(Book book){
+//        this.setBook(book);
+//        Set currentBookRatingsSet = book.getRatings();
+//        currentBookRatingsSet.add(this);
+//        book.setRatings(currentBookRatingsSet);
+//    }
+//
+//    public void removeBookRating(Book book){
+//        this.setBook(null);
+//        Set currentBookRatingsSet = book.getRatings();
+//        currentBookRatingsSet.remove(this);
+//        book.setRatings(currentBookRatingsSet);
+//    }
+//
+//    public void addStudentRating(Student student){
+//        this.setStudent(student);
+//        Set currentStudentRatingsSet = student.getRatings();
+//        currentStudentRatingsSet.add(this);
+//        book.setRatings(currentStudentRatingsSet);
+//
+//    }
 }

@@ -49,6 +49,7 @@ public class AuthorNotification {
         this.sourceId = sourceId;
     }
 
+
     public AuthorNotification(String content,UUID sourceId) {
         this.content = content;
         this.sourceId = sourceId;

@@ -24,7 +24,6 @@ public class StudentComment {
     @ManyToOne
     @JoinColumn(name = "student_id")
     private Student student;
-
     @ManyToOne
     @JoinColumn(name = "chapter_id")
     private Chapter chapter;

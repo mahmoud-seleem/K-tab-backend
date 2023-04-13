@@ -32,12 +32,15 @@ public class Interaction {
     @JsonIgnore
     private JSONObject data;
 
+    @Column(name = "reading_progress" , nullable = false)
+    private int readingProgress;
     @JsonProperty("data")
     public Map<String, Object> getAsJsonString() throws IOException, JSONException {
         return JsonToMapConverter.toMap(data);
     }
     public Interaction() {
     }
+
 
     public Interaction(JSONObject data) {
         this.data = data;
@@ -74,6 +77,14 @@ public class Interaction {
     public void setStudent(Student student) {
         this.student = student;
     }
-//Reference for below code: https://stackoverflow.com/questions/21720759/convert-a-json-string-to-a-hashmap
+
+    public int getReadingProgress() {
+        return readingProgress;
+    }
+
+    public void setReadingProgress(int readingProgress) {
+        this.readingProgress = readingProgress;
+    }
+    //Reference for below code: https://stackoverflow.com/questions/21720759/convert-a-json-string-to-a-hashmap
 
 }

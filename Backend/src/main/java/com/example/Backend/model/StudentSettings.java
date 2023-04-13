@@ -45,6 +45,15 @@ public class StudentSettings {
     private Student student;
 
     public StudentSettings() {
+        this.brightnessLevel = 0;
+        this.contrastLevel = 0;
+        this.fontSize = 0;
+        this.fontStyle = "fontStyle";
+        this.invertColor = true;
+        this.grayscale = true;
+        this.switchTextToSymbols = true;
+        this.playLesson = true;
+        this.audioTranscriptHighLighting = true;
     }
 
     public StudentSettings(int brightnessLevel, int contrastLevel, int fontSize, String fontStyle, boolean invertColor, boolean grayscale, boolean switchTextToSymbols, boolean playLesson, boolean audioTranscriptHighLighting) {

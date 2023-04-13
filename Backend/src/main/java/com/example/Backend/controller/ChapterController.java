@@ -101,7 +101,7 @@ public class ChapterController {
     public List<Book> getAllBooks(){return bookRepository.findAll();}
 
     @GetMapping("/getbookchapters")
-    public List<Chapter> getbookChapters(){
+    public List<Chapter> getBookChapters(){
         return bookRepository.findByTitle("JAVA").getChapters();
     }
     @GetMapping("/getchapterbook")
