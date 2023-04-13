@@ -44,9 +44,9 @@ public class S3Controller {
         return s3fileSystem.createBookFolder(book.getBookId());
     }
 
-    @GetMapping("/newchapter/{title}")
-    public String CreateNewChapter(@PathVariable String title) {
-        Book book = bookRepository.findByTitle("temp-title");
+    @GetMapping("{bookTitle}/newchapter/{title}")
+    public String CreateNewChapter(@PathVariable String title, @PathVariable String bookTitle) {
+        Book book = bookRepository.findByTitle(bookTitle);
         Chapter chapter = new Chapter(title);
         chapter = chapterRepository.save(chapter);
         return s3fileSystem.createChapterFolder(book.getBookId(), chapter.getChapterId());
