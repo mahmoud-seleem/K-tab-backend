@@ -3,14 +3,15 @@ package com.example.Backend.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.util.*;
 
 @Entity
 @Table(name = "student")
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler",
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler",
         "studentCommentList","disabilityList",
-        "studentNotificationList","interactions","ratings","studentSettings","paymentList"})
+        "studentNotificationList","interactions","ratings","studentSettings","paymentList"} , ignoreUnknown = true)
 public class Student {
 
     @Id
@@ -64,24 +65,25 @@ public class Student {
     public Student() {
     }
 
-    public Student(String studentName, String studentEmail, String password, String profilePhoto, String contact) {
-        this.studentName = studentName;
-        this.studentEmail = studentEmail;
-        this.password = password;
-        this.profilePhoto = profilePhoto;
-        this.contact = contact;
-    }
-
-    public Student(String studentName, String studentEmail, String password, String profilePhoto, String contact, String educationLevel, List<StudentComment> studentCommentList) {
-        this.studentName = studentName;
-        this.studentEmail = studentEmail;
-        this.password = password;
-        this.profilePhoto = profilePhoto;
-        this.contact = contact;
-        this.educationLevel = educationLevel;
-        this.studentCommentList = studentCommentList;
-    }
-
+//    public Student(String studentName, String studentEmail, String password, String profilePhoto, String contact) {
+//        this.studentName = studentName;
+//        this.studentEmail = studentEmail;
+//        this.password = password;
+//        this.profilePhoto = profilePhoto;
+//        this.contact = contact;
+//        //this.educationLevel = educationLevel;
+//    }
+//
+//    public Student(String studentName, String studentEmail, String password, String profilePhoto, String contact, String educationLevel, List<StudentComment> studentCommentList) {
+//        this.studentName = studentName;
+//        this.studentEmail = studentEmail;
+//        this.password = password;
+//        this.profilePhoto = profilePhoto;
+//        this.contact = contact;
+//        this.educationLevel = educationLevel;
+//        this.studentCommentList = studentCommentList;
+//    }
+//
     public Student(String studentName) {
         this.studentName = studentName;
         this.studentEmail = "mahmoudsaleem522@gmail.com";

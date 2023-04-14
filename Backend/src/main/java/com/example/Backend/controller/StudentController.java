@@ -6,7 +6,9 @@ import com.example.Backend.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -111,5 +113,10 @@ public class StudentController {
         Student student = studentRepository.findById(stdId).get();
         student.addDisability(disability);
         return disabilityRepository.save(disability);
+    }
+
+    @PostMapping("/newstudent/")
+    public Student createNewStudent(@RequestBody Student student){
+        return studentRepository.save(student);
     }
 }

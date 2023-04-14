@@ -11,9 +11,7 @@ import com.example.Backend.model.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping("/author")
@@ -74,5 +72,10 @@ public class AuthorController {
     public Author getSettingsAuthor(@PathVariable UUID id){
         AuthorSettings a = authorSettingsRepository.findById(id).get();
         return a.getAuthor();
+    }
+
+    @PostMapping("/newauthor/")
+    public Author createNewAuthor(@RequestBody Author author){
+        return authorRepository.save(author);
     }
 }

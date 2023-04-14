@@ -7,9 +7,9 @@ import java.util.*;
 
 @Entity
 @Table(name = "author")
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler",
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler",
         "authorCommentList","authorNotificationList","chaptersList",
-        "authorBooksList","authorSettings"})
+        "authorBooksList","authorSettings"} , ignoreUnknown = true)
 public class Author {
 
     @Id
@@ -29,7 +29,7 @@ public class Author {
     @Column(name = "profile_photo", nullable = false)
     private String profilePhoto;
 
-    @Column(name = "contact", nullable = false)
+    @Column(name = "contact",nullable = false)
     private String contact;
 
     @OneToMany(mappedBy = "author")
@@ -71,6 +71,16 @@ public class Author {
         this.contributionList = new ArrayList<>();
         this.authorBooksList = new ArrayList<>();
     }
+//    public Author(String authorName, String authorEmail, String password, String profilePhoto) {
+//        this.authorName = authorName;
+//        this.authorEmail = authorEmail;
+//        this.password = password;
+//        this.profilePhoto = profilePhoto;
+//        this.authorCommentList = new ArrayList<>();
+//        this.authorNotificationList = new ArrayList<>();
+//        this.contributionList = new ArrayList<>();
+//        this.authorBooksList = new ArrayList<>();
+//    }
     public UUID getAuthorId() {
         return authorId;
     }
