@@ -1,5 +1,7 @@
 package com.example.Backend.model;
+import com.example.Backend.jsonConversion.AuthorSerializer;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 
 import java.util.*;
@@ -10,6 +12,7 @@ import java.util.*;
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler",
         "authorCommentList","authorNotificationList","chaptersList",
         "authorBooksList","authorSettings"} , ignoreUnknown = true)
+//@JsonSerialize(using = AuthorSerializer.class)
 public class Author {
 
     @Id

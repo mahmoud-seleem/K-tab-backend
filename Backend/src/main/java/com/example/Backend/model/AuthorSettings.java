@@ -1,11 +1,13 @@
 package com.example.Backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.UUID;
 
 @Entity
 @Table(name = "author_settings")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AuthorSettings {
 
     @Id

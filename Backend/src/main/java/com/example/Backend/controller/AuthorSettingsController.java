@@ -22,7 +22,7 @@ public class AuthorSettingsController {
     @Autowired
     private AuthorRepository authorRepository;
 
-    @PostMapping
+    @PostMapping("/setsettings/")
     public AuthorSettings setAuthorSettings(@RequestBody Map<String,Object>[] authorAndSettings){
         UUID authorId = UUID.fromString((String) authorAndSettings[0].get("authorId"));
         Author author = authorRepository.findById(authorId).get();
