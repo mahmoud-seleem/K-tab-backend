@@ -54,7 +54,7 @@ public class BookService {
         return bookRepository.save(book);
     }
 
-    public Set<Tag> getBookTags(UUID id){
+    public List<Tag> getBookTags(UUID id){
         Book book = bookRepository.findById(id).orElseThrow();
         return book.getTags();
     }

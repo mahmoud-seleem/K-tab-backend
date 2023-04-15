@@ -7,16 +7,16 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @Embeddable
-public class WritingKey implements Serializable {
+public class ContributionKey implements Serializable {
     @Column(name = "author_id")
     private UUID authorId;
     @Column(name = "chapter_id")
     private UUID chapterId;
 
-    public WritingKey() {
+    public ContributionKey() {
     }
 
-    public WritingKey(UUID authorId, UUID chapterId) {
+    public ContributionKey(UUID authorId, UUID chapterId) {
         this.authorId = authorId;
         this.chapterId = chapterId;
     }

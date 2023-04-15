@@ -1,15 +1,15 @@
 package com.example.Backend.model;
 
-import com.example.Backend.compositeKeys.WritingKey;
+import com.example.Backend.compositeKeys.ContributionKey;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "writing")
-public class Writing {
+@Table(name = "contribution")
+public class Contribution {
     @EmbeddedId
-    WritingKey writingId;
+    ContributionKey contributionId;
 
     @ManyToOne
     @MapsId("authorId")
@@ -24,22 +24,22 @@ public class Writing {
     @Column(name = "update_date")
     private LocalDateTime updateDate;
 
-    public Writing() {
+    public Contribution() {
     }
 
-    public Writing(WritingKey writingId, Author author, Chapter chapter, LocalDateTime updateDate) {
-        this.writingId = writingId;
+    public Contribution(ContributionKey contributionId, Author author, Chapter chapter, LocalDateTime updateDate) {
+        this.contributionId = contributionId;
         this.author = author;
         this.chapter = chapter;
         this.updateDate = updateDate;
     }
 
-    public WritingKey getWritingId() {
-        return writingId;
+    public ContributionKey getContributionId() {
+        return contributionId;
     }
 
-    public void setWritingId(WritingKey writingId) {
-        this.writingId = writingId;
+    public void setContributionId(ContributionKey contributionId) {
+        this.contributionId = contributionId;
     }
 
     public Author getAuthor() {

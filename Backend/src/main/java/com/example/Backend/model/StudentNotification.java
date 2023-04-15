@@ -41,6 +41,7 @@ public class StudentNotification {
         this.destinationStudent = destinationStudent;
     }
 
+
     public StudentNotification(LocalDateTime localDateTime, String content, String sourceType, UUID sourceId) {
         this.localDateTime = localDateTime;
         this.content = content;

@@ -1,8 +1,6 @@
 package com.example.Backend.controller;
 
-import com.example.Backend.Repository.DisabilityRepository;
-import com.example.Backend.Repository.StudentCommentRepository;
-import com.example.Backend.Repository.StudentRepository;
+import com.example.Backend.Repository.*;
 import com.example.Backend.model.*;
 import com.example.Backend.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,61 +22,96 @@ public class StudentController {
     private StudentCommentRepository studentCommentRepository;
 
     @Autowired
+    private StudentNotificationRepository studentNotificationRepository;
+
+    @Autowired
+    private StudentSettingsRepository studentSettingsRepository;
+    @Autowired
     private DisabilityRepository disabilityRepository;
+
     @GetMapping("/new")
-    public Student saveNewStudent(){
+    public Student saveNewStudent() {
         Student student = new Student("mahmoud");
-        StudentComment comment1 = new StudentComment("blablabla");
-//        Disability disability = new Disability("Dyslexia");
-//        student.addDisability(disability);
-        student.addStudentComment(comment1);
-        comment1.addStudent(student);
-        Book book = new Book("Mahmoud book");
-        Rating rating = new Rating(book, student,4 );
-        student.addRating(rating);
-//        student.getDisabilityList().add(disability);
-//        Disability d = disabilityRepository.findAll().get(0);
-//        student.addDisability(d);
-        Student a = studentRepository.save(student);
-        return a;
+        return studentRepository.save(student);
     }
-    @GetMapping("/getallstudents")
-    public List<Student> getStudent(){
+
+    @GetMapping("/getallstudents/")
+    public List<Student> getStudent() {
         return studentRepository.findAll();
-    }
-    @GetMapping("/getalldis")
-    public List<Disability> getAllDis(){
-        return disabilityRepository.findAll();
-    }
-//    @GetMapping("/get/{id}")
-//    public List<StudentComment> getStudent(@PathVariable UUID id){
-//        return studentRepository.findById(id).get().getStudentCommentList();
-//    }
-    @GetMapping("/getstudentdis/{id}")
-    public List<Disability> getStudentdis(@PathVariable UUID id){
-        return studentRepository.findById(id).get().getDisabilityList();
     }
 
     @GetMapping("/newcomment/{id}")
-    public StudentComment saveNewStudentComment(@PathVariable UUID id){
+    public StudentComment saveNewStudentComment(@PathVariable UUID id) {
         StudentComment studentComment = new StudentComment("blablablablablabalbala");
         Student a = studentRepository.findById(id).get();
         a.addStudentComment(studentComment);
         StudentComment ac = studentCommentRepository.save(studentComment);
         return ac;
     }
-    @GetMapping("/newdis/{dis}")
-    public Disability saveNewdis(@PathVariable String dis){
-        Disability disability = new Disability(dis);
-        Disability d = disabilityRepository.save(disability);
-        return d;
+
+    @GetMapping("/getcomments/{id}")
+    public List<StudentComment> getAllStudentComments(@PathVariable UUID id) {
+        Student a = studentRepository.findById(id).get();
+        return a.getStudentCommentList();
     }
+
+    @GetMapping("/getcommentstudent/{id}")
+    public Student getCommentStudent(@PathVariable UUID id) {
+        StudentComment studentComment = studentCommentRepository.findById(id).get();
+        return studentComment.getStudent();
+    }
+
+    @GetMapping("/newsettings/{id}")
+    public StudentSettings newStudentSettings(@PathVariable UUID id) {
+        Student student = studentRepository.findById(id).get();
+        StudentSettings studentSettings = new StudentSettings();
+        student.setStudentSettings(studentSettings);
+        return studentSettingsRepository.save(studentSettings);
+    }
+
+    @GetMapping("/getstudentsettings/{id}")
+    public StudentSettings getStudentSettings(@PathVariable UUID id) {
+        return studentRepository.findById(id).get().getStudentSettings();
+    }
+
+    @GetMapping("/getsettingsauthor/{id}")
+    public Student getSettingsStudent(@PathVariable UUID id) {
+        return studentSettingsRepository.findById(id).get().getStudent();
+    }
+
+    @GetMapping("/getalldis")
+    public List<Disability> getAllDis() {
+        return disabilityRepository.findAll();
+    }
+
+    //    @GetMapping("/get/{id}")
+//    public List<StudentComment> getStudent(@PathVariable UUID id){
+//        return studentRepository.findById(id).get().getStudentCommentList();
+//    }
+    @GetMapping("/getstudentdis/{id}")
+    public List<Disability> getStudentdis(@PathVariable UUID id) {
+        return studentRepository.findById(id).get().getDisabilityList();
+    }
+
+    @GetMapping("/newdis/{dis}")
+    public Disability saveNewdis(@PathVariable String dis) {
+        Disability disability = new Disability(dis);
+        return disabilityRepository.save(disability);
+    }
+
     @GetMapping("/getdisstudents/{id}")
-    public List<Student> getstudents(@PathVariable UUID id){
+    public List<Student> getstudents(@PathVariable UUID id) {
         Disability d = disabilityRepository.findById(id).get();
         return d.getStudentList();
     }
 
+    @GetMapping("/adddistostudent/{disId}/{stdId}")
+    public Disability addDisToStudent(@PathVariable UUID disId, @PathVariable UUID stdId) {
+        Disability disability = disabilityRepository.findById(disId).get();
+        Student student = studentRepository.findById(stdId).get();
+        student.addDisability(disability);
+        return disabilityRepository.save(disability);
+    }
     @GetMapping("get/{id}")
     public Student getStudentById(@PathVariable UUID id){
         return studentService.findById(id);

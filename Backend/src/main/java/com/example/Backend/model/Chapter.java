@@ -2,7 +2,6 @@ package com.example.Backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import org.springframework.data.relational.core.sql.In;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -43,7 +42,7 @@ public class Chapter {
     private List<StudentComment> studentCommentList;
 
     @OneToMany(mappedBy = "chapter")
-    private List<Writing> authorList;
+    private List<Contribution> authorContributionsList;
 
     @ManyToMany()
     @JoinTable(
@@ -70,7 +69,7 @@ public class Chapter {
         this.lastModified = lastModified;
         this.authorCommentList = authorCommentList;
         this.studentCommentList = studentCommentList;
-        this.authorList = new ArrayList<>();
+        this.authorContributionsList = new ArrayList<>();
         this.tags = new ArrayList<>();
     }
     public Chapter(String title) {
@@ -81,7 +80,7 @@ public class Chapter {
         this.lastModified = LocalDateTime.now();
         this.authorCommentList = new ArrayList<>();
         this.studentCommentList = new ArrayList<>();
-        this.authorList = new ArrayList<>();
+        this.authorContributionsList = new ArrayList<>();
         this.tags = new ArrayList<>();
         this.interactions = new ArrayList<>();
     }
@@ -149,12 +148,12 @@ public class Chapter {
         this.studentCommentList = studentCommentList;
     }
 
-    public List<Writing> getAuthorList() {
-        return authorList;
+    public List<Contribution> getAuthorList() {
+        return authorContributionsList;
     }
 
-    public void setAuthorList(List<Writing> authorList) {
-        this.authorList = authorList;
+    public void setAuthorList(List<Contribution> authorList) {
+        this.authorContributionsList = authorList;
     }
 
     public List<Tag> getTags() {
@@ -197,13 +196,13 @@ public class Chapter {
        // tag.getChapterList().remove(this);
 
     }
-    public void addWriting(Writing writing){
-        this.getAuthorList().add(writing);
-        writing.setChapter(this);
+    public void addWriting(Contribution contribution){
+        this.getAuthorList().add(contribution);
+        contribution.setChapter(this);
     }
-    public void removeWriting(Writing writing){
-        this.getAuthorList().remove(writing);
-        writing.setChapter(null);
+    public void removeWriting(Contribution contribution){
+        this.getAuthorList().remove(contribution);
+        contribution.setChapter(null);
     }
     public void addStudentComment(StudentComment studentComment){
         this.getStudentCommentList().add(studentComment);

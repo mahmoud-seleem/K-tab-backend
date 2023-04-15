@@ -10,7 +10,7 @@ import java.util.*;
 @Table(name = "student")
 @JsonIgnoreProperties({"hibernateLazyInitializer","handler",
         "studentCommentList","disabilityList",
-        "studentNotificationList","interactions","ratings"})
+        "studentNotificationList","interactions","ratings","studentSettings","paymentList"})
 public class Student {
 
     @Id
@@ -35,11 +35,11 @@ public class Student {
 
     @Column(name = "education_level" , nullable = false)
     private String educationLevel;
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "student")
     private List<StudentComment> studentCommentList;
 
     @OneToMany(mappedBy = "student")
-    Set<Rating> ratings = new HashSet<>();
+    List<Rating> ratings = new ArrayList<>();
 
     @OneToOne(mappedBy = "student")
     private StudentSettings studentSettings;
@@ -56,6 +56,10 @@ public class Student {
 
     @OneToMany(mappedBy = "student")
     private List<Interaction> interactions;
+
+
+    @OneToMany(mappedBy = "student")
+    private List<Payment> paymentList ;
 
     public Student() {
     }
@@ -94,6 +98,15 @@ public class Student {
         this.disabilityList = new ArrayList<>();
         this.studentNotificationList = new ArrayList<>();
         this.interactions = new ArrayList<>();
+        this.paymentList = new ArrayList<>();
+    }
+
+    public List<Payment> getPaymentList() {
+        return paymentList;
+    }
+
+    public void setPaymentList(List<Payment> paymentList) {
+        this.paymentList = paymentList;
     }
 
     public UUID getStudentId() {
@@ -170,11 +183,11 @@ public class Student {
         studentComment.setStudent(null);
     }
 
-    public Set<Rating> getRatings() {
+    public List<Rating> getRatings() {
         return ratings;
     }
 
-    public void setRatings(Set<Rating> ratings) {
+    public void setRatings(List<Rating> ratings) {
         this.ratings = ratings;
     }
 
@@ -196,13 +209,23 @@ public class Student {
     public void setStudentCommentList(List<StudentComment> studentCommentList) {
         this.studentCommentList = studentCommentList;
     }
+
+    public void addPayment(Payment payment){
+        this.getPaymentList().add(payment);
+        payment.setStudent(this);
+    }
+    public void removePayment(Payment payment){
+        this.getPaymentList().remove(payment);
+        payment.setStudent(null);
+    }
     public void addDisability(Disability disability){
         this.disabilityList.add(disability);
         //disability.getStudentList().add(this);
+        //disability.addStudent(this);
     }
     public void removeDisability(Disability disability){
         this.disabilityList.remove(disability);
-        //disability.getStudentList().remove(this);
+        //disability.removeStudent(this);
     }
     public List<Disability> getDisabilityList() {
         return disabilityList;

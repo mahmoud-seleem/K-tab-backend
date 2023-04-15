@@ -8,7 +8,7 @@ import java.util.*;
 
 @Entity
 @Table(name = "book")
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler","ratings","chapters"})
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler","ratings","chapters","tags","paymentList"})
 public class Book {
     @Id
     @GeneratedValue
@@ -26,7 +26,7 @@ public class Book {
 
 
     @OneToMany(mappedBy = "book")
-    private Set<Rating> ratings = new HashSet<>();
+    private List<Rating> ratings = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "author_id")
@@ -36,14 +36,26 @@ public class Book {
     @JoinTable(name = "book_tags"
             ,joinColumns = @JoinColumn(name = "book_id")
             ,inverseJoinColumns = @JoinColumn(name = "tag_id") )
-    private Set<Tag> tags = new HashSet<>();
+    private List<Tag> tags = new ArrayList<>();
 
     @OneToMany(mappedBy = "book")
     private List<Chapter> chapters = new ArrayList<>();
+
+    @OneToMany(mappedBy = "book")
+    private List<Payment> paymentList = new ArrayList<>();
+
+    public List<Payment> getPaymentList() {
+        return paymentList;
+    }
+
+    public void setPaymentList(List<Payment> paymentList) {
+        this.paymentList = paymentList;
+    }
+
     public Book() {
     }
 
-    public Book(UUID bookId, String title, float price, String bookAbstract, Set<Rating> ratings) {
+    public Book(UUID bookId, String title, float price, String bookAbstract, List<Rating> ratings) {
         this.bookId = bookId;
         this.title = title;
         this.price = price;
@@ -88,11 +100,11 @@ public class Book {
         this.bookAbstract = bookAbstract;
     }
 
-    public Set<Rating> getRatings() {
+    public List<Rating> getRatings() {
         return ratings;
     }
 
-    public void setRatings(Set<Rating> ratings) {
+    public void setRatings(List<Rating> ratings) {
         this.ratings = ratings;
     }
 
@@ -104,11 +116,11 @@ public class Book {
         this.author = author;
     }
 
-    public Set<Tag> getTags() {
+    public List<Tag> getTags() {
         return tags;
     }
 
-    public void setTags(Set<Tag> tags) {
+    public void setTags(List<Tag> tags) {
         this.tags = tags;
     }
 
@@ -120,6 +132,14 @@ public class Book {
         this.chapters = chapters;
     }
 
+    public void addPayment(Payment payment){
+        this.getPaymentList().add(payment);
+        payment.setBook(this);
+    }
+    public void removePayment(Payment payment){
+        this.getPaymentList().remove(payment);
+        payment.setBook(null);
+    }
     public void addChapter(Chapter chapter){
         this.chapters.add(chapter);
         chapter.setBook(this);
@@ -137,11 +157,11 @@ public class Book {
         rating.setBook(null);
     }
 
-    public void addTags(Tag tag){
+    public void addTag(Tag tag){
         this.getTags().add(tag);
-        Set bookList = tag.getBookList();
-        bookList.add(this);
-        tag.setBookList(bookList);
+    }
+    public void removeTag(Tag tag){
+        this.getTags().remove(tag);
     }
 
     public void addAuthor(Author author){
@@ -153,6 +173,4 @@ public class Book {
         this.setAuthor(null);
         author.getAuthorBooksList().remove(this);
     }
-
-
 }

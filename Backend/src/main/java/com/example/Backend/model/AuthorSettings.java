@@ -36,9 +36,15 @@ public class AuthorSettings {
     private Author author;
 
     public AuthorSettings() {
+        this.brightnessLevel = 0;
+        this.contrastLevel =0 ;
+        this.fontSize = 0;
+        this.fontStyle = "fontStyle";
+        this.invertColor =true ;
+        this.grayscale = true;
     }
 
-    public AuthorSettings(int brightnessLevel, int contrastLevel, int fontSize, String fontStyle, Boolean invertColor, boolean grayscale) {
+    public AuthorSettings(int brightnessLevel, int contrastLevel, int fontSize, String fontStyle, boolean invertColor, boolean grayscale) {
         this.brightnessLevel = brightnessLevel;
         this.contrastLevel = contrastLevel;
         this.fontSize = fontSize;
@@ -46,6 +52,7 @@ public class AuthorSettings {
         this.invertColor = invertColor;
         this.grayscale = grayscale;
     }
+
 
     public UUID getAuthorSettingsId() {
         return authorSettingsId;
