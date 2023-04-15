@@ -6,11 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="1c000a62-84c3-4b17-a6a1-8060d0dde503" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/example/Backend/Repository/StudentRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/example/Backend/Repository/StudentRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/example/Backend/controller/StudentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/example/Backend/controller/StudentController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/example/Backend/model/Student.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/example/Backend/model/Student.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/example/Backend/service/StudentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/example/Backend/service/StudentService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
