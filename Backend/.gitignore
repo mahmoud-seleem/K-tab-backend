@@ -33,4 +33,4 @@ build/
 .vscode/
 
 src/main/resources/secrets.properties
-src/main/resources/user.properties
+src/main/resources/template.user.properties
