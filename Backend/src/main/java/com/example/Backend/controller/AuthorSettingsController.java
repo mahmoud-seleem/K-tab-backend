@@ -23,11 +23,11 @@ public class AuthorSettingsController {
     private AuthorRepository authorRepository;
 
     @PostMapping("/setsettings/")
-    public AuthorSettings setAuthorSettings(@RequestBody Map<String,Object>[] authorAndSettings){
-        UUID authorId = UUID.fromString((String) authorAndSettings[0].get("authorId"));
+    public AuthorSettings setAuthorSettings(@RequestBody Map<String,Object> authorAndSettings){
+        UUID authorId = UUID.fromString((String) authorAndSettings.get("authorId"));
         Author author = authorRepository.findById(authorId).get();
         ObjectMapper objectMapper = new ObjectMapper();
-        AuthorSettings authorSettings = objectMapper.convertValue(authorAndSettings[1],AuthorSettings.class);
+        AuthorSettings authorSettings = objectMapper.convertValue(authorAndSettings.get("authorSettings"),AuthorSettings.class);
         author.setAuthorSettings(authorSettings);
         return authorSettingsRepository.save(authorSettings);
     }

@@ -117,6 +117,9 @@ public class StudentController {
 
     @PostMapping("/newstudent/")
     public Student createNewStudent(@RequestBody Student student){
+        for(Disability d : student.getDisabilityList()){
+            disabilityRepository.save(d);
+        }
         return studentRepository.save(student);
     }
 }

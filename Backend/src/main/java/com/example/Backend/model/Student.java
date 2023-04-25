@@ -10,7 +10,7 @@ import java.util.*;
 @Entity
 @Table(name = "student")
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler",
-        "studentCommentList","disabilityList",
+        "studentCommentList",
         "studentNotificationList","interactions","ratings","studentSettings","paymentList"} , ignoreUnknown = true)
 public class Student {
 
@@ -230,6 +230,11 @@ public class Student {
     public void setDisabilityList(List<Disability> disabilityList) {
         this.disabilityList = disabilityList;
     }
+//    public void setDisabilityList(List<String> disabilityList) {
+//        for(String s : disabilityList){
+//            this.getDisabilityList().add(new Disability(s));
+//        }
+//    }
 
     public List<StudentNotification> getStudentNotificationList() {
         return studentNotificationList;
