@@ -22,7 +22,7 @@ public class Student {
     @Column(name = "student_name", nullable = false)
     private String studentName;
 
-    @Column(name = "student_email", nullable = false)
+    @Column(name = "student_email", nullable = false, unique = true)
     private String studentEmail;
 
     @Column(name = "password", nullable = false)
@@ -65,6 +65,7 @@ public class Student {
     public Student() {
     }
 
+<<<<<<< HEAD
 //    public Student(String studentName, String studentEmail, String password, String profilePhoto, String contact) {
 //        this.studentName = studentName;
 //        this.studentEmail = studentEmail;
@@ -84,6 +85,31 @@ public class Student {
 //        this.studentCommentList = studentCommentList;
 //    }
 //
+=======
+    public Student(String studentName, String studentEmail) {
+        this.studentName = studentName;
+        this.studentEmail = studentEmail;
+    }
+
+    public Student(String studentName, String studentEmail, String password, String profilePhoto, String contact) {
+        this.studentName = studentName;
+        this.studentEmail = studentEmail;
+        this.password = password;
+        this.profilePhoto = profilePhoto;
+        this.contact = contact;
+    }
+
+    public Student(String studentName, String studentEmail, String password, String profilePhoto, String contact, String educationLevel, List<StudentComment> studentCommentList) {
+        this.studentName = studentName;
+        this.studentEmail = studentEmail;
+        this.password = password;
+        this.profilePhoto = profilePhoto;
+        this.contact = contact;
+        this.educationLevel = educationLevel;
+        this.studentCommentList = studentCommentList;
+    }
+
+>>>>>>> endpoints-check
     public Student(String studentName) {
         this.studentName = studentName;
         this.studentEmail = "mahmoudsaleem522@gmail.com";

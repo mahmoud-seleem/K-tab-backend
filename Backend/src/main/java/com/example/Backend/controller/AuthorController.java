@@ -46,6 +46,17 @@ public class AuthorController {
         AuthorComment ac = authorCommentRepository.save(authorComment);
         return ac;
     }
+
+    @GetMapping("/get/all")
+    public List<Author> getAllAuthors(){
+        return authorRepository.findAll();
+    }
+
+    @CrossOrigin
+    @PostMapping
+    public Author addNewAuthor(@RequestBody Author a){
+        return authorRepository.save(a);
+    }
     @GetMapping("/getcomments/{id}")
     public List<AuthorComment> getAllAuthorComments(@PathVariable UUID id){
         Author a = authorRepository.findById(id).get();

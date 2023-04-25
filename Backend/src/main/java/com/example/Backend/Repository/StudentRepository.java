@@ -14,4 +14,10 @@ public interface StudentRepository extends JpaRepository<Student, UUID> {
             value = "SELECT * FROM student WHERE student.student_name = ?1",
             nativeQuery = true)
     Student findByName(String userName);
+
+//    @Query(
+//            value = "SELECT * FROM student WHERE student.student_email = ?1",
+//            nativeQuery = true)
+    Student findByStudentEmail(String studentEmail);
+
 }

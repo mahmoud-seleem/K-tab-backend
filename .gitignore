@@ -1,1 +1,5 @@
 Backend/src/main/resources/secrets.properties
+
+.vscode
+
+.idea
