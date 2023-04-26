@@ -1,8 +1,10 @@
 package com.example.Backend.controller;
 
 
+import com.example.Backend.Repository.BookRepository;
 import com.example.Backend.model.Book;
 import com.example.Backend.model.Tag;
+import com.example.Backend.schema.BookInfo;
 import com.example.Backend.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,14 +20,17 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
+
+    @Autowired
+    private BookRepository bookdRepository;
     @GetMapping("/{id}")
     public Book findBookById(@PathVariable UUID id){
         return bookService.findBookById(id);
     }
 
     @PostMapping()
-    public Book insertBook(@RequestBody Book book){
-        return bookService.insertBook(book);
+    public BookInfo insertBook(@RequestBody BookInfo bookInfo){
+        return bookService.saveNewBook(bookInfo);
     }
 
     @PutMapping

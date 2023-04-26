@@ -64,19 +64,11 @@ public class AuthorSignUpForm {
     public void setProfilePhotoAsBinaryString(String profilePhotoAsBinaryString) {
         this.profilePhotoAsBinaryString = profilePhotoAsBinaryString;
     }
-    private byte[] decodeImage() {
-        return Base64.decodeBase64(getProfilePhotoAsBinaryString());
-    }
-    public InputStream convertImgToFile(){
-        System.out.println(decodeImage().length);
-        InputStream inputStream = new ByteArrayInputStream(decodeImage());
-        return inputStream;
-    }
-    public File convertImgToFile2() throws IOException {
-        File file = new File("D:\\SBME_4\\Graduation_Project\\Platform_Backend\\temp.png");
-        OutputStream outputStream = new FileOutputStream(file);
-        outputStream.write(decodeImage());
-        return file;
-    }
+//    public File convertImgToFile2() throws IOException {
+//        File file = new File("D:\\SBME_4\\Graduation_Project\\Platform_Backend\\temp.png");
+//        OutputStream outputStream = new FileOutputStream(file);
+//        outputStream.write(decodeImage());
+//        return file;
+//    }
 
 }

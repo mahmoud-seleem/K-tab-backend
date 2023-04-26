@@ -5,11 +5,12 @@ import com.example.Backend.model.Tag;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public interface TagRepository extends JpaRepository<Tag, UUID> {
     @Query(
             value = "SELECT * FROM tag WHERE tag.tag_name = ?1",
             nativeQuery = true)
-    Tag findByName(String tagName);
+    Optional<Tag> findByName(String tagName);
 }

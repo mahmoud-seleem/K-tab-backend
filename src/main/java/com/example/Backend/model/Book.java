@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
@@ -19,12 +20,43 @@ public class Book {
     private String title;
 
     @Column(name = "price")
-    private float price;
+    private Double price;
 
     @Column(name = "book_abstract")
     private String bookAbstract;
 
+    @Column(name = "book_cover")
+    private String bookCover;
 
+    public String getBookCover() {
+        return bookCover;
+    }
+
+    public void setBookCover(String bookCover) {
+        this.bookCover = bookCover;
+    }
+
+    public LocalDateTime getPublishDate() {
+        return publishDate;
+    }
+
+    public void setPublishDate(LocalDateTime publishDate) {
+        this.publishDate = publishDate;
+    }
+
+    public LocalDateTime getLastEditDate() {
+        return lastEditDate;
+    }
+
+    public void setLastEditDate(LocalDateTime lastEditDate) {
+        this.lastEditDate = lastEditDate;
+    }
+
+    @Column(name = "publish_date")
+    private LocalDateTime publishDate;
+
+    @Column(name = "last_edit_date")
+    private LocalDateTime lastEditDate;
     @OneToMany(mappedBy = "book")
     private List<Rating> ratings = new ArrayList<>();
 
@@ -55,13 +87,19 @@ public class Book {
     public Book() {
     }
 
-    public Book(UUID bookId, String title, float price, String bookAbstract, List<Rating> ratings) {
+    public Book(UUID bookId, String title, Double price, String bookAbstract, List<Rating> ratings) {
         this.bookId = bookId;
         this.title = title;
         this.price = price;
         this.bookAbstract = bookAbstract;
         this.ratings = ratings;
         this.chapters = new ArrayList<>();
+    }
+    public Book(String title, Double price, String bookAbstract) {
+        this.title = title;
+        this.price = price;
+        this.bookAbstract = bookAbstract;
+        this.lastEditDate = LocalDateTime.now();
     }
 
     public Book(String title) {
@@ -84,11 +122,11 @@ public class Book {
         this.title = title;
     }
 
-    public float getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(float price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 

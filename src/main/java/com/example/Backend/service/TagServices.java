@@ -31,7 +31,7 @@ public class TagServices {
 
 
     public Chapter addTag(){
-        Tag tag = tagRepository.findByName("science");
+        Tag tag = tagRepository.findByName("science").get();
         Chapter chapter = chapterRepository.findByTitle("chapter one");
         chapter.addTag(tag);
         tagRepository.save(tag);
@@ -45,7 +45,7 @@ public class TagServices {
     }
 
     public List<Chapter> getTagChapters(){
-        Tag tag = tagRepository.findByName("science");
+        Tag tag = tagRepository.findByName("science").get();
         //Chapter chapter = chapterRepository.findByTitle("chapter one");
         return tag.getChapterList();
     }

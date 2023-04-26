@@ -2,10 +2,15 @@ package com.example.Backend.service;
 
 import com.example.Backend.Repository.AuthorRepository;
 import com.example.Backend.Repository.BookRepository;
+import com.example.Backend.Repository.TagRepository;
 import com.example.Backend.model.*;
+import com.example.Backend.s3Connection.S3fileSystem;
+import com.example.Backend.schema.BookInfo;
+import com.example.Backend.utils.ImageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.InputStream;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,6 +25,45 @@ public class BookService {
     @Autowired
     private AuthorRepository authorRepository;
 
+    @Autowired
+    private ImageConverter imageConverter;
+
+    @Autowired
+    private TagRepository tagRepository;
+    @Autowired
+    private S3fileSystem s3fileSystem;
+    public BookInfo saveNewBook(BookInfo bookInfo){
+        Book book = createNewBook(bookInfo);
+        bookRepository.save(book);
+        String photoPath = ("Books/"+book.getBookId().toString()+"/coverPhoto.png");
+        book.setBookCover(photoPath);
+        InputStream inputStream = imageConverter.convertImgToFile(
+                bookInfo.getBookCoverPhotoAsBinaryString());
+        s3fileSystem.uploadPhoto(photoPath,inputStream);
+        setupBookTags(book,bookInfo.getTags());
+        bookInfo.setBookId(book.getBookId());
+        bookInfo.setBookCoverPath(photoPath);
+        return bookInfo;
+    }
+    private void setupBookTags(Book book,List<String> tags){
+        for(String tagName : tags){
+            Tag tag;
+            if(tagRepository.findByName(tagName).isEmpty()){
+                tag =new Tag(tagName);
+            }else {
+                tag = tagRepository.findByName(tagName).get();
+            }
+            tag.addBook(book);
+            tagRepository.save(tag);
+        }
+    }
+    private Book createNewBook(BookInfo bookInfo){
+        return bookRepository.save(new Book(
+                bookInfo.getBookTitle(),
+                bookInfo.getPrice(),
+                bookInfo.getBookAbstract()
+        ));
+    }
     public Book findBookById(UUID id){
         return bookRepository.findById(id).orElseThrow();
     }

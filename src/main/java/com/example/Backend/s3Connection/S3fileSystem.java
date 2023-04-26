@@ -17,7 +17,7 @@ public class S3fileSystem {
 
     @Autowired
     private S3Utils s3Utils;
-    public String uploadProfilePhoto(String photoPath, InputStream inputStream){
+    public String uploadPhoto(String photoPath, InputStream inputStream){
         s3Utils.initializeTheClient();
         s3Utils.getAmazonS3().putObject(
                 new PutObjectRequest(s3Utils.getBucketName()

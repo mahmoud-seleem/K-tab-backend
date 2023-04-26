@@ -120,10 +120,10 @@ public class AuthorController {
     public AuthorSignUpResponse saveSignUpData(@RequestBody AuthorSignUpForm authorSignUpForm){
         return authorService.saveNewAuthor(authorSignUpForm);
     }
-    @PostMapping("/img2/")
-    public String saveSignUpData2(@RequestBody AuthorSignUpForm authorSignUpForm) throws IOException {
-        File file = authorSignUpForm.convertImgToFile2();
-        System.out.println("hello");
-        return s3fileSystem.uploadProfilePhoto2("authorId",file);
-    }
+//    @PostMapping("/img2/")
+//    public String saveSignUpData2(@RequestBody AuthorSignUpForm authorSignUpForm) throws IOException {
+//        File file = authorSignUpForm.convertImgToFile2();
+//        System.out.println("hello");
+//        return s3fileSystem.uploadProfilePhoto2("authorId",file);
+//    }
 }
