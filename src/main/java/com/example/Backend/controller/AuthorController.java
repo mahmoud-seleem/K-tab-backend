@@ -8,9 +8,17 @@ import com.example.Backend.model.Author;
 import com.example.Backend.model.AuthorComment;
 import com.example.Backend.model.AuthorSettings;
 import com.example.Backend.model.Book;
+import com.example.Backend.s3Connection.S3fileSystem;
+import com.example.Backend.schema.AuthorSignUpForm;
+import com.example.Backend.schema.AuthorSignUpResponse;
+import com.example.Backend.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 @RestController
@@ -27,6 +35,11 @@ public class AuthorController {
 
     @Autowired
     private AuthorNotificationRepository authorNotificationRepository;
+    @Autowired
+    private S3fileSystem s3fileSystem;
+
+    @Autowired
+    private AuthorService authorService;
     @GetMapping("/new")
     public Author saveNewAuthor(){
         Author author = new Author("mahmoud");
@@ -88,5 +101,29 @@ public class AuthorController {
     @PostMapping("/newauthor/")
     public Author createNewAuthor(@RequestBody Author author){
         return authorRepository.save(author);
+    }
+
+    @GetMapping("/encodeimg")
+    public String encodeImg() throws IOException {
+
+        File file = new File("D:\\SBME_4\\Graduation_Project\\Platform_Backend\\profile_picture.jpg");
+            // Reading a Image file from file system
+            FileInputStream imageInFile = new FileInputStream(file);
+            byte imageData[] = new byte[(int) file.length()];
+            imageInFile.read(imageData);
+            // Converting Image byte array into Base64 String
+            return Base64.getEncoder().encodeToString(imageData);
+    }
+
+
+    @PostMapping("/signup/")
+    public AuthorSignUpResponse saveSignUpData(@RequestBody AuthorSignUpForm authorSignUpForm){
+        return authorService.saveNewAuthor(authorSignUpForm);
+    }
+    @PostMapping("/img2/")
+    public String saveSignUpData2(@RequestBody AuthorSignUpForm authorSignUpForm) throws IOException {
+        File file = authorSignUpForm.convertImgToFile2();
+        System.out.println("hello");
+        return s3fileSystem.uploadProfilePhoto2("authorId",file);
     }
 }

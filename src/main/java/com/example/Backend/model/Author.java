@@ -29,7 +29,7 @@ public class Author {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "profile_photo", nullable = false)
+    @Column(name = "profile_photo")
     private String profilePhoto;
 
     @Column(name = "contact",nullable = false)
@@ -74,16 +74,12 @@ public class Author {
         this.contributionList = new ArrayList<>();
         this.authorBooksList = new ArrayList<>();
     }
-//    public Author(String authorName, String authorEmail, String password, String profilePhoto) {
-//        this.authorName = authorName;
-//        this.authorEmail = authorEmail;
-//        this.password = password;
-//        this.profilePhoto = profilePhoto;
-//        this.authorCommentList = new ArrayList<>();
-//        this.authorNotificationList = new ArrayList<>();
-//        this.contributionList = new ArrayList<>();
-//        this.authorBooksList = new ArrayList<>();
-//    }
+    public Author(String authorName, String authorEmail, String password,String contact) {
+        this.authorName = authorName;
+        this.authorEmail = authorEmail;
+        this.password = password;
+        this.contact = contact;
+    }
     public UUID getAuthorId() {
         return authorId;
     }

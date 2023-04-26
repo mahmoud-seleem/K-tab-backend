@@ -1,12 +1,14 @@
 package com.example.Backend.s3Connection;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
 
-import com.amazonaws.services.s3.model.ObjectListing;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.amazonaws.services.s3.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +17,22 @@ public class S3fileSystem {
 
     @Autowired
     private S3Utils s3Utils;
+    public String uploadProfilePhoto(String photoPath, InputStream inputStream){
+        s3Utils.initializeTheClient();
+        s3Utils.getAmazonS3().putObject(
+                new PutObjectRequest(s3Utils.getBucketName()
+        ,photoPath,inputStream, new ObjectMetadata()));
+        return photoPath;
+    }
+    public String uploadProfilePhoto2(String authorId, File file){
+        s3Utils.initializeTheClient();
+        String profilePhotoPath = "Authors/"+authorId+"/profilePhoto.png";
+        System.out.println("starting");
+        PutObjectResult result = s3Utils.getAmazonS3().putObject(s3Utils.getBucketName()
+                ,profilePhotoPath,file);
+        System.out.println("end");
+        return profilePhotoPath;
+    }
     public  String createChapterFolder(UUID bookId, UUID chapterId) {
         s3Utils.initializeTheClient();
         String bookFolder = bookId.toString();
