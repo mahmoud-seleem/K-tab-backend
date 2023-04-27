@@ -14,6 +14,7 @@ import com.example.Backend.schema.AuthorSignUpResponse;
 import com.example.Backend.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -103,17 +104,18 @@ public class AuthorController {
         return authorRepository.save(author);
     }
 
-    @GetMapping("/encodeimg")
-    public String encodeImg() throws IOException {
-
-        File file = new File("D:\\SBME_4\\Graduation_Project\\Platform_Backend\\profile_picture.jpg");
+    @PostMapping("/encodeimg")
+    public String encodeImg(@RequestParam MultipartFile image) throws IOException {
+        //File file = new File("D:\\SBME_4\\Graduation_Project\\Platform_Backend\\profile_picture.jpg");
             // Reading a Image file from file system
-            FileInputStream imageInFile = new FileInputStream(file);
-            byte imageData[] = new byte[(int) file.length()];
-            imageInFile.read(imageData);
+            //FileInputStream imageInFile = (FileInputStream) image.getInputStream();
+            //byte imageData[] = new byte[(int) ((File)image).length()];
+            byte imageData[] = image.getBytes();
+            //imageInFile.read(imageData);
             // Converting Image byte array into Base64 String
             return Base64.getEncoder().encodeToString(imageData);
     }
+
 
 
     @PostMapping("/signup/")

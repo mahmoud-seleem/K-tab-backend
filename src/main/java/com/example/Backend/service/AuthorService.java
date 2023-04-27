@@ -27,11 +27,13 @@ public class AuthorService {
     public AuthorSignUpResponse saveNewAuthor(AuthorSignUpForm form){
         Author author = createNewAuthor(form);
         authorRepository.save(author);
-        String photoPath = ("Authors/"+author.getAuthorId().toString()+"/profilePhoto.png");
-        author.setProfilePhoto(photoPath);
-        InputStream inputStream = imageConverter.convertImgToFile(
-                form.getProfilePhotoAsBinaryString());
-        s3fileSystem.uploadPhoto(photoPath,inputStream);
+        if(form.getProfilePhotoAsBinaryString() != null){
+            String photoPath = ("Authors/"+author.getAuthorId().toString()+"/profilePhoto.png");
+            author.setProfilePhoto(photoPath);
+            InputStream inputStream = imageConverter.convertImgToFile(
+                    form.getProfilePhotoAsBinaryString());
+            s3fileSystem.uploadPhoto(photoPath,inputStream);
+        }
         authorRepository.save(author);
         return constructResponse(author);
     }

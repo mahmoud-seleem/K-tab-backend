@@ -202,6 +202,16 @@ public class Book {
         this.getTags().remove(tag);
     }
 
+    public void clearTags(){
+        this.tags = new ArrayList<>();
+    }
+    public List<String> getTagsNames(){
+        List<String> tagsNames = new ArrayList<>();
+        for (Tag tag : getTags()){
+            tagsNames.add(tag.getTagName());
+        }
+        return tagsNames;
+    }
     public void addAuthor(Author author){
         this.setAuthor(author);
         author.getAuthorBooksList().add(this);
@@ -210,5 +220,25 @@ public class Book {
     public void removeAuthor(Author author){
         this.setAuthor(null);
         author.getAuthorBooksList().remove(this);
+    }
+
+    public Double calculateAvgRating(){
+        Double sum = 0.0;
+        for(Rating rating : getRatings()){
+            sum +=  rating.getRatingValue();
+        }
+        if (getRatings().size() == 0){
+            return 0.0;
+        }else {
+            return sum / (double) getRatings().size();
+        }
+    }
+
+    public List<String> getChaptersTitles(){
+        List<String> titles = new ArrayList<>();
+        for(Chapter chapter : getChapters()){
+            titles.add(chapter.getTitle());
+        }
+        return titles;
     }
 }

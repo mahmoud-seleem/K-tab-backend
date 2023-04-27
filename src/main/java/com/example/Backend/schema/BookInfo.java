@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.sql.SQLTransactionRollbackException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,35 +17,65 @@ public class BookInfo {
 
     private UUID authorId;
     private UUID bookId;
-    private String bookTitle;
+    private String title;
     private String bookCoverPhotoAsBinaryString;
     private String bookAbstract;
     private List<String> tags;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private String bookCoverPath;
+    private String bookCoverPath = null;
 
+    private String publishDate;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String  lastEditDate;
 
     private Double price;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Double avgRate;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private List<String> chaptersTitles ;
+
     public BookInfo() {
     }
 
-    public BookInfo(UUID authorId, UUID bookId, String bookTitle, String bookCoverPhotoAsBinaryString, String bookAbstract, List<String> tags, Double price) {
+    public BookInfo(UUID authorId, UUID bookId, String title,
+                    String bookCoverPhotoAsBinaryString,
+                    String bookAbstract, List<String> tags, String bookCoverPath,
+                    String publishDate, String lastEditDate, Double price,
+                    Double avgRate, List<String> chaptersTitles) {
         this.authorId = authorId;
         this.bookId = bookId;
-        this.bookTitle = bookTitle;
+        this.title = title;
         this.bookCoverPhotoAsBinaryString = bookCoverPhotoAsBinaryString;
         this.bookAbstract = bookAbstract;
         this.tags = tags;
+        this.bookCoverPath = bookCoverPath;
+        this.publishDate = publishDate;
+        this.lastEditDate = lastEditDate;
         this.price = price;
+        this.avgRate = avgRate;
+        this.chaptersTitles = chaptersTitles;
     }
 
-    public BookInfo(UUID authorId, String bookTitle, String bookCoverPhotoAsBinaryString, String bookAbstract, List<String> tags, Double price) {
+    public BookInfo(UUID authorId, String title,
+                    String bookCoverPhotoAsBinaryString,
+                    String bookAbstract, List<String> tags,
+                    String bookCoverPath, String publishDate,
+                    String lastEditDate, Double price,
+                    Double avgRate, List<String> chaptersTitles) {
         this.authorId = authorId;
-        this.bookTitle = bookTitle;
+        this.title = title;
         this.bookCoverPhotoAsBinaryString = bookCoverPhotoAsBinaryString;
         this.bookAbstract = bookAbstract;
         this.tags = tags;
+        this.bookCoverPath = bookCoverPath;
+        this.publishDate = publishDate;
+        this.lastEditDate = lastEditDate;
         this.price = price;
+        this.avgRate = avgRate;
+        this.chaptersTitles = chaptersTitles;
     }
 
     public UUID getBookId() {
@@ -55,12 +86,12 @@ public class BookInfo {
         this.bookId = bookId;
     }
 
-    public String getBookTitle() {
-        return bookTitle;
+    public String getTitle() {
+        return title;
     }
 
-    public void setBookTitle(String bookTitle) {
-        this.bookTitle = bookTitle;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getBookCoverPath() {
@@ -109,5 +140,37 @@ public class BookInfo {
 
     public void setAuthorId(UUID authorId) {
         this.authorId = authorId;
+    }
+
+    public String getPublishDate() {
+        return publishDate;
+    }
+
+    public void setPublishDate(String publishDate) {
+        this.publishDate = publishDate;
+    }
+
+    public String getLastEditDate() {
+        return lastEditDate;
+    }
+
+    public void setLastEditDate(String lastEditDate) {
+        this.lastEditDate = lastEditDate;
+    }
+
+    public Double getAvgRate() {
+        return avgRate;
+    }
+
+    public void setAvgRate(Double avgRate) {
+        this.avgRate = avgRate;
+    }
+
+    public List<String> getChaptersTitles() {
+        return chaptersTitles;
+    }
+
+    public void setChaptersTitles(List<String> chaptersTitles) {
+        this.chaptersTitles = chaptersTitles;
     }
 }

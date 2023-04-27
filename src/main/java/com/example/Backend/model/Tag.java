@@ -24,11 +24,11 @@ public class Tag{
             inverseJoinColumns = @JoinColumn(name = "chapter_id"))
     private List<Chapter> chapterList = new ArrayList<>();
 
-    @ManyToMany()
-    @JoinTable(
-            name = "book_tags",
-            joinColumns = @JoinColumn(name = "tag_id"),
-            inverseJoinColumns = @JoinColumn(name = "book_id"))
+    @ManyToMany(mappedBy = "tags")
+//    @JoinTable(
+//            name = "book_tags",
+//            joinColumns = @JoinColumn(name = "tag_id"),
+//            inverseJoinColumns = @JoinColumn(name = "book_id"))
     private List<Book> bookList = new ArrayList<>();
 
 
@@ -88,8 +88,10 @@ public class Tag{
 
     public void addBook(Book book){
         this.getBookList().add(book);
+        book.getTags().add(this);
     }
     public void removeBook(Book book){
         this.getBookList().remove(book);
+       book.getTags().remove(this);
     }
 }

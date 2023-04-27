@@ -9,6 +9,7 @@ import com.example.Backend.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -32,10 +33,9 @@ public class BookController {
     public BookInfo insertBook(@RequestBody BookInfo bookInfo){
         return bookService.saveNewBook(bookInfo);
     }
-
-    @PutMapping
-    public Book updateBookInfo(@RequestBody Book book){
-        return bookService.updateBookInfo(book);
+    @PutMapping()
+    public BookInfo updateBookInfo(@RequestBody BookInfo bookInfo) throws Exception {
+        return bookService.updateBookInfo(bookInfo);
     }
 
     @GetMapping("/add/specificBook")
