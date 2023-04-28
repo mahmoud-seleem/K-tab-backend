@@ -3,6 +3,7 @@ package com.example.Backend.schema;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
@@ -17,6 +18,7 @@ public class BookInfo {
 
     private UUID authorId;
     private UUID bookId;
+    @NotNull
     private String title;
     private String bookCoverPhotoAsBinaryString;
     private String bookAbstract;

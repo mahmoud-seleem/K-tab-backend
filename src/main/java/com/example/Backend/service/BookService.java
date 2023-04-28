@@ -41,52 +41,43 @@ public class BookService {
     private S3fileSystem s3fileSystem;
     @Autowired
     private Utils utils;
-    final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    public BookInfo saveNewBook(BookInfo bookInfo){
+    public BookInfo saveNewBook(BookInfo bookInfo)throws Exception{
         Book book = createNewBook(bookInfo);
         Author author = authorRepository.findById(bookInfo.getAuthorId()).get();
-        bookRepository.save(book);
-        if(bookInfo.getBookCoverPhotoAsBinaryString() != null){
-            String photoPath = setupBookCover(book,bookInfo);
-            bookInfo.setBookCoverPath(photoPath);
-        }
-        setupBookTags(book,bookInfo.getTags());
         author.addAuthorBook(book);
         authorRepository.save(author);
-        bookInfo.setBookId(book.getBookId());
-
-        bookInfo.setLastEditDate(updateLastEditDate(book).
-                getLastEditDate().format(formatter));
-        bookInfo.setAvgRate(book.calculateAvgRating());
-        bookInfo.setChaptersTitles(book.getChaptersTitles());
-        return bookInfo;
+        return createBookInfoResponse(
+                bookRepository.save(updateLastEditDate(book)));
     }
-    public BookInfo updateBookInfo(BookInfo bookInfo) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    public BookInfo updateBookInfo(BookInfo bookInfo) throws Exception {
         Book book = bookRepository.findById(bookInfo.getBookId()).get();
+        updateBookData(book,bookInfo);
+        return createBookInfoResponse(
+                bookRepository.save(updateLastEditDate(book)));
+    }
+    private void updateBookData(Book book,BookInfo bookInfo) throws Exception{
         for (Field field : bookInfo.getClass().getDeclaredFields()){
             field.setAccessible(true);
-            if(field.get(bookInfo) != null ){
+            if(field.get(bookInfo) != null){
                 System.out.println(field.getName());
-                if (field.getName() == "bookCoverPhotoAsBinaryString"){
-                    setupBookCover(book,bookInfo);
-                }else if(field.getName() == "tags"){
+                if(field.getName() == "tags"){
                     setupBookTags(book,bookInfo.getTags());
                 }else if (field.getName() == "publishDate" || field.getName() == "lastEditDate"){
                     utils.getMethodBySignature("set",field,book,LocalDateTime.class)
-                            .invoke(book,LocalDateTime.parse(field.get(bookInfo).toString() , formatter));
-                }
-                else {
+                            .invoke(book,LocalDateTime.parse(field.get(bookInfo).toString() , Utils.formatter));
+                } else if (field.getName() == "authorId") {
+                    book.setAuthor(authorRepository.findById(bookInfo.getAuthorId()).get());
+                } else if (field.getName() == "bookCoverPhotoAsBinaryString") {
+                } else {
                     utils.getMethodBySignature("set",field,book,field.getType())
                             .invoke(book,field.get(bookInfo));
                 }
             }
         }
-        bookRepository.save(updateLastEditDate(book));
-        return createBookInfoResponse(bookInfo);
+        setupBookCover(book,bookInfo);
     }
-    private BookInfo createBookInfoResponse(BookInfo bookInfo){
-        Book book = bookRepository.findById(bookInfo.getBookId()).get();
+    private BookInfo createBookInfoResponse(Book book){
         BookInfo response =  new BookInfo(
                 book.getAuthor().getAuthorId(),
                 book.getBookId(),
@@ -95,25 +86,33 @@ public class BookService {
                 book.getBookAbstract(),
                 book.getTagsNames(),
                 book.getBookCover(),
-                book.getPublishDate().format(formatter),
-                book.getLastEditDate().format(formatter),
+                book.getPublishDateAsString(),
+                book.getLastEditDate().format(utils.formatter),
                 book.getPrice(),
                 book.calculateAvgRating(),
                 book.getChaptersTitles()
         );
         return response;
     }
-    public Book updateLastEditDate(Book book){
+    private Book updateLastEditDate(Book book){
         book.setLastEditDate(LocalDateTime.parse(LocalDateTime.now().
-                format(formatter) , formatter));
+                format(Utils.formatter) , Utils.formatter));
         return book;
     }
     private String setupBookCover(Book book,BookInfo bookInfo){
-        String photoPath = ("Books/"+book.getBookId().toString()+"/coverPhoto.png");
+        String photoPath = storeCoverPhotoPath(book);
+        if (bookInfo.getBookCoverPhotoAsBinaryString() != null){
+            InputStream inputStream = imageConverter.convertImgToFile(
+                    bookInfo.getBookCoverPhotoAsBinaryString());
+            s3fileSystem.uploadPhoto(photoPath,inputStream);
+        }
+        return photoPath;
+    }
+    private String storeCoverPhotoPath(Book book) {
+        String photoPath = ("Books/" + book.getBookId().toString() + "/coverPhoto.png");
+        s3fileSystem.reserveEmptyPlace(photoPath);
         book.setBookCover(photoPath);
-        InputStream inputStream = imageConverter.convertImgToFile(
-                bookInfo.getBookCoverPhotoAsBinaryString());
-        return s3fileSystem.uploadPhoto(photoPath,inputStream);
+        return photoPath;
     }
     private Book setupBookTags(Book book,List<String> tags){
         book.clearTags();
@@ -141,16 +140,15 @@ public class BookService {
         System.out.println("____________________________________________");
         return b;
     }
-    private Book createNewBook(BookInfo bookInfo){
+    private Book createNewBook(BookInfo bookInfo)throws Exception{
         Book book = new Book(
                 bookInfo.getTitle(),
                 bookInfo.getPrice(),
                 bookInfo.getBookAbstract()
         );
-        if (bookInfo.getPublishDate() != null){
-            book.setPublishDate(LocalDateTime.parse(bookInfo.getPublishDate(),formatter));
-        }
-        return bookRepository.save(book);
+        bookRepository.save(book);
+        updateBookData(book,bookInfo);
+        return book;
     }
     public Book findBookById(UUID id){
         return bookRepository.findById(id).orElseThrow();

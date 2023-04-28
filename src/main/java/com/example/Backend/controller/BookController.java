@@ -31,11 +31,23 @@ public class BookController {
 
     @PostMapping()
     public BookInfo insertBook(@RequestBody BookInfo bookInfo){
-        return bookService.saveNewBook(bookInfo);
+        BookInfo response = new BookInfo();
+        try {
+            response = bookService.saveNewBook(bookInfo);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return response;
     }
     @PutMapping()
     public BookInfo updateBookInfo(@RequestBody BookInfo bookInfo) throws Exception {
-        return bookService.updateBookInfo(bookInfo);
+        BookInfo response = new BookInfo();
+        try {
+            response = bookService.updateBookInfo(bookInfo);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return response;
     }
 
     @GetMapping("/add/specificBook")

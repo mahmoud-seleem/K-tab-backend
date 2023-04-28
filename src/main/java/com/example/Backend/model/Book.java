@@ -1,10 +1,12 @@
 package com.example.Backend.model;
 
+import com.example.Backend.utils.Utils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Entity
@@ -37,7 +39,12 @@ public class Book {
     }
 
     public LocalDateTime getPublishDate() {
-        return publishDate;
+        return this.publishDate;
+    }
+    public String getPublishDateAsString(){
+        return (publishDate != null ?
+                publishDate.format(Utils.formatter)
+                : null);
     }
 
     public void setPublishDate(LocalDateTime publishDate) {
