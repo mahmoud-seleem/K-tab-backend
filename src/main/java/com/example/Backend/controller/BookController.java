@@ -50,6 +50,10 @@ public class BookController {
         return response;
     }
 
+    @GetMapping()
+    public BookInfo getBookInfo(@RequestBody BookInfo bookInfo){
+        return bookService.getBookInfo(bookInfo);
+    }
     @GetMapping("/add/specificBook")
     public Book insertSpecificBook(){
         return bookService.insertSpecificBook();

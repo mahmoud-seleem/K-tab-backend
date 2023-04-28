@@ -56,6 +56,13 @@ public class BookService {
         return createBookInfoResponse(
                 bookRepository.save(updateLastEditDate(book)));
     }
+    public BookInfo getBookInfo(BookInfo bookInfo){
+        return createBookInfoResponse(
+                bookRepository.findById(
+                        bookInfo.getBookId()
+                ).get()
+        );
+    }
     private void updateBookData(Book book,BookInfo bookInfo) throws Exception{
         for (Field field : bookInfo.getClass().getDeclaredFields()){
             field.setAccessible(true);
@@ -87,7 +94,7 @@ public class BookService {
                 book.getTagsNames(),
                 book.getBookCover(),
                 book.getPublishDateAsString(),
-                book.getLastEditDate().format(utils.formatter),
+                book.getLastEditDateAsString(),
                 book.getPrice(),
                 book.calculateAvgRating(),
                 book.getChaptersTitles()

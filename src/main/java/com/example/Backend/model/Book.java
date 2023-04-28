@@ -46,6 +46,11 @@ public class Book {
                 publishDate.format(Utils.formatter)
                 : null);
     }
+    public String getLastEditDateAsString(){
+        return (lastEditDate != null ?
+                lastEditDate.format(Utils.formatter)
+                : null);
+    }
 
     public void setPublishDate(LocalDateTime publishDate) {
         this.publishDate = publishDate;

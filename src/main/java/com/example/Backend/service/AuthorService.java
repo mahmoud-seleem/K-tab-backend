@@ -40,6 +40,13 @@ public class AuthorService {
         return constructResponse(authorRepository.save(author));
     }
 
+    public AuthorSignUpResponse getAuthorInfo(AuthorSignUpForm form){
+        return constructResponse(
+                authorRepository.findById(
+                        form.getAuthorId()
+                ).get()
+        );
+    }
     private String storeProfilePhotoPath(Author author) {
         String photoPath = ("Authors/" + author.getAuthorId().toString() + "/profilePhoto.png");
         s3fileSystem.reserveEmptyPlace(photoPath);
