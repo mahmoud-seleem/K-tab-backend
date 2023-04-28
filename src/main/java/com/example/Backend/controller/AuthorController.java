@@ -115,12 +115,26 @@ public class AuthorController {
             // Converting Image byte array into Base64 String
             return Base64.getEncoder().encodeToString(imageData);
     }
-
-
-
     @PostMapping("/signup/")
-    public AuthorSignUpResponse saveSignUpData(@RequestBody AuthorSignUpForm authorSignUpForm){
-        return authorService.saveNewAuthor(authorSignUpForm);
+    public AuthorSignUpResponse saveSignUpData(@RequestBody AuthorSignUpForm authorSignUpForm) {
+        AuthorSignUpResponse response = new AuthorSignUpResponse();
+        try {
+            response =  authorService.saveNewAuthor(authorSignUpForm);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return response;
+    }
+
+    @RequestMapping(method = {RequestMethod.GET,RequestMethod.PUT})
+    public AuthorSignUpResponse updateAuthorProfileInfo(@RequestBody AuthorSignUpForm authorSignUpForm) {
+        AuthorSignUpResponse response = new AuthorSignUpResponse();
+        try {
+            response =  authorService.updateAuthorInfo(authorSignUpForm);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return response;
     }
 //    @PostMapping("/img2/")
 //    public String saveSignUpData2(@RequestBody AuthorSignUpForm authorSignUpForm) throws IOException {

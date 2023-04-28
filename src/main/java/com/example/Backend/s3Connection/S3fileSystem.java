@@ -24,6 +24,11 @@ public class S3fileSystem {
         ,photoPath,inputStream, new ObjectMetadata()));
         return photoPath;
     }
+    public String reserveEmptyPlace(String path){
+        s3Utils.initializeTheClient();
+        s3Utils.getAmazonS3().putObject(s3Utils.getBucketName(),path,"");
+        return path;
+    }
     public String uploadProfilePhoto2(String authorId, File file){
         s3Utils.initializeTheClient();
         String profilePhotoPath = "Authors/"+authorId+"/profilePhoto.png";

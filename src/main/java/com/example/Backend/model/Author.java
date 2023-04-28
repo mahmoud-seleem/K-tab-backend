@@ -32,7 +32,7 @@ public class Author {
     @Column(name = "profile_photo")
     private String profilePhoto;
 
-    @Column(name = "contact",nullable = false)
+    @Column(name = "contact")
     private String contact;
 
     @OneToMany(mappedBy = "author")
@@ -61,6 +61,12 @@ public class Author {
         this.authorCommentList = new ArrayList<>();
         this.authorNotificationList = new ArrayList<>();
         this.contributionList = new ArrayList<>();
+    }
+
+    public Author(String authorName, String authorEmail, String password) {
+        this.authorName = authorName;
+        this.authorEmail = authorEmail;
+        this.password = password;
     }
 
     public Author(String authorName, String authorEmail, String password, String profilePhoto, String contact) {

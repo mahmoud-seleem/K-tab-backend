@@ -1,14 +1,21 @@
 package com.example.Backend.schema;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotNull;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
+import java.util.UUID;
 
 @Component
 public class AuthorSignUpForm {
+    private UUID authorId;
+    @NotNull
     private String authorName;
+    @NotNull
     private String authorEmail;
+    @NotNull
     private String password;
     private String contact;
     private String profilePhotoAsBinaryString;
@@ -64,7 +71,15 @@ public class AuthorSignUpForm {
     public void setProfilePhotoAsBinaryString(String profilePhotoAsBinaryString) {
         this.profilePhotoAsBinaryString = profilePhotoAsBinaryString;
     }
-//    public File convertImgToFile2() throws IOException {
+
+    public UUID getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(UUID authorId) {
+        this.authorId = authorId;
+    }
+    //    public File convertImgToFile2() throws IOException {
 //        File file = new File("D:\\SBME_4\\Graduation_Project\\Platform_Backend\\temp.png");
 //        OutputStream outputStream = new FileOutputStream(file);
 //        outputStream.write(decodeImage());

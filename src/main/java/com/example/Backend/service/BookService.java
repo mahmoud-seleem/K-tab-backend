@@ -7,6 +7,7 @@ import com.example.Backend.model.*;
 import com.example.Backend.s3Connection.S3fileSystem;
 import com.example.Backend.schema.BookInfo;
 import com.example.Backend.utils.ImageConverter;
+import com.example.Backend.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.s3.endpoints.internal.Value;
@@ -38,6 +39,8 @@ public class BookService {
     private TagRepository tagRepository;
     @Autowired
     private S3fileSystem s3fileSystem;
+    @Autowired
+    private Utils utils;
     final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public BookInfo saveNewBook(BookInfo bookInfo){
@@ -70,11 +73,11 @@ public class BookService {
                 }else if(field.getName() == "tags"){
                     setupBookTags(book,bookInfo.getTags());
                 }else if (field.getName() == "publishDate" || field.getName() == "lastEditDate"){
-                    getMethodBySignature("set",field,book,LocalDateTime.class)
+                    utils.getMethodBySignature("set",field,book,LocalDateTime.class)
                             .invoke(book,LocalDateTime.parse(field.get(bookInfo).toString() , formatter));
                 }
                 else {
-                    getMethodBySignature("set",field,book,field.getType())
+                    utils.getMethodBySignature("set",field,book,field.getType())
                             .invoke(book,field.get(bookInfo));
                 }
             }
@@ -154,12 +157,6 @@ public class BookService {
     }
 
 
-    private Method getMethodBySignature(String prefix,Field field,Object callerObject,Class<?>... parametersTypes) throws NoSuchMethodException {
-        String methodName = prefix +
-                field.getName().substring(0,1).toUpperCase() +
-                field.getName().substring(1);
-        return  callerObject.getClass().getMethod(methodName,parametersTypes);
-    }
     public Book insertSpecificBook(){
         Book book = new Book("Mariam's fav book");
         Student student = new Student("Mariam");
