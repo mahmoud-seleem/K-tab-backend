@@ -11,11 +11,13 @@ import com.example.Backend.model.Book;
 import com.example.Backend.s3Connection.S3fileSystem;
 import com.example.Backend.schema.AuthorSignUpForm;
 import com.example.Backend.schema.AuthorSignUpResponse;
+import com.example.Backend.schema.SearchInput;
 import com.example.Backend.service.AuthorService;
 import jakarta.persistence.PersistenceUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -140,6 +142,16 @@ public class AuthorController {
     @GetMapping
     public AuthorSignUpResponse getAuthorInfo(@RequestBody AuthorSignUpForm form){
         return authorService.getAuthorInfo(form);
+    }
+    @GetMapping("books/headers/")
+    public List<Map<String,Object>> getAuthorBooksHeaders(@RequestBody SearchInput input){
+        List<Map<String,Object>> response = null;
+        try {
+            response = authorService.getAuthorBooksHeaders(input);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return response;
     }
 //    @PostMapping("/img2/")
 //    public String saveSignUpData2(@RequestBody AuthorSignUpForm authorSignUpForm) throws IOException {

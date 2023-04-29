@@ -5,6 +5,7 @@ import com.example.Backend.Repository.AuthorRepository;
 import com.example.Backend.Repository.AuthorSettingsRepository;
 import com.example.Backend.model.Author;
 import com.example.Backend.model.AuthorSettings;
+import com.example.Backend.schema.AuthorSettingsForm;
 import com.example.Backend.service.AuthorSettingsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,39 @@ public class AuthorSettingsController {
     private AuthorSettingsRepository authorSettingsRepository;
     @Autowired
     private AuthorRepository authorRepository;
+
+    @Autowired
+    private AuthorSettingsService authorSettingsService;
+    @PostMapping()
+    public AuthorSettingsForm setAuthorSettingsInfo(@RequestBody AuthorSettingsForm form){
+        AuthorSettingsForm response = new AuthorSettingsForm();
+        try {
+            response = authorSettingsService.setAuthorSettingsInfo(form);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return response;
+    }
+    @PutMapping()
+    public AuthorSettingsForm updateAuthorSettingsInfo(@RequestBody AuthorSettingsForm form){
+        AuthorSettingsForm response = new AuthorSettingsForm();
+        try {
+            response = authorSettingsService.updateAuthorSettingsInfo(form);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return response;
+    }
+    @GetMapping()
+    public AuthorSettingsForm getAuthorSettingsInfo(@RequestBody AuthorSettingsForm form){
+        AuthorSettingsForm response = new AuthorSettingsForm();
+        try {
+            response = authorSettingsService.getAuthorSettingsInfo(form);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return response;
+    }
 
     @PostMapping("/setsettings/")
     public AuthorSettings setAuthorSettings(@RequestBody Map<String,Object> authorAndSettings){

@@ -1,52 +1,42 @@
-package com.example.Backend.model;
+package com.example.Backend.schema;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.*;
+import com.example.Backend.model.Book;
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.util.UUID;
 
-@Entity
-@Table(name = "author_settings")
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class AuthorSettings {
-
-    @Id
-    @GeneratedValue
-    @Column(name = "author_settings_id")
+public class AuthorSettingsForm {
+    private UUID authorId;
     private UUID authorSettingsId;
-
-    @Column(name = "brightness_level")
     private Integer brightnessLevel;
-
-    @Column(name = "contrast_level")
     private Integer contrastLevel;
-
-    @Column(name = "font_size")
     private Integer fontSize;
-
-    @Column(name = "font_style")
     private String fontStyle;
-
-    @Column(name = "invert_color")
     private Boolean invertColor;
-
-    @Column(name = "gray_Scale")
     private Boolean grayScale;
 
-    @OneToOne
-    @JoinColumn(name = "author_id")
-    private Author author;
-
-    public AuthorSettings() {
+    public AuthorSettingsForm() {
     }
 
-    public AuthorSettings(Integer brightnessLevel, Integer contrastLevel, Integer fontSize, String fontStyle, Boolean invertColor, Boolean grayScale, Author author) {
+    public AuthorSettingsForm(UUID authorId, UUID authorSettingsId, Integer brightnessLevel, Integer contrastLevel, Integer fontSize, String fontStyle, Boolean invertColor, Boolean grayscale) {
+        this.authorId = authorId;
+        this.authorSettingsId = authorSettingsId;
         this.brightnessLevel = brightnessLevel;
         this.contrastLevel = contrastLevel;
         this.fontSize = fontSize;
         this.fontStyle = fontStyle;
         this.invertColor = invertColor;
-        this.grayScale = grayScale;
+        this.grayScale = grayscale;
+    }
+
+    public UUID getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(UUID authorId) {
+        this.authorId = authorId;
     }
 
     public UUID getAuthorSettingsId() {
@@ -104,12 +94,5 @@ public class AuthorSettings {
     public void setGrayScale(Boolean grayScale) {
         this.grayScale = grayScale;
     }
-
-    public Author getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(Author author) {
-        this.author = author;
-    }
 }
+
