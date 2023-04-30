@@ -6,7 +6,8 @@ import jakarta.persistence.*;
 import java.util.*;
 
 @Entity
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler","chapterList","bookList"})
+@JsonIgnoreProperties({"hibernateLazyInitializer"
+        ,"handler","chapterList","bookList"})
 public class Tag{
 
     @Id
@@ -17,11 +18,11 @@ public class Tag{
     @Column(name = "tag_name", nullable = false)
     private String tagName;
 
-    @ManyToMany()
-    @JoinTable(
-            name = "chapter_tags",
-            joinColumns = @JoinColumn(name = "tag_id"),
-            inverseJoinColumns = @JoinColumn(name = "chapter_id"))
+    @ManyToMany(mappedBy = "tags")
+//    @JoinTable(
+//            name = "chapter_tags",
+//            joinColumns = @JoinColumn(name = "tag_id"),
+//            inverseJoinColumns = @JoinColumn(name = "chapter_id"))
     private List<Chapter> chapterList = new ArrayList<>();
 
     @ManyToMany(mappedBy = "tags")
@@ -79,11 +80,11 @@ public class Tag{
 
     public void addChapter(Chapter chapter){
         this.getChapterList().add(chapter);
-       // chapter.getTags().add(this);
+        chapter.getTags().add(this);
     }
     public void removeChapter(Chapter chapter){
         this.getChapterList().remove(chapter);
-        //chapter.getTags().remove(this);
+        chapter.getTags().remove(this);
     }
 
     public void addBook(Book book){
@@ -92,6 +93,6 @@ public class Tag{
     }
     public void removeBook(Book book){
         this.getBookList().remove(book);
-       book.getTags().remove(this);
+        book.getTags().remove(this);
     }
 }

@@ -4,6 +4,7 @@ import com.example.Backend.compositeKeys.ContributionKey;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "contribution")
@@ -24,6 +25,8 @@ public class Contribution {
     @Column(name = "update_date")
     private LocalDateTime updateDate;
 
+    @Column(name = "book_id")
+    private UUID bookId;
     public Contribution() {
     }
 
@@ -64,5 +67,13 @@ public class Contribution {
 
     public void setUpdateDate(LocalDateTime updateDate) {
         this.updateDate = updateDate;
+    }
+
+    public UUID getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(UUID bookId) {
+        this.bookId = bookId;
     }
 }

@@ -209,9 +209,11 @@ public class Book {
 
     public void addTag(Tag tag){
         this.getTags().add(tag);
+        tag.getBookList().add(this);
     }
     public void removeTag(Tag tag){
         this.getTags().remove(tag);
+        tag.getChapterList().remove(this);
     }
 
     public void clearTags(){

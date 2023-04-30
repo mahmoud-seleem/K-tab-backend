@@ -27,7 +27,7 @@ public class Chapter {
     private String content;
 
     @Column(name = "reading_duration", nullable = false)
-    private double readingDuration;
+    private Double readingDuration;
 
     @Column(name = "creation_date", nullable = false)
     private LocalDateTime creationDate;
@@ -58,6 +58,9 @@ public class Chapter {
     @ManyToOne
     @JoinColumn(name = "book_id")
     private Book book;
+
+    @Column(name = "chapter_order")
+    private Integer chapterOrder;
     public Chapter() {
     }
 
@@ -176,6 +179,26 @@ public class Chapter {
         this.book = book;
     }
 
+    public void setReadingDuration(Double readingDuration) {
+        this.readingDuration = readingDuration;
+    }
+
+    public List<Contribution> getAuthorContributionsList() {
+        return authorContributionsList;
+    }
+
+    public void setAuthorContributionsList(List<Contribution> authorContributionsList) {
+        this.authorContributionsList = authorContributionsList;
+    }
+
+    public Integer getChapterOrder() {
+        return chapterOrder;
+    }
+
+    public void setChapterOrder(Integer chapterOrder) {
+        this.chapterOrder = chapterOrder;
+    }
+
     public void setInteractions(List<Interaction> interactions) {
         this.interactions = interactions;
     }
@@ -189,18 +212,18 @@ public class Chapter {
     }
     public void addTag(Tag tag){
         this.getTags().add(tag);
-        //tag.getChapterList().add(this);
+        tag.getChapterList().add(this);
     }
     public void removeTag(Tag tag){
         this.getTags().remove(tag);
-       // tag.getChapterList().remove(this);
+        tag.getChapterList().remove(this);
 
     }
-    public void addWriting(Contribution contribution){
+    public void addContribution(Contribution contribution){
         this.getAuthorList().add(contribution);
         contribution.setChapter(this);
     }
-    public void removeWriting(Contribution contribution){
+    public void removeContribution(Contribution contribution){
         this.getAuthorList().remove(contribution);
         contribution.setChapter(null);
     }

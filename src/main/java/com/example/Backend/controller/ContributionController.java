@@ -58,7 +58,7 @@ public class ContributionController {
         Chapter chapter = chapterRepository.findByTitle("chapter one");
         Contribution contribution = new Contribution(new ContributionKey(author.getAuthorId(),chapter.getChapterId()),author,chapter, LocalDateTime.now());
         author.addContribution(contribution);
-        chapter.addWriting(contribution);
+        chapter.addContribution(contribution);
         return writingRepository.save(contribution);
     }
 }
