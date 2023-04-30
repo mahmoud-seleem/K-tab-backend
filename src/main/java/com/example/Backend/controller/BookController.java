@@ -51,8 +51,8 @@ public class BookController {
     }
 
     @GetMapping()
-    public BookInfo getBookInfo(@RequestBody BookInfo bookInfo){
-        return bookService.getBookInfo(bookInfo);
+    public BookInfo getBookInfo(@RequestParam UUID bookId){
+        return bookService.getBookInfo(bookId);
     }
     @GetMapping("/add/specificBook")
     public Book insertSpecificBook(){

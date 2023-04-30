@@ -4,11 +4,17 @@ import com.example.Backend.Repository.AuthorRepository;
 import com.example.Backend.Repository.BookRepository;
 import com.example.Backend.Repository.TagRepository;
 import com.example.Backend.model.*;
+import com.example.Backend.s3Connection.AccessType;
+import com.example.Backend.s3Connection.S3PreSignedURL;
 import com.example.Backend.s3Connection.S3fileSystem;
 import com.example.Backend.schema.BookInfo;
+import com.example.Backend.schema.SearchInput;
 import com.example.Backend.utils.ImageConverter;
 import com.example.Backend.utils.Utils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
@@ -18,10 +24,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class BookService {
@@ -42,6 +45,8 @@ public class BookService {
     @Autowired
     private Utils utils;
 
+    @Autowired
+    private S3PreSignedURL s3PreSignedURL;
     public BookInfo saveNewBook(BookInfo bookInfo)throws Exception{
         Book book = createNewBook(bookInfo);
         Author author = authorRepository.findById(bookInfo.getAuthorId()).get();
@@ -56,13 +61,24 @@ public class BookService {
         return createBookInfoResponse(
                 bookRepository.save(updateLastEditDate(book)));
     }
-    public BookInfo getBookInfo(BookInfo bookInfo){
+    public BookInfo getBookInfo(UUID bookId){
         return createBookInfoResponse(
-                bookRepository.findById(
-                        bookInfo.getBookId()
-                ).get()
+                bookRepository.findById(bookId).get()
         );
     }
+
+    public String getPreSignedAsString(String bookCoverPath){
+        return s3PreSignedURL.generatePreSignedUrl(
+                bookCoverPath,
+                60,
+                AccessType.READ
+        ).toString();
+    }
+//    public ResponseEntity<?> redirectToPreSignedUrl(SearchInput input){
+//        return ResponseEntity.status(302).header(
+//                "Location", s3PreSignedURL.generatePreSignedUrl(
+//                        ).toString()).body("success");
+//    }
     private void updateBookData(Book book,BookInfo bookInfo) throws Exception{
         for (Field field : bookInfo.getClass().getDeclaredFields()){
             field.setAccessible(true);

@@ -9,12 +9,22 @@ public class SearchInput {
     private UUID authorId;
     private String title;
 
+    private String bookCoverPath;
     public SearchInput() {
     }
 
-    public SearchInput(UUID authorId, String title) {
+    public SearchInput(UUID authorId, String title, String bookCoverPath) {
         this.authorId = authorId;
         this.title = title;
+        this.bookCoverPath = bookCoverPath;
+    }
+
+    public String getBookCoverPath() {
+        return bookCoverPath;
+    }
+
+    public void setBookCoverPath(String bookCoverPath) {
+        this.bookCoverPath = bookCoverPath;
     }
 
     public UUID getAuthorId() {

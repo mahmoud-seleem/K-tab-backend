@@ -13,10 +13,14 @@ import com.example.Backend.schema.AuthorSignUpForm;
 import com.example.Backend.schema.AuthorSignUpResponse;
 import com.example.Backend.schema.SearchInput;
 import com.example.Backend.service.AuthorService;
+import com.example.Backend.service.BookService;
 import jakarta.persistence.PersistenceUnit;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.view.RedirectView;
 import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.io.File;
@@ -44,6 +48,8 @@ public class AuthorController {
 
     @Autowired
     private AuthorService authorService;
+    @Autowired
+    private BookService bookService;
     @GetMapping("/new")
     public Author saveNewAuthor(){
         Author author = new Author("mahmoud");
@@ -140,8 +146,8 @@ public class AuthorController {
         return response;
     }
     @GetMapping
-    public AuthorSignUpResponse getAuthorInfo(@RequestBody AuthorSignUpForm form){
-        return authorService.getAuthorInfo(form);
+    public AuthorSignUpResponse getAuthorInfo(@RequestParam UUID authorId){
+        return authorService.getAuthorInfo(authorId);
     }
     @GetMapping("books/headers/")
     public List<Map<String,Object>> getAuthorBooksHeaders(@RequestBody SearchInput input){
@@ -152,6 +158,12 @@ public class AuthorController {
             e.printStackTrace();
         }
         return response;
+    }
+    @GetMapping("books/cover/")
+    public RedirectView getBookCover(@RequestParam String bookCoverPath){
+        RedirectView redirectView = new RedirectView();
+        redirectView.setUrl(bookService.getPreSignedAsString(bookCoverPath));
+        return redirectView;
     }
 //    @PostMapping("/img2/")
 //    public String saveSignUpData2(@RequestBody AuthorSignUpForm authorSignUpForm) throws IOException {

@@ -25,6 +25,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class AuthorService {
@@ -56,10 +57,10 @@ public class AuthorService {
         return constructResponse(authorRepository.save(author));
     }
 
-    public AuthorSignUpResponse getAuthorInfo(AuthorSignUpForm form){
+    public AuthorSignUpResponse getAuthorInfo(UUID authorId){
         return constructResponse(
                 authorRepository.findById(
-                        form.getAuthorId()
+                       authorId
                 ).get()
         );
     }
