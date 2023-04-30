@@ -12,15 +12,17 @@ public class AuthorSignUpResponse {
     private String contact;
     private String profilePhotoPath;
 
+    private UUID authorSettingsId;
     public AuthorSignUpResponse() {
     }
 
-    public AuthorSignUpResponse(UUID authorId, String authorName, String authorEmail, String contact, String profilePhotoPath) {
+    public AuthorSignUpResponse(UUID authorId, String authorName, String authorEmail, String contact, String profilePhotoPath, UUID authorSettingsId) {
         this.authorId = authorId;
         this.authorName = authorName;
         this.authorEmail = authorEmail;
         this.contact = contact;
         this.profilePhotoPath = profilePhotoPath;
+        this.authorSettingsId = authorSettingsId;
     }
 
     public UUID getAuthorId() {
@@ -61,5 +63,13 @@ public class AuthorSignUpResponse {
 
     public void setProfilePhotoPath(String profilePhotoPath) {
         this.profilePhotoPath = profilePhotoPath;
+    }
+
+    public UUID getAuthorSettingsId() {
+        return authorSettingsId;
+    }
+
+    public void setAuthorSettingsId(UUID authorSettingsId) {
+        this.authorSettingsId = authorSettingsId;
     }
 }

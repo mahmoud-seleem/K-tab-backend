@@ -38,6 +38,12 @@ public class AuthorSettings {
     private Author author;
 
     public AuthorSettings() {
+        this.brightnessLevel = 10;
+        this.contrastLevel = 10;
+        this.fontSize = 10;
+        this.fontStyle = "Times new Roman";
+        this.invertColor = false;
+        this.grayScale = false;
     }
 
     public AuthorSettings(Integer brightnessLevel, Integer contrastLevel, Integer fontSize, String fontStyle, Boolean invertColor, Boolean grayScale, Author author) {

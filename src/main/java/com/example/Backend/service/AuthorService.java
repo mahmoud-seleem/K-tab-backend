@@ -1,10 +1,12 @@
 package com.example.Backend.service;
 
 import com.example.Backend.Repository.AuthorRepository;
+import com.example.Backend.Repository.AuthorSettingsRepository;
 import com.example.Backend.Repository.BookRepository;
 import com.example.Backend.jsonConversion.BookHeaderSerializer;
 import com.example.Backend.jsonConversion.JsonConverter;
 import com.example.Backend.model.Author;
+import com.example.Backend.model.AuthorSettings;
 import com.example.Backend.model.Book;
 import com.example.Backend.s3Connection.S3fileSystem;
 import com.example.Backend.schema.AuthorSignUpForm;
@@ -19,7 +21,6 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.awt.*;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -33,6 +34,8 @@ public class AuthorService {
     @Autowired
     private AuthorRepository authorRepository;
 
+    @Autowired
+    private AuthorSettingsRepository authorSettingsRepository;
     @Autowired
     private S3fileSystem s3fileSystem;
 
@@ -81,13 +84,19 @@ public class AuthorService {
     }
 
     private Author createNewAuthor(AuthorSignUpForm form) throws Exception {
-        Author author = authorRepository.save(new Author(
+        Author author = new Author(
                 form.getAuthorName(),
                 form.getAuthorEmail(),
-                form.getPassword()));
-        return updateAuthorData(form, author);
+                form.getPassword());
+        return updateAuthorData(form,
+                createDefaultSettings(author));
     }
-
+    private Author createDefaultSettings(Author author){
+        AuthorSettings authorSettings = new AuthorSettings();
+        authorSettingsRepository.save(authorSettings);
+        author.setAuthorSettings(authorSettings);
+        return authorRepository.save(author);
+    }
     private Author updateAuthorData(AuthorSignUpForm form, Author author) throws Exception {
         for (Field field : form.getClass().getDeclaredFields()) {
             field.setAccessible(true);
@@ -139,8 +148,8 @@ public class AuthorService {
                 author.getAuthorName(),
                 author.getAuthorEmail(),
                 author.getContact(),
-                author.getProfilePhoto()
-        );
+                author.getProfilePhoto(),
+                author.getAuthorSettings().getAuthorSettingsId());
     }
     private ObjectMapper createCustomMapper(){
         ObjectMapper mapper = new ObjectMapper();

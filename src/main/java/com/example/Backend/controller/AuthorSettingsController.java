@@ -25,16 +25,16 @@ public class AuthorSettingsController {
 
     @Autowired
     private AuthorSettingsService authorSettingsService;
-    @PostMapping()
-    public AuthorSettingsForm setAuthorSettingsInfo(@RequestBody AuthorSettingsForm form){
-        AuthorSettingsForm response = new AuthorSettingsForm();
-        try {
-            response = authorSettingsService.setAuthorSettingsInfo(form);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return response;
-    }
+//    @PostMapping()
+//    public AuthorSettingsForm setAuthorSettingsInfo(@RequestBody AuthorSettingsForm form){
+//        AuthorSettingsForm response = new AuthorSettingsForm();
+//        try {
+//            response = authorSettingsService.setAuthorSettingsInfo(form);
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+//        return response;
+//    }
     @PutMapping()
     public AuthorSettingsForm updateAuthorSettingsInfo(@RequestBody AuthorSettingsForm form){
         AuthorSettingsForm response = new AuthorSettingsForm();
