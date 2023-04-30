@@ -150,10 +150,11 @@ public class AuthorController {
         return authorService.getAuthorInfo(authorId);
     }
     @GetMapping("books/headers/")
-    public List<Map<String,Object>> getAuthorBooksHeaders(@RequestBody SearchInput input){
+    public List<Map<String,Object>> getAuthorBooksHeaders(@RequestParam UUID authorId,@RequestParam(required = false) String title){
         List<Map<String,Object>> response = null;
         try {
-            response = authorService.getAuthorBooksHeaders(input);
+            response = authorService.getAuthorBooksHeaders(
+                    new SearchInput(authorId,title));
         }catch (Exception e){
             e.printStackTrace();
         }

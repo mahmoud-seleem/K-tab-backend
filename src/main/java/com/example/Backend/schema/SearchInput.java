@@ -19,6 +19,11 @@ public class SearchInput {
         this.bookCoverPath = bookCoverPath;
     }
 
+    public SearchInput(UUID authorId, String title) {
+        this.authorId = authorId;
+        this.title = title;
+    }
+
     public String getBookCoverPath() {
         return bookCoverPath;
     }

@@ -46,10 +46,10 @@ public class AuthorSettingsController {
         return response;
     }
     @GetMapping()
-    public AuthorSettingsForm getAuthorSettingsInfo(@RequestBody AuthorSettingsForm form){
+    public AuthorSettingsForm getAuthorSettingsInfo(@RequestParam UUID authorId){
         AuthorSettingsForm response = new AuthorSettingsForm();
         try {
-            response = authorSettingsService.getAuthorSettingsInfo(form);
+            response = authorSettingsService.getAuthorSettingsInfo(authorId);
         }catch (Exception e){
             e.printStackTrace();
         }

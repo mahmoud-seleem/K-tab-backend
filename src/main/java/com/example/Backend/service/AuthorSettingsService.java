@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
+import java.util.UUID;
 
 @Service
 public class AuthorSettingsService {
@@ -28,14 +29,14 @@ public class AuthorSettingsService {
         return createResponse(settings);
     }
     public AuthorSettingsForm updateAuthorSettingsInfo(AuthorSettingsForm form) throws Exception{
-        AuthorSettings settings = getAuthorSettingsObject(form);
+        AuthorSettings settings = getAuthorSettingsObject(form.getAuthorId());
         updateAuthorSettings(settings,form);
         connectAuthorAndSettings(settings,form);
         return createResponse(settings);
     }
 
-    public AuthorSettingsForm getAuthorSettingsInfo(AuthorSettingsForm form) throws Exception {
-        AuthorSettings settings = getAuthorSettingsObject(form);
+    public AuthorSettingsForm getAuthorSettingsInfo(UUID authorId) throws Exception {
+        AuthorSettings settings = getAuthorSettingsObject(authorId);
         return createResponse(settings);
     }
     private AuthorSettingsForm createResponse(AuthorSettings settings){
@@ -53,9 +54,9 @@ public class AuthorSettingsService {
     private AuthorSettings createNewAuthorSettings(){
         return authorSettingsRepository.save(new AuthorSettings());
     }
-    private AuthorSettings getAuthorSettingsObject(AuthorSettingsForm form){
+    private AuthorSettings getAuthorSettingsObject(UUID authorId){
         return authorRepository.findById(
-                form.getAuthorId()).get().getAuthorSettings();
+                authorId).get().getAuthorSettings();
     }
     private void connectAuthorAndSettings(AuthorSettings settings,AuthorSettingsForm form){
         Author author = authorRepository.findById(form.getAuthorId()).get();
