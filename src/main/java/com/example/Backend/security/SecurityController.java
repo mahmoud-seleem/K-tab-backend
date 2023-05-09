@@ -19,7 +19,7 @@ public class SecurityController {
             new Student("ahmed mohamed")
     );
 
-    @GetMapping(path = "/{id}")
+    @GetMapping(path = "students/{id}")
     public Student getStudent(@PathVariable int id) {
         Student student = new Student();
         try {
@@ -28,5 +28,14 @@ public class SecurityController {
             e.printStackTrace();
         }
         return student;
+    }
+
+    @GetMapping(path ="admin/")
+    public List<String> getStudents(){
+        List<String> names = new ArrayList<>();
+        for (Student student: students){
+            names.add(student.getStudentName());
+    }
+        return names;
     }
 }

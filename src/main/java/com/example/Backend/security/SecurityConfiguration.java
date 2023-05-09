@@ -9,50 +9,49 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AndRequestMatcher;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import static org.springframework.security.config.Customizer.withDefaults;
-
+import static com.example.Backend.security.Permissions.*;
+import static com.example.Backend.security.Roles.*;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf().disable()
+                .authorizeHttpRequests(
+                        requests -> requests
+                                .requestMatchers("/api/**")
+                                .hasRole(ADMIN.name())
+                .anyRequest()
+                .authenticated())
+                .httpBasic(withDefaults());
+        return http.build();
+    }
+
     @Bean
     public UserDetailsService userDetailsService(){
         UserDetails mahmoudDetails = User.builder()
                 .username("mahmoud")
                 .password(passwordEncoder.encode("123"))
-                .roles("Admin").build();
+                .roles(ADMIN.name()).build();
         UserDetails mohamedDetails = User.builder()
                 .username("mohamed")
                 .password(passwordEncoder.encode("456"))
-                .roles("student").build();
+                .roles(STUDENT.name()).build();
         return new InMemoryUserDetailsManager(
                 mahmoudDetails,
                 mohamedDetails
         );
     }
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf().disable()
-//                .authorizeHttpRequests( authorize -> authorize
-//                        .requestMatchers("/api/**")
-//                        .permitAll())
-                .authorizeHttpRequests()
-                .anyRequest()
-                .authenticated()
-                .and()
-                .httpBasic(withDefaults());
-                //.authenticationEntryPoint(authenticationEntryPoint)
-        //http.addFilterAfter(, BasicAuthenticationFilter.class);
-        return http.build();
-    }
-
 }
