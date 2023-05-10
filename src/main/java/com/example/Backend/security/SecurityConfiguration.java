@@ -3,6 +3,8 @@ package com.example.Backend.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -17,6 +19,7 @@ import static com.example.Backend.security.Role.*;
 import static com.example.Backend.security.Permission.*;
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity()
 public class SecurityConfiguration {
 
     @Autowired
@@ -28,8 +31,8 @@ public class SecurityConfiguration {
                 .csrf().disable()
                 .authorizeHttpRequests(
                         requests -> requests
-                                .requestMatchers("/api/**")
-                                .hasAuthority(CHAPTER_WRITE.getName())
+//                                .requestMatchers("/api/**")
+//                                .hasAuthority(CHAPTER_WRITE.getName())
                 .anyRequest()
                 .authenticated())
                 .httpBasic(withDefaults());
