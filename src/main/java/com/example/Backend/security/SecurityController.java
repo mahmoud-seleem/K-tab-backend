@@ -1,6 +1,7 @@
 package com.example.Backend.security;
 
 import com.example.Backend.model.Student;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +22,7 @@ public class SecurityController {
     );
 
     @GetMapping(path = "students/{id}")
-    @PreAuthorize(value = "hasAuthority('chapter_write')")
+    //@PostAuthorize(value = "hasAuthority('chapter_write')")
     public Student getStudent(@PathVariable int id) {
         Student student = new Student();
         try {

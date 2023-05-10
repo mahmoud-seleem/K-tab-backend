@@ -1,5 +1,6 @@
 package com.example.Backend.model;
 import com.example.Backend.jsonConversion.AuthorSerializer;
+import com.example.Backend.security.AppUser;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
@@ -13,7 +14,7 @@ import java.util.*;
         "authorCommentList","authorNotificationList","chaptersList",
         "authorBooksList","authorSettings"} , ignoreUnknown = true)
 //@JsonSerialize(using = AuthorSerializer.class)
-public class Author {
+public class Author extends AppUser {
 
     @Id
     @GeneratedValue

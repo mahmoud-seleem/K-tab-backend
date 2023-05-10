@@ -1,5 +1,6 @@
 package com.example.Backend.model;
 
+import com.example.Backend.security.AppUser;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -12,7 +13,7 @@ import java.util.*;
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler",
         "studentCommentList",
         "studentNotificationList","interactions","ratings","studentSettings","paymentList"} , ignoreUnknown = true)
-public class Student {
+public class Student extends AppUser {
 
     @Id
     @GeneratedValue
@@ -64,14 +65,16 @@ public class Student {
 
     public Student() {
     }
-//    public Student(String studentName, String studentEmail, String password, String profilePhoto, String contact) {
-//        this.studentName = studentName;
-//        this.studentEmail = studentEmail;
-//        this.password = password;
+    public Student(String studentName,
+                   String studentEmail,
+                   String password) {
+        this.studentName = studentName;
+        this.studentEmail = studentEmail;
+        this.password = password;
 //        this.profilePhoto = profilePhoto;
 //        this.contact = contact;
-//        //this.educationLevel = educationLevel;
-//    }
+        //this.educationLevel = educationLevel;
+    }
 //
 //    public Student(String studentName, String studentEmail, String password, String profilePhoto, String contact, String educationLevel, List<StudentComment> studentCommentList) {
 //        this.studentName = studentName;
