@@ -5,19 +5,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AndRequestMatcher;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import static org.springframework.security.config.Customizer.withDefaults;
-import static com.example.Backend.security.Permissions.*;
-import static com.example.Backend.security.Roles.*;
+import static com.example.Backend.security.Role.*;
+import static com.example.Backend.security.Permission.*;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
@@ -32,7 +29,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(
                         requests -> requests
                                 .requestMatchers("/api/**")
-                                .hasRole(ADMIN.name())
+                                .hasAuthority(CHAPTER_WRITE.getName())
                 .anyRequest()
                 .authenticated())
                 .httpBasic(withDefaults());
@@ -44,14 +41,19 @@ public class SecurityConfiguration {
         UserDetails mahmoudDetails = User.builder()
                 .username("mahmoud")
                 .password(passwordEncoder.encode("123"))
-                .roles(ADMIN.name()).build();
+                .authorities(ADMIN.getGrantedAuthorities()).build();
         UserDetails mohamedDetails = User.builder()
                 .username("mohamed")
                 .password(passwordEncoder.encode("456"))
-                .roles(STUDENT.name()).build();
+                .authorities(STUDENT.getGrantedAuthorities()).build();
+        UserDetails ahmedDetails = User.builder()
+                .username("ahmed")
+                .password(passwordEncoder.encode("789"))
+                .authorities(STUDENT.getGrantedAuthorities()).build();
         return new InMemoryUserDetailsManager(
                 mahmoudDetails,
-                mohamedDetails
+                mohamedDetails,
+                ahmedDetails
         );
     }
 }

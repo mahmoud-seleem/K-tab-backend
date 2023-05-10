@@ -1,12 +1,12 @@
 package com.example.Backend.security;
 
-public enum Permissions {
+public enum Permission {
     CHAPTER_WRITE("chapter_write")
     ,CHAPTER_READ("chapter_read");
 
     private  String name;
 
-    Permissions(String name) {
+    Permission(String name) {
         this.name = name;
     }
 
