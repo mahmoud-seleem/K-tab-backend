@@ -25,7 +25,7 @@ public enum Role {
             grantedAuthorities.add(new SimpleGrantedAuthority(permission.getName()));
         }
         grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_"+this.name()));
-         return grantedAuthorities;
+        return grantedAuthorities;
     }
     public Set<Permission> getPermissions() {
         return permissions;
