@@ -46,7 +46,7 @@ public class SecurityController {
         return jwtService.generateJwtToken(authentication);
     }
     @GetMapping(path = "students/{id}")
-    //@PostAuthorize(value = "hasAuthority('chapter_write')")
+    @PostAuthorize(value = "hasAuthority('chapter_write')")
     public Student getStudent(@PathVariable int id) {
         Student student = new Student();
         try {

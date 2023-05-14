@@ -29,13 +29,13 @@ public class Student extends AppUser {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "profile_photo", nullable = false)
+    @Column(name = "profile_photo")
     private String profilePhoto;
 
-    @Column(name = "contact", nullable = false)
+    @Column(name = "contact")
     private String contact;
 
-    @Column(name = "education_level" , nullable = false)
+    @Column(name = "education_level")
     private String educationLevel;
     @OneToMany(mappedBy = "student")
     private List<StudentComment> studentCommentList;

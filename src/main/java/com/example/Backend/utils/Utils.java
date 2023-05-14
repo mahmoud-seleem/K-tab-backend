@@ -46,11 +46,11 @@ public class Utils {
                 "mahmoudsaleem522@gmail.com",
                 passwordEncoder.encode("123")
         ));
-//        studentRepository.save(new Student(
-//                "mohamed",
-//                "mohamed@gmail.com",
-//                passwordEncoder.encode("456")
-//        ));
+        studentRepository.save(new Student(
+                "mohamed",
+                "mohamed@gmail.com",
+                passwordEncoder.encode("456")
+        ));
     }
 
 }
