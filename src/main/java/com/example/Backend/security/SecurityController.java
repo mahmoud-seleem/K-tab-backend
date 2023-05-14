@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,16 +34,16 @@ public class SecurityController {
 
     @PostMapping(path = "login/")
     public String login(@RequestBody LoginForm loginForm){
-        authenticationManager.authenticate(
+        Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginForm.getEmail(),
                         loginForm.getPassword()
                 )
         );
-        UserDetails userDetails =
-                appUserDetailsService.
-                        loadUserByUsername(loginForm.getEmail());
-        return jwtService.generateJwtToken(userDetails);
+//        UserDetails userDetails =
+//                appUserDetailsService.
+//                        loadUserByUsername(loginForm.getEmail());
+        return jwtService.generateJwtToken(authentication);
     }
     @GetMapping(path = "students/{id}")
     //@PostAuthorize(value = "hasAuthority('chapter_write')")
