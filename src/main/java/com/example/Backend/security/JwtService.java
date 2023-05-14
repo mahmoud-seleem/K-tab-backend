@@ -114,8 +114,8 @@ public class JwtService {
         String headerAuth = request.getHeader("Authorization");
         return parseJwt(headerAuth);
     }
-    public  UUID getUserIdFromHeader(String headerAuth) {
-        String token = parseJwt(headerAuth);
+    public  UUID getUserId(HttpServletRequest request) {
+        String token = parseJwt(request);
         return UUID.fromString(
                 Jwts.parserBuilder()
                 .setSigningKey(getSecretKey())

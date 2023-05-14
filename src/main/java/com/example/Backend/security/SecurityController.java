@@ -74,10 +74,7 @@ public class SecurityController {
     }
     @GetMapping(path ="user/")
     public UUID getUser(HttpServletRequest request){
-        UUID userId = jwtService.getUserIdFromHeader(
-                request.getHeader("Authorization")
-        );
-        return userId;
+        return jwtService.getUserId(request);
     }
 
 }
