@@ -5,19 +5,24 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 public class AppUserDetails implements UserDetails {
 
     private List<? extends GrantedAuthority> grantedAuthorities;
+
+    private UUID userId;
     private String userName;
     private String password;
     private boolean isAccountNonExpired;
     private boolean isAccountNonLocked;
     private boolean isCredentialsNonExpired;
     private boolean isEnabled;
-
+    private String userType;
     public AppUserDetails(String userName,
                           String password,
+                          String userType,
+                          UUID userId,
                           List<? extends GrantedAuthority> grantedAuthorities,
                           boolean isAccountNonExpired,
                           boolean isAccountNonLocked,
@@ -26,6 +31,8 @@ public class AppUserDetails implements UserDetails {
         this.grantedAuthorities = grantedAuthorities;
         this.userName = userName;
         this.password = password;
+        this.userType = userType;
+        this.userId = userId;
         this.isAccountNonExpired = isAccountNonExpired;
         this.isAccountNonLocked = isAccountNonLocked;
         this.isCredentialsNonExpired = isCredentialsNonExpired;
@@ -93,5 +100,21 @@ public class AppUserDetails implements UserDetails {
 
     public void setEnabled(boolean enabled) {
         isEnabled = enabled;
+    }
+
+    public String getUserType() {
+        return userType;
+    }
+
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public void setUserId(UUID userId) {
+        this.userId = userId;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
     }
 }

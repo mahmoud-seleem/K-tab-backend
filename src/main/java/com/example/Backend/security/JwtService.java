@@ -5,12 +5,14 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.activation.spi.MailcapRegistryProvider;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -19,10 +21,7 @@ import java.security.Key;
 import java.security.PrivateKey;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @Service
@@ -84,12 +83,20 @@ public class JwtService {
     }
 
 
+    public String parseJwt(String headerAuth) {
+        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+            return headerAuth.substring(7);
+        }
+        return null;
+    }
     public String generateJwtToken(Authentication authentication) {
 
         AppUserDetails userPrincipal = (AppUserDetails) authentication.getPrincipal();
         return Jwts
                 .builder()
                 .setSubject((userPrincipal.getUsername()))
+                .claim("userId",userPrincipal.getUserId())
+                .claim("userType",userPrincipal.getUserType())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusWeeks(2)))                .signWith(getSecretKey())
                 .compact();
@@ -103,10 +110,24 @@ public class JwtService {
                 .getBody()
                 .getSubject();
     }
-    public boolean validateJwtToken(String jwtToken) {
+    public String parseJwt(HttpServletRequest request) {
+        String headerAuth = request.getHeader("Authorization");
+        return parseJwt(headerAuth);
+    }
+    public  UUID getUserIdFromHeader(String headerAuth) {
+        String token = parseJwt(headerAuth);
+        return UUID.fromString(
+                Jwts.parserBuilder()
+                .setSigningKey(getSecretKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("userId",String.class));
+    }
+    public boolean validateJwtToken(String jwtToken,UserDetails userDetails) {
         try {
             Jwts.parserBuilder().setSigningKey(getSecretKey()).build().parseClaimsJws(jwtToken);
-            return true;
+            return isTokenValid(jwtToken,userDetails);
         } catch (SignatureException e) {
             System.out.println("Invalid JWT signature: {}"+ e.getMessage());
         } catch (MalformedJwtException e) {

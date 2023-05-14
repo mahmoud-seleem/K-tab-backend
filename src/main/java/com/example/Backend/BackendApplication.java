@@ -29,7 +29,7 @@ public class BackendApplication {
 				passwordUtils.passwordEncoder(),
 				studentRepository,
 				authorRepository);
-  		utils.generateSomeUsers();
+		utils.generateSomeUsers();
 	}
 
 }

@@ -2,6 +2,9 @@ package com.example.Backend.security;
 
 import com.example.Backend.model.Student;
 import com.example.Backend.schema.LoginForm;
+import com.example.Backend.schema.LoginResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,10 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/security/")
@@ -33,7 +33,7 @@ public class SecurityController {
     );
 
     @PostMapping(path = "login/")
-    public String login(@RequestBody LoginForm loginForm){
+    public LoginResponse login(@RequestBody LoginForm loginForm){
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginForm.getEmail(),
@@ -43,8 +43,16 @@ public class SecurityController {
 //        UserDetails userDetails =
 //                appUserDetailsService.
 //                        loadUserByUsername(loginForm.getEmail());
-        return jwtService.generateJwtToken(authentication);
+
+        AppUserDetails userDetails =
+                (AppUserDetails)authentication.getPrincipal();
+        LoginResponse response = new LoginResponse();
+        response.setToken(jwtService.generateJwtToken(authentication));
+        response.setUserType(userDetails.getUserType());
+        response.setUserId(userDetails.getUserId());
+        return response;
     }
+
     @GetMapping(path = "students/{id}")
     @PostAuthorize(value = "hasAuthority('chapter_write')")
     public Student getStudent(@PathVariable int id) {
@@ -56,7 +64,6 @@ public class SecurityController {
         }
         return student;
     }
-
     @GetMapping(path ="admin/")
     public List<String> getStudents(){
         List<String> names = new ArrayList<>();
@@ -65,6 +72,12 @@ public class SecurityController {
     }
         return names;
     }
-
+    @GetMapping(path ="user/")
+    public UUID getUser(HttpServletRequest request){
+        UUID userId = jwtService.getUserIdFromHeader(
+                request.getHeader("Authorization")
+        );
+        return userId;
+    }
 
 }

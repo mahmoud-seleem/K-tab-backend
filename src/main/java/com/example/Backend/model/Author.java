@@ -35,7 +35,6 @@ public class Author extends AppUser {
 
     @Column(name = "contact")
     private String contact;
-
     @OneToMany(mappedBy = "author")
     private List<AuthorComment> authorCommentList;
 

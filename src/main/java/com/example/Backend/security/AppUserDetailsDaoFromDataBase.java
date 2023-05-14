@@ -51,23 +51,26 @@ public class AppUserDetailsDaoFromDataBase implements AppUserDetailsDao{
         return new AppUserDetails(
                 author.getAuthorEmail(),
                 author.getPassword(),
-                ADMIN.getGrantedAuthorities()
-                        .stream().toList(),
-                true,
-                true,
-                true,
-                true
+                ADMIN.name(),
+                author.getAuthorId(),
+                ADMIN.getGrantedAuthorities().stream().toList(),
+                author.isAccountNonExpired(),
+                author.isAccountNonLocked(),
+                author.isCredentialsNonExpired(),
+                author.isEnabled()
         );
     }
     private AppUserDetails createUserDetailsFromStudent(Student student){
         return new AppUserDetails(
                 student.getStudentEmail(),
                 student.getPassword(),
+                STUDENT.name(),
+                student.getStudentId(),
                 STUDENT.getGrantedAuthorities().stream().toList(),
-                true,
-                true,
-                true,
-                true
+                student.isAccountNonExpired(),
+                student.isAccountNonLocked(),
+                student.isCredentialsNonExpired(),
+                student.isEnabled()
         );
     }
 }
