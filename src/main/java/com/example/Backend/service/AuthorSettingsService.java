@@ -31,8 +31,12 @@ public class AuthorSettingsService {
     public AuthorSettingsForm updateAuthorSettingsInfo(AuthorSettingsForm form) throws Exception{
         AuthorSettings settings = getAuthorSettingsObject(form.getAuthorId());
         updateAuthorSettings(settings,form);
-        connectAuthorAndSettings(settings,form);
-        return createResponse(settings);
+//        connectAuthorAndSettings(settings,form);
+        return createResponse(
+                authorRepository.
+                        save(settings.getAuthor())
+                        .getAuthorSettings()
+        );
     }
 
     public AuthorSettingsForm getAuthorSettingsInfo(UUID authorId) throws Exception {
@@ -60,11 +64,12 @@ public class AuthorSettingsService {
     }
     private void connectAuthorAndSettings(AuthorSettings settings,AuthorSettingsForm form){
         Author author = authorRepository.findById(form.getAuthorId()).get();
+        authorSettingsRepository.delete(author.getAuthorSettings());
         author.setAuthorSettings(settings);
         authorRepository.save(author);
         authorSettingsRepository.save(settings);
     }
-    private void updateAuthorSettings(AuthorSettings settings,AuthorSettingsForm form) throws Exception{
+    private AuthorSettings updateAuthorSettings(AuthorSettings settings,AuthorSettingsForm form) throws Exception{
         for (Field field : form.getClass().getDeclaredFields()) {
             field.setAccessible(true);
             if (field.get(form) != null && field.getName() != "authorId"){
@@ -72,5 +77,6 @@ public class AuthorSettingsService {
                         ,settings, field.getType()).invoke(settings, field.get(form));
             }
         }
+        return authorSettingsRepository.save(settings);
     }
 }

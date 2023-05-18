@@ -6,8 +6,10 @@ import com.example.Backend.Repository.AuthorSettingsRepository;
 import com.example.Backend.model.Author;
 import com.example.Backend.model.AuthorSettings;
 import com.example.Backend.schema.AuthorSettingsForm;
+import com.example.Backend.security.JwtService;
 import com.example.Backend.service.AuthorSettingsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,9 +17,11 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/author/settings")
+@RequestMapping("/author/settings/")
 public class AuthorSettingsController {
 
+    @Autowired
+    private JwtService jwtService;
     @Autowired
     private AuthorSettingsRepository authorSettingsRepository;
     @Autowired
@@ -36,7 +40,8 @@ public class AuthorSettingsController {
 //        return response;
 //    }
     @PutMapping()
-    public AuthorSettingsForm updateAuthorSettingsInfo(@RequestBody AuthorSettingsForm form){
+    public AuthorSettingsForm updateAuthorSettingsInfo(HttpServletRequest request, @RequestBody AuthorSettingsForm form){
+        form.setAuthorId(jwtService.getUserId(request));
         AuthorSettingsForm response = new AuthorSettingsForm();
         try {
             response = authorSettingsService.updateAuthorSettingsInfo(form);
@@ -46,10 +51,12 @@ public class AuthorSettingsController {
         return response;
     }
     @GetMapping()
-    public AuthorSettingsForm getAuthorSettingsInfo(@RequestParam UUID authorId){
+    public AuthorSettingsForm getAuthorSettingsInfo(HttpServletRequest request){
         AuthorSettingsForm response = new AuthorSettingsForm();
         try {
-            response = authorSettingsService.getAuthorSettingsInfo(authorId);
+            response = authorSettingsService
+                    .getAuthorSettingsInfo(
+                            jwtService.getUserId(request));
         }catch (Exception e){
             e.printStackTrace();
         }

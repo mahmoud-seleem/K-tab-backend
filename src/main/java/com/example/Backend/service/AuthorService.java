@@ -13,12 +13,19 @@ import com.example.Backend.schema.AuthorSignUpForm;
 import com.example.Backend.schema.AuthorSignUpResponse;
 import com.example.Backend.schema.BookInfo;
 import com.example.Backend.schema.SearchInput;
+import com.example.Backend.security.AppUserDetails;
+import com.example.Backend.security.AppUserDetailsService;
+import com.example.Backend.security.JwtService;
 import com.example.Backend.utils.ImageConverter;
 import com.example.Backend.utils.Utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
@@ -46,12 +53,33 @@ public class AuthorService {
     private Utils utils;
 
     @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
     private BookRepository bookRepository;
     @Autowired
     private JsonConverter jsonConverter;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private JwtService jwtService;
+
+    @Autowired
+    private AppUserDetailsService appUserDetailsService;
+
     public AuthorSignUpResponse saveNewAuthor(AuthorSignUpForm form) throws Exception {
         Author author = createNewAuthor(form);
-        return constructResponse(authorRepository.save(author));
+        String jwtToken = authenticateNewAuthor(form);
+        return constructResponse(author, jwtToken);
+    }
+
+    private String authenticateNewAuthor(AuthorSignUpForm form) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        form.getAuthorEmail(),
+                        form.getPassword()
+                )
+        );
+        return jwtService.generateJwtToken(authentication);
     }
 
     public AuthorSignUpResponse updateAuthorInfo(AuthorSignUpForm form) throws Exception {
@@ -60,13 +88,14 @@ public class AuthorService {
         return constructResponse(authorRepository.save(author));
     }
 
-    public AuthorSignUpResponse getAuthorInfo(UUID authorId){
+    public AuthorSignUpResponse getAuthorInfo(UUID authorId) {
         return constructResponse(
-                authorRepository.findById(
-                       authorId
-                ).get()
+                authorRepository
+                        .findById(authorId)
+                        .get()
         );
     }
+
     private String storeProfilePhotoPath(Author author) {
         String photoPath = ("Authors/" + author.getAuthorId().toString() + "/profilePhoto.png");
         s3fileSystem.reserveEmptyPlace(photoPath);
@@ -87,53 +116,61 @@ public class AuthorService {
         Author author = new Author(
                 form.getAuthorName(),
                 form.getAuthorEmail(),
-                form.getPassword());
+                passwordEncoder.encode(form.getPassword()));
         return updateAuthorData(form,
                 createDefaultSettings(author));
     }
-    private Author createDefaultSettings(Author author){
+
+    private Author createDefaultSettings(Author author) {
         AuthorSettings authorSettings = new AuthorSettings();
         authorSettingsRepository.save(authorSettings);
         author.setAuthorSettings(authorSettings);
         return authorRepository.save(author);
     }
+
     private Author updateAuthorData(AuthorSignUpForm form, Author author) throws Exception {
-        for (Field field : form.getClass().getDeclaredFields()) {
+        List<Field> fields = new ArrayList<>();
+        fields = utils.getAllFields(fields, AuthorSignUpForm.class);
+        for (Field field : fields) {
             field.setAccessible(true);
             if (field.get(form) != null &&
                     field.getName() !=
-                            "profilePhotoAsBinaryString") {
+                            "profilePhotoAsBinaryString" &&
+                    field.getName() != "password") {
                 utils.getMethodBySignature("set", field
                         , author, field.getType()).invoke(author, field.get(form));
             }
         }
-        setupProfilePhoto(author,form);
-        return author;
+        updatePassword(form, author);
+        setupProfilePhoto(author, form);
+        return authorRepository.save(author);
     }
-    public List<Map<String,Object>> getAuthorBooksHeaders(SearchInput input) throws JsonProcessingException {
-        List<Map<String,Object>> authorBooksHeaders = new ArrayList<>();
+
+    public List<Map<String, Object>> getAuthorBooksHeaders(SearchInput input) throws JsonProcessingException {
+        List<Map<String, Object>> authorBooksHeaders = new ArrayList<>();
         ObjectMapper mapper = createCustomMapper();
-        for(BookInfo bookInfo: getAuthorBooksHeadersInfo(input)){
+        for (BookInfo bookInfo : getAuthorBooksHeadersInfo(input)) {
             authorBooksHeaders.add(
                     jsonConverter.convertToEntityAttribute(
                             mapper.writeValueAsString(bookInfo)).toMap());
         }
         return authorBooksHeaders;
     }
-    private List<BookInfo> getAuthorBooksHeadersInfo(SearchInput input){
-        Author author  = authorRepository.findById(
+
+    private List<BookInfo> getAuthorBooksHeadersInfo(SearchInput input) {
+        Author author = authorRepository.findById(
                 input.getAuthorId()
         ).get();
-        return constructBooksHeadersInfo(author ,input.getTitle());
+        return constructBooksHeadersInfo(author, input.getTitle());
     }
 
-    private List<BookInfo> constructBooksHeadersInfo(Author author,String title){
+    private List<BookInfo> constructBooksHeadersInfo(Author author, String title) {
         List<BookInfo> bookInfoList = new ArrayList<>();
         List<Book> bookList = (title == null) ?
                 author.getAuthorBooksList() :
                 bookRepository.findByTitleContainingAndAuthor(
-                        title,author);
-        for(Book book: bookList){
+                        title, author);
+        for (Book book : bookList) {
             BookInfo bookInfo = new BookInfo();
             bookInfo.setBookId(book.getBookId());
             bookInfo.setTitle(book.getTitle());
@@ -142,6 +179,7 @@ public class AuthorService {
         }
         return bookInfoList;
     }
+
     private AuthorSignUpResponse constructResponse(Author author) {
         return new AuthorSignUpResponse(
                 author.getAuthorId(),
@@ -149,13 +187,36 @@ public class AuthorService {
                 author.getAuthorEmail(),
                 author.getContact(),
                 author.getProfilePhoto(),
-                author.getAuthorSettings().getAuthorSettingsId());
+                author.getAuthorSettings().getAuthorSettingsId(),
+                null
+        );
     }
-    private ObjectMapper createCustomMapper(){
+
+    private AuthorSignUpResponse constructResponse(Author author, String jwtToken) {
+        return new AuthorSignUpResponse(
+                author.getAuthorId(),
+                author.getAuthorName(),
+                author.getAuthorEmail(),
+                author.getContact(),
+                author.getProfilePhoto(),
+                author.getAuthorSettings().getAuthorSettingsId(),
+                jwtToken
+        );
+    }
+
+    private ObjectMapper createCustomMapper() {
         ObjectMapper mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
         module.addSerializer(BookInfo.class, new BookHeaderSerializer());
         mapper.registerModule(module);
         return mapper;
+    }
+
+    private void updatePassword(AuthorSignUpForm form, Author author) {
+        if (form.getPassword() != null) {
+            author.setPassword(
+                    passwordEncoder
+                            .encode(form.getPassword()));
+        }
     }
 }

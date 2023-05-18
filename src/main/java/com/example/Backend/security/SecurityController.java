@@ -72,7 +72,7 @@ public class SecurityController {
     }
         return names;
     }
-    @GetMapping(path ="user/")
+    @PutMapping(path ="user/")
     public UUID getUser(HttpServletRequest request){
         return jwtService.getUserId(request);
     }

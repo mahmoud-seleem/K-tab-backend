@@ -12,12 +12,16 @@ import com.example.Backend.s3Connection.S3fileSystem;
 import com.example.Backend.schema.AuthorSignUpForm;
 import com.example.Backend.schema.AuthorSignUpResponse;
 import com.example.Backend.schema.SearchInput;
+import com.example.Backend.security.JwtService;
 import com.example.Backend.service.AuthorService;
 import com.example.Backend.service.BookService;
 import jakarta.persistence.PersistenceUnit;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
@@ -30,9 +34,11 @@ import java.io.InputStream;
 import java.util.*;
 
 @RestController
-@RequestMapping("/author")
+@RequestMapping("/author/")
 public class AuthorController {
 
+    @Autowired
+    private JwtService jwtService;
     @Autowired
     private AuthorRepository authorRepository;
     @Autowired
@@ -124,7 +130,27 @@ public class AuthorController {
             // Converting Image byte array into Base64 String
             return Base64.getEncoder().encodeToString(imageData);
     }
-    @PostMapping("/signup/")
+
+
+//    Starting the real endpoints
+//    Starting the real endpoints
+//    Starting the real endpoints
+//    Starting the real endpoints
+//    Starting the real endpoints
+//    Starting the real endpoints
+//    Starting the real endpoints
+//    Starting the real endpoints
+//    Starting the real endpoints
+//    Starting the real endpoints
+//    Starting the real endpoints
+//    Starting the real endpoints
+//    Starting the real endpoints
+//    Starting the real endpoints
+//    Starting the real endpoints
+//    Starting the real endpoints
+//    Starting the real endpoints
+//    Starting the real endpoints
+    @PostMapping("signup/")
     public AuthorSignUpResponse saveSignUpData(@RequestBody AuthorSignUpForm authorSignUpForm) {
         AuthorSignUpResponse response = new AuthorSignUpResponse();
         try {
@@ -136,7 +162,11 @@ public class AuthorController {
     }
 
     @PutMapping
-    public AuthorSignUpResponse updateAuthorProfileInfo(@RequestBody AuthorSignUpForm authorSignUpForm) {
+    @PostAuthorize(value = "hasAuthority('chapter_write')")
+    public AuthorSignUpResponse updateAuthorProfileInfo(HttpServletRequest request, @RequestBody AuthorSignUpForm authorSignUpForm) {
+        authorSignUpForm
+                .setAuthorId(
+                        jwtService.getUserId(request));
         AuthorSignUpResponse response = new AuthorSignUpResponse();
         try {
             response =  authorService.updateAuthorInfo(authorSignUpForm);
@@ -146,8 +176,8 @@ public class AuthorController {
         return response;
     }
     @GetMapping
-    public AuthorSignUpResponse getAuthorInfo(@RequestParam UUID authorId){
-        return authorService.getAuthorInfo(authorId);
+    public AuthorSignUpResponse getAuthorInfo(HttpServletRequest request){
+        return authorService.getAuthorInfo(jwtService.getUserId(request));
     }
     @GetMapping("books/headers/")
     public List<Map<String,Object>> getAuthorBooksHeaders(@RequestParam UUID authorId,@RequestParam(required = false) String title){
