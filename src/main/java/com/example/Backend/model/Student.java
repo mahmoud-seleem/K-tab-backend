@@ -46,12 +46,8 @@ public class Student extends AppUser {
     @OneToOne(mappedBy = "student")
     private StudentSettings studentSettings;
 
-    @ManyToMany()
-    @JoinTable(
-            name = "student_disabilities",
-            joinColumns = @JoinColumn(name = "student_id"),
-            inverseJoinColumns = @JoinColumn(name = "disability_id"))
-    private List<Disability> disabilityList;
+    @OneToMany(mappedBy = "student")
+    private List<StudentDisability> studentDisabilityList;
 
     @OneToMany(mappedBy = "destinationStudent")
     private List<StudentNotification> studentNotificationList;
@@ -65,27 +61,13 @@ public class Student extends AppUser {
 
     public Student() {
     }
-    public Student(String studentName,
-                   String studentEmail,
-                   String password) {
+    public Student( String studentName,
+                    String studentEmail,
+                    String password) {
         this.studentName = studentName;
         this.studentEmail = studentEmail;
         this.password = password;
-//        this.profilePhoto = profilePhoto;
-//        this.contact = contact;
-        //this.educationLevel = educationLevel;
     }
-//
-//    public Student(String studentName, String studentEmail, String password, String profilePhoto, String contact, String educationLevel, List<StudentComment> studentCommentList) {
-//        this.studentName = studentName;
-//        this.studentEmail = studentEmail;
-//        this.password = password;
-//        this.profilePhoto = profilePhoto;
-//        this.contact = contact;
-//        this.educationLevel = educationLevel;
-//        this.studentCommentList = studentCommentList;
-//    }
-//
     public Student(String studentName, String studentEmail) {
         this.studentName = studentName;
         this.studentEmail = studentEmail;
@@ -118,7 +100,7 @@ public class Student extends AppUser {
         this.profilePhoto = "profile_photo_link";
         this.educationLevel = "3rd secondary";
         this.studentCommentList = new ArrayList<>();
-        this.disabilityList = new ArrayList<>();
+        this.studentDisabilityList = new ArrayList<>();
         this.studentNotificationList = new ArrayList<>();
         this.interactions = new ArrayList<>();
         this.paymentList = new ArrayList<>();
@@ -233,6 +215,14 @@ public class Student extends AppUser {
         this.studentCommentList = studentCommentList;
     }
 
+    public List<StudentDisability> getStudentDisabilityList() {
+        return studentDisabilityList;
+    }
+
+    public void setStudentDisabilityList(List<StudentDisability> studentDisabilityList) {
+        this.studentDisabilityList = studentDisabilityList;
+    }
+
     public void addPayment(Payment payment){
         this.getPaymentList().add(payment);
         payment.setStudent(this);
@@ -241,27 +231,6 @@ public class Student extends AppUser {
         this.getPaymentList().remove(payment);
         payment.setStudent(null);
     }
-    public void addDisability(Disability disability){
-        this.disabilityList.add(disability);
-        //disability.getStudentList().add(this);
-        //disability.addStudent(this);
-    }
-    public void removeDisability(Disability disability){
-        this.disabilityList.remove(disability);
-        //disability.removeStudent(this);
-    }
-    public List<Disability> getDisabilityList() {
-        return disabilityList;
-    }
-    public void setDisabilityList(List<Disability> disabilityList) {
-        this.disabilityList = disabilityList;
-    }
-//    public void setDisabilityList(List<String> disabilityList) {
-//        for(String s : disabilityList){
-//            this.getDisabilityList().add(new Disability(s));
-//        }
-//    }
-
     public List<StudentNotification> getStudentNotificationList() {
         return studentNotificationList;
     }
@@ -270,6 +239,14 @@ public class Student extends AppUser {
         this.studentNotificationList = studentNotificationList;
     }
 
+    public void removeStudentDisability(StudentDisability studentDisability){
+        this.getStudentDisabilityList().remove(studentDisability);
+        studentDisability.setStudent(null);
+    }
+    public void addStudentDisability(StudentDisability studentDisability){
+        this.getStudentDisabilityList().add(studentDisability);
+        studentDisability.setStudent(this);
+    }
     public void addStudentNotification(StudentNotification studentNotification){
         this.getStudentNotificationList().add(studentNotification);
         studentNotification.setDestinationStudent(this);

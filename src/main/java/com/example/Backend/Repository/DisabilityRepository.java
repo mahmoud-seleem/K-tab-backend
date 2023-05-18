@@ -8,4 +8,5 @@ import java.util.UUID;
 
 @Repository
 public interface DisabilityRepository extends JpaRepository<Disability, UUID> {
+    Disability findByDisabilityName(String disabilityName);
 }

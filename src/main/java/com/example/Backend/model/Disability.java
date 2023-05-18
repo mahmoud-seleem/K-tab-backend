@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "disability")
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler","studentList"})
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler","studentDisabilityList"})
 public class Disability {
     @Id
     @GeneratedValue
@@ -19,63 +19,42 @@ public class Disability {
     @Column(name = "disability_name" ,nullable = false)
     private String disabilityName;
 
-    @Column(name = "disability_details")
-    private String disabilityDetails;
-
-    @ManyToMany
-    @JoinTable(
-            name = "student_disabilities",
-            joinColumns = @JoinColumn(name = "disability_id"),
-            inverseJoinColumns = @JoinColumn(name = "student_id"))
-    private List<Student> studentList = new ArrayList<>();
+    @OneToMany(mappedBy = "disability")
+    private List<StudentDisability> studentDisabilityList = new ArrayList<>();
 
     public Disability() {
     }
-
-    public Disability(String disabilityName, String disabilityDetails) {
-        this.disabilityName = disabilityName;
-        this.disabilityDetails = disabilityDetails;
-    }
     public Disability(String disabilityName) {
         this.disabilityName = disabilityName;
-        this.disabilityDetails = "none";
+    }
+
+    public List<StudentDisability> getStudentDisabilityList() {
+        return studentDisabilityList;
+    }
+
+    public void setStudentDisabilityList(List<StudentDisability> studentDisabilityList) {
+        this.studentDisabilityList = studentDisabilityList;
     }
 
     public UUID getDisabilityId() {
         return disabilityId;
     }
-
     public void setDisabilityId(UUID disabilityId) {
         this.disabilityId = disabilityId;
     }
-
     public String getDisabilityName() {
         return disabilityName;
     }
-
     public void setDisabilityName(String disabilityName) {
         this.disabilityName = disabilityName;
     }
-
-    public String getDisabilityDetails() {
-        return disabilityDetails;
+    public void removeStudentDisability(StudentDisability studentDisability){
+        this.getStudentDisabilityList().remove(studentDisability);
+        studentDisability.setDisability(null);
+    }
+    public void addStudentDisability(StudentDisability studentDisability){
+        this.getStudentDisabilityList().add(studentDisability);
+        studentDisability.setDisability(this);
     }
 
-    public void setDisabilityDetails(String disabilityDetails) {
-        this.disabilityDetails = disabilityDetails;
-    }
-
-    public List<Student> getStudentList() {
-        return studentList;
-    }
-
-    public void setStudentList(List<Student> studentList) {
-        this.studentList = studentList;
-    }
-    public void addStudent(Student student){
-        this.getStudentList().add(student);
-    }
-    public void removeStudent(Student student){
-        this.getStudentList().remove(student);
-    }
 }

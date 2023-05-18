@@ -162,7 +162,7 @@ public class AuthorController {
     }
 
     @PutMapping
-    @PostAuthorize(value = "hasAuthority('chapter_write')")
+    @PreAuthorize(value = "hasAuthority('chapter_write')")
     public AuthorSignUpResponse updateAuthorProfileInfo(HttpServletRequest request, @RequestBody AuthorSignUpForm authorSignUpForm) {
         authorSignUpForm
                 .setAuthorId(
@@ -176,7 +176,7 @@ public class AuthorController {
         return response;
     }
     @GetMapping
-    public AuthorSignUpResponse getAuthorInfo(HttpServletRequest request){
+    public AuthorSignUpResponse getAuthorProfileInfo(HttpServletRequest request){
         return authorService.getAuthorInfo(jwtService.getUserId(request));
     }
     @GetMapping("books/headers/")

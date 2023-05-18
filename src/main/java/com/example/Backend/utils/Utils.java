@@ -1,8 +1,10 @@
 package com.example.Backend.utils;
 
 import com.example.Backend.Repository.AuthorRepository;
+import com.example.Backend.Repository.DisabilityRepository;
 import com.example.Backend.Repository.StudentRepository;
 import com.example.Backend.model.Author;
+import com.example.Backend.model.Disability;
 import com.example.Backend.model.Student;
 import jdk.jshell.execution.Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +14,7 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class Utils {
@@ -24,16 +24,19 @@ public class Utils {
 
     private PasswordEncoder passwordEncoder;
 
+    private DisabilityRepository disabilityRepository;
     public Utils() {
     }
 
     @Autowired
     public Utils(PasswordEncoder passwordEncoder,
                  StudentRepository studentRepository,
-                 AuthorRepository authorRepository){
+                 AuthorRepository authorRepository,
+                 DisabilityRepository disabilityRepository){
         this.passwordEncoder = passwordEncoder;
         this.studentRepository = studentRepository;
         this.authorRepository = authorRepository;
+        this.disabilityRepository = disabilityRepository;
     }
     public static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     public Method getMethodBySignature(String prefix, Field field, Object callerObject, Class<?>... parametersTypes) throws NoSuchMethodException {
@@ -56,6 +59,16 @@ public class Utils {
         ));
     }
 
+    public void generateSomeDisabilities(){
+        disabilityRepository
+                .saveAll(
+                        Arrays.asList(
+                                new Disability("Blind"),
+                                new Disability("Visually_Impaired"),
+                                new Disability("Dyslexia")
+                        )
+                );
+    }
     public  List<Field> getAllFields(List<Field> fields, Class<?> type) {
         fields.addAll(Arrays.asList(type.getDeclaredFields()));
         if (type.getSuperclass() != null) {

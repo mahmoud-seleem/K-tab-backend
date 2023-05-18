@@ -30,6 +30,25 @@ public class Book {
     @Column(name = "book_cover")
     private String bookCover;
 
+
+    @Column(name = "publish_date")
+    private LocalDateTime publishDate;
+
+    @Column(name = "last_edit_date")
+    private LocalDateTime lastEditDate;
+    @OneToMany(mappedBy = "book")
+    private List<Rating> ratings = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "author_id")
+    private Author author;
+
+    @ManyToMany
+    @JoinTable(name = "book_tags"
+            ,joinColumns = @JoinColumn(name = "book_id")
+            ,inverseJoinColumns = @JoinColumn(name = "tag_id") )
+    private List<Tag> tags = new ArrayList<>();
+
     public String getBookCover() {
         return bookCover;
     }
@@ -63,24 +82,6 @@ public class Book {
     public void setLastEditDate(LocalDateTime lastEditDate) {
         this.lastEditDate = lastEditDate;
     }
-
-    @Column(name = "publish_date")
-    private LocalDateTime publishDate;
-
-    @Column(name = "last_edit_date")
-    private LocalDateTime lastEditDate;
-    @OneToMany(mappedBy = "book")
-    private List<Rating> ratings = new ArrayList<>();
-
-    @ManyToOne
-    @JoinColumn(name = "author_id")
-    private Author author;
-
-    @ManyToMany
-    @JoinTable(name = "book_tags"
-            ,joinColumns = @JoinColumn(name = "book_id")
-            ,inverseJoinColumns = @JoinColumn(name = "tag_id") )
-    private List<Tag> tags = new ArrayList<>();
 
     @OneToMany(mappedBy = "book")
     private List<Chapter> chapters = new ArrayList<>();
