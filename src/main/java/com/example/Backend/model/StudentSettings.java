@@ -14,31 +14,31 @@ public class StudentSettings {
     private UUID studentSettingsId;
 
     @Column(name = "brightness_level")
-    private int brightnessLevel;
+    private Integer brightnessLevel;
 
     @Column(name = "contrast_level")
-    private int contrastLevel;
+    private Integer contrastLevel;
 
     @Column(name = "font_size")
-    private int fontSize;
+    private Integer fontSize;
 
     @Column(name = "font_style")
     private String fontStyle;
 
     @Column(name = "invert_color")
-    private boolean invertColor;
+    private Boolean invertColor;
 
     @Column(name = "grayscale")
-    private boolean grayscale;
+    private Boolean grayscale;
 
     @Column(name = "switch_text_to_symbols")
-    private boolean switchTextToSymbols;
+    private Boolean switchTextToSymbols;
 
     @Column(name = "play_lesson")
-    private boolean playLesson;
+    private Boolean playLesson;
 
     @Column(name = "audio_transcript_highlighting")
-    private boolean audioTranscriptHighLighting;
+    private Boolean audioTranscriptHighLighting;
 
     @OneToOne
     @JoinColumn(name = "student_id")

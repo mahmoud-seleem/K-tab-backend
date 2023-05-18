@@ -11,6 +11,7 @@ import java.util.UUID;
 public class AuthorSettingsForm {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private UUID authorId;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private UUID authorSettingsId;
     private Integer brightnessLevel;
     private Integer contrastLevel;

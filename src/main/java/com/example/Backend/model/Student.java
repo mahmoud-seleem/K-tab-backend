@@ -12,7 +12,12 @@ import java.util.*;
 @Table(name = "student")
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler",
         "studentCommentList",
-        "studentNotificationList","interactions","ratings","studentSettings","paymentList"} , ignoreUnknown = true)
+        "studentNotificationList",
+        "interactions",
+        "ratings",
+        "studentSettings",
+        "paymentList",
+        "studentDisabilityList"} , ignoreUnknown = true)
 public class Student extends AppUser {
 
     @Id
@@ -47,7 +52,7 @@ public class Student extends AppUser {
     private StudentSettings studentSettings;
 
     @OneToMany(mappedBy = "student")
-    private List<StudentDisability> studentDisabilityList;
+    private List<StudentDisability> studentDisabilityList = new ArrayList<>();
 
     @OneToMany(mappedBy = "destinationStudent")
     private List<StudentNotification> studentNotificationList;
@@ -270,5 +275,16 @@ public class Student extends AppUser {
     public void removeInteraction(Interaction interaction){
         this.getInteractions().remove(interaction);
         interaction.setStudent(null);
+    }
+    public List<String> getDisabilitiesNames(){
+        List<String> disabilitiesNames = new ArrayList<>();
+        for (StudentDisability studentDisability
+                : this.getStudentDisabilityList()){
+            disabilitiesNames.add(
+                    studentDisability
+                            .getDisability().getDisabilityName()
+            );
+        }
+        return disabilitiesNames;
     }
 }

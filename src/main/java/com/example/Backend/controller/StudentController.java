@@ -2,8 +2,13 @@ package com.example.Backend.controller;
 
 import com.example.Backend.Repository.*;
 import com.example.Backend.model.*;
+import com.example.Backend.schema.AuthorSignUpForm;
+import com.example.Backend.schema.AuthorSignUpResponse;
+import com.example.Backend.schema.StudentSignUpForm;
 import com.example.Backend.service.StudentService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -31,124 +36,155 @@ public class StudentController {
     @Autowired
     private DisabilityRepository disabilityRepository;
 
-    @GetMapping("/new")
-    public Student saveNewStudent() {
-        Student student = new Student("mahmoud");
-        return studentRepository.save(student);
+    @PostMapping("signup/")
+    public AuthorSignUpResponse saveSignUpData(@RequestBody StudentSignUpForm studentSignUpForm) {
+        response = new AuthorSignUpResponse();
+        try {
+            response =  authorService.saveNewAuthor(authorSignUpForm);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return response;
     }
 
-    @GetMapping("/getallstudents/")
-    public List<Student> getStudent() {
-        return studentRepository.findAll();
+    @PutMapping
+    @PreAuthorize(value = "hasAuthority('chapter_write')")
+    public AuthorSignUpResponse updateAuthorProfileInfo(HttpServletRequest request, @RequestBody AuthorSignUpForm authorSignUpForm) {
+        authorSignUpForm
+                .setAuthorId(
+                        jwtService.getUserId(request));
+        AuthorSignUpResponse response = new AuthorSignUpResponse();
+        try {
+            response =  authorService.updateAuthorInfo(authorSignUpForm);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return response;
+    }
+    @GetMapping
+    public AuthorSignUpResponse getAuthorProfileInfo(HttpServletRequest request){
+        return authorService.getAuthorInfo(jwtService.getUserId(request));
     }
 
-    @GetMapping("/newcomment/{id}")
-    public StudentComment saveNewStudentComment(@PathVariable UUID id) {
-        StudentComment studentComment = new StudentComment("blablablablablabalbala");
-        Student a = studentRepository.findById(id).get();
-        a.addStudentComment(studentComment);
-        StudentComment ac = studentCommentRepository.save(studentComment);
-        return ac;
-    }
-
-    @GetMapping("/getcomments/{id}")
-    public List<StudentComment> getAllStudentComments(@PathVariable UUID id) {
-        Student a = studentRepository.findById(id).get();
-        return a.getStudentCommentList();
-    }
-
-    @GetMapping("/getcommentstudent/{id}")
-    public Student getCommentStudent(@PathVariable UUID id) {
-        StudentComment studentComment = studentCommentRepository.findById(id).get();
-        return studentComment.getStudent();
-    }
-
-    @GetMapping("/newsettings/{id}")
-    public StudentSettings newStudentSettings(@PathVariable UUID id) {
-        Student student = studentRepository.findById(id).get();
-        StudentSettings studentSettings = new StudentSettings();
-        student.setStudentSettings(studentSettings);
-        return studentSettingsRepository.save(studentSettings);
-    }
-
-    @GetMapping("/getstudentsettings/{id}")
-    public StudentSettings getStudentSettings(@PathVariable UUID id) {
-        return studentRepository.findById(id).get().getStudentSettings();
-    }
-
-    @GetMapping("/getsettingsauthor/{id}")
-    public Student getSettingsStudent(@PathVariable UUID id) {
-        return studentSettingsRepository.findById(id).get().getStudent();
-    }
-
-    @GetMapping("/getalldis")
-    public List<Disability> getAllDis() {
-        return disabilityRepository.findAll();
-    }
+//    @GetMapping("/new")
+//    public Student saveNewStudent() {
+//        Student student = new Student("mahmoud");
+//        return studentRepository.save(student);
+//    }
+//
+//    @GetMapping("/getallstudents/")
+//    public List<Student> getStudent() {
+//        return studentRepository.findAll();
+//    }
+//
+//    @GetMapping("/newcomment/{id}")
+//    public StudentComment saveNewStudentComment(@PathVariable UUID id) {
+//        StudentComment studentComment = new StudentComment("blablablablablabalbala");
+//        Student a = studentRepository.findById(id).get();
+//        a.addStudentComment(studentComment);
+//        StudentComment ac = studentCommentRepository.save(studentComment);
+//        return ac;
+//    }
+//
+//    @GetMapping("/getcomments/{id}")
+//    public List<StudentComment> getAllStudentComments(@PathVariable UUID id) {
+//        Student a = studentRepository.findById(id).get();
+//        return a.getStudentCommentList();
+//    }
+//
+//    @GetMapping("/getcommentstudent/{id}")
+//    public Student getCommentStudent(@PathVariable UUID id) {
+//        StudentComment studentComment = studentCommentRepository.findById(id).get();
+//        return studentComment.getStudent();
+//    }
+//
+//    @GetMapping("/newsettings/{id}")
+//    public StudentSettings newStudentSettings(@PathVariable UUID id) {
+//        Student student = studentRepository.findById(id).get();
+//        StudentSettings studentSettings = new StudentSettings();
+//        student.setStudentSettings(studentSettings);
+//        return studentSettingsRepository.save(studentSettings);
+//    }
+//
+//    @GetMapping("/getstudentsettings/{id}")
+//    public StudentSettings getStudentSettings(@PathVariable UUID id) {
+//        return studentRepository.findById(id).get().getStudentSettings();
+//    }
+//
+//    @GetMapping("/getsettingsauthor/{id}")
+//    public Student getSettingsStudent(@PathVariable UUID id) {
+//        return studentSettingsRepository.findById(id).get().getStudent();
+//    }
+//
+//    @GetMapping("/getalldis")
+//    public List<Disability> getAllDis() {
+//        return disabilityRepository.findAll();
+//    }
 
     //    @GetMapping("/get/{id}")
 //    public List<StudentComment> getStudent(@PathVariable UUID id){
 //        return studentRepository.findById(id).get().getStudentCommentList();
 //    }
-    @GetMapping("/getstudentdis/{id}")
-    public List<Disability> getStudentdis(@PathVariable UUID id) {
-        return studentRepository.findById(id).get().getDisabilityList();
-    }
-
-    @GetMapping("/newdis/{dis}")
-    public Disability saveNewdis(@PathVariable String dis) {
-        Disability disability = new Disability(dis);
-        return disabilityRepository.save(disability);
-    }
-
-    @GetMapping("/getdisstudents/{id}")
-    public List<Student> getstudents(@PathVariable UUID id) {
-        Disability d = disabilityRepository.findById(id).get();
-        return d.getStudentList();
-    }
-
-    @GetMapping("/adddistostudent/{disId}/{stdId}")
-    public Disability addDisToStudent(@PathVariable UUID disId, @PathVariable UUID stdId) {
-        Disability disability = disabilityRepository.findById(disId).get();
-        Student student = studentRepository.findById(stdId).get();
-        student.addDisability(disability);
-        return disabilityRepository.save(disability);
-    }
-
-    @PostMapping("/newstudent/")
-    public Student createNewStudent(@RequestBody Student student){
-        for(Disability d : student.getDisabilityList()){
-            disabilityRepository.save(d);
-        }
-        return studentRepository.save(student);
-    }
-    @GetMapping("get/{id}")
-    public Student getStudentById(@PathVariable UUID id){
-        return studentService.findById(id);
-
-    }
-
-    @CrossOrigin
-    @PostMapping
-    public Student addStudent(@RequestBody Student student){
-        return studentService.addStudent(student);
-    }
-
-    @GetMapping("/get")
-    public Student getByEmail(@RequestParam(value="email") String email){
-        return studentService.findByEmail(email);
-    }
-
-
-//    @GetMapping("check/{email}")
-//    public String existByEmail(@PathVariable String email){
-//         if(studentService.existByEmail(email)){
-//             return "student";
-//
-//         }
-//         else{
-//             return "none";
-//         }
+//    @GetMapping("/getstudentdis/{id}")
+//    public List<Disability> getStudentdis(@PathVariable UUID id) {
+//        return studentRepository.findById(id).get().getDisabilityList();
 //    }
 
+//    @GetMapping("/newdis/{dis}")
+//    public Disability saveNewdis(@PathVariable String dis) {
+//        Disability disability = new Disability(dis);
+//        return disabilityRepository.save(disability);
+//    }
+
+//    @GetMapping("/getdisstudents/{id}")
+//    public List<Student> getstudents(@PathVariable UUID id) {
+//        Disability d = disabilityRepository.findById(id).get();
+//        return d.getStudentList();
+//    }
+
+//    @GetMapping("/adddistostudent/{disId}/{stdId}")
+//    public Disability addDisToStudent(@PathVariable UUID disId, @PathVariable UUID stdId) {
+//        Disability disability = disabilityRepository.findById(disId).get();
+//        Student student = studentRepository.findById(stdId).get();
+//        student.addDisability(disability);
+//        return disabilityRepository.save(disability);
+//    }
+
+//    @PostMapping("/newstudent/")
+//    public Student createNewStudent(@RequestBody Student student){
+//        for(Disability d : student.getDisabilityList()){
+//            disabilityRepository.save(d);
+//        }
+//        return studentRepository.save(student);
+//    }
+//    @GetMapping("get/{id}")
+//    public Student getStudentById(@PathVariable UUID id){
+//        return studentService.findById(id);
+//
+//    }
+//
+//
+//    @CrossOrigin
+//    @PostMapping
+//    public Student addStudent(@RequestBody Student student){
+//        return studentService.addStudent(student);
+//    }
+//
+//    @GetMapping("/get")
+//    public Student getByEmail(@RequestParam(value="email") String email){
+//        return studentService.findByEmail(email);
+//    }
+//
+//
+////    @GetMapping("check/{email}")
+////    public String existByEmail(@PathVariable String email){
+////         if(studentService.existByEmail(email)){
+////             return "student";
+////
+////         }
+////         else{
+////             return "none";
+////         }
+////    }
+//
 }
