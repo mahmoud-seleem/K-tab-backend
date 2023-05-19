@@ -5,6 +5,8 @@ import com.example.Backend.model.*;
 import com.example.Backend.schema.AuthorSignUpForm;
 import com.example.Backend.schema.AuthorSignUpResponse;
 import com.example.Backend.schema.StudentSignUpForm;
+import com.example.Backend.schema.StudentSignUpResponse;
+import com.example.Backend.security.JwtService;
 import com.example.Backend.service.StudentService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/student")
+@RequestMapping("/student/")
 public class StudentController {
     @Autowired
     private StudentRepository studentRepository;
@@ -32,15 +34,18 @@ public class StudentController {
     private StudentNotificationRepository studentNotificationRepository;
 
     @Autowired
+    private JwtService jwtService;
+
+    @Autowired
     private StudentSettingsRepository studentSettingsRepository;
     @Autowired
     private DisabilityRepository disabilityRepository;
 
     @PostMapping("signup/")
-    public AuthorSignUpResponse saveSignUpData(@RequestBody StudentSignUpForm studentSignUpForm) {
-        response = new AuthorSignUpResponse();
+    public StudentSignUpResponse saveSignUpData(@RequestBody StudentSignUpForm studentSignUpForm) {
+        StudentSignUpResponse response = new StudentSignUpResponse();
         try {
-            response =  authorService.saveNewAuthor(authorSignUpForm);
+            response = studentService.saveNewStudent(studentSignUpForm);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -48,22 +53,23 @@ public class StudentController {
     }
 
     @PutMapping
-    @PreAuthorize(value = "hasAuthority('chapter_write')")
-    public AuthorSignUpResponse updateAuthorProfileInfo(HttpServletRequest request, @RequestBody AuthorSignUpForm authorSignUpForm) {
-        authorSignUpForm
-                .setAuthorId(
+    public StudentSignUpResponse updateStudentProfileInfo(HttpServletRequest request
+            , @RequestBody StudentSignUpForm studentSignUpForm) {
+        studentSignUpForm
+                .setStudentId(
                         jwtService.getUserId(request));
-        AuthorSignUpResponse response = new AuthorSignUpResponse();
+        StudentSignUpResponse response = new StudentSignUpResponse();
         try {
-            response =  authorService.updateAuthorInfo(authorSignUpForm);
+            response = studentService.updateStudentInfo(studentSignUpForm);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return response;
     }
+
     @GetMapping
-    public AuthorSignUpResponse getAuthorProfileInfo(HttpServletRequest request){
-        return authorService.getAuthorInfo(jwtService.getUserId(request));
+    public StudentSignUpResponse getStudentProfileInfo(HttpServletRequest request) {
+        return studentService.getStudentInfo(jwtService.getUserId(request));
     }
 
 //    @GetMapping("/new")

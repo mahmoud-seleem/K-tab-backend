@@ -74,13 +74,13 @@ public class StudentService {
         return jwtService.generateJwtToken(authentication);
     }
 
-    public StudentSignUpResponse updateAuthorInfo(StudentSignUpForm form) throws Exception {
-        Student student = studentRepository.findById(form.getStudentId()).get()
+    public StudentSignUpResponse updateStudentInfo(StudentSignUpForm form) throws Exception {
+        Student student = studentRepository.findById(form.getStudentId()).get();
         updateStudentData(form,student);
         return constructResponse(studentRepository.save(student));
     }
 
-    public StudentSignUpResponse getAuthorInfo(UUID studentId) {
+    public StudentSignUpResponse getStudentInfo(UUID studentId) {
         return constructResponse(
                 studentRepository
                         .findById(studentId)

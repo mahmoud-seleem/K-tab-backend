@@ -29,6 +29,10 @@ public class StudentSignUpResponse extends StudentSignUpBasicInfo{
         this.token = token;
     }
 
+    public StudentSignUpResponse() {
+
+    }
+
     public String getProfilePhotoPath() {
         return profilePhotoPath;
     }
