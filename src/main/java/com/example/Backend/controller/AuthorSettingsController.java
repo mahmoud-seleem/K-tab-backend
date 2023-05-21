@@ -5,19 +5,20 @@ import com.example.Backend.Repository.AuthorRepository;
 import com.example.Backend.Repository.AuthorSettingsRepository;
 import com.example.Backend.model.Author;
 import com.example.Backend.model.AuthorSettings;
-import com.example.Backend.schema.AuthorSettingsForm;
+import com.example.Backend.schema.SettingsForm;
+import com.example.Backend.schema.SettingsResponse;
 import com.example.Backend.security.JwtService;
 import com.example.Backend.service.AuthorSettingsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 import java.util.UUID;
 
-@RestController
-@RequestMapping("/author/settings/")
+@Component
 public class AuthorSettingsController {
 
     @Autowired
@@ -39,10 +40,9 @@ public class AuthorSettingsController {
 //        }
 //        return response;
 //    }
-    @PutMapping()
-    public AuthorSettingsForm updateAuthorSettingsInfo(HttpServletRequest request, @RequestBody AuthorSettingsForm form){
+    public SettingsResponse updateAuthorSettingsInfo(HttpServletRequest request,SettingsForm form){
         form.setAuthorId(jwtService.getUserId(request));
-        AuthorSettingsForm response = new AuthorSettingsForm();
+        SettingsResponse response = new SettingsResponse();
         try {
             response = authorSettingsService.updateAuthorSettingsInfo(form);
         }catch (Exception e){
@@ -50,9 +50,8 @@ public class AuthorSettingsController {
         }
         return response;
     }
-    @GetMapping()
-    public AuthorSettingsForm getAuthorSettingsInfo(HttpServletRequest request){
-        AuthorSettingsForm response = new AuthorSettingsForm();
+    public SettingsResponse getAuthorSettingsInfo(HttpServletRequest request){
+        SettingsResponse response = new SettingsResponse();
         try {
             response = authorSettingsService
                     .getAuthorSettingsInfo(
@@ -63,7 +62,6 @@ public class AuthorSettingsController {
         return response;
     }
 
-    @PostMapping("/setsettings/")
     public AuthorSettings setAuthorSettings(@RequestBody Map<String,Object> authorAndSettings){
         UUID authorId = UUID.fromString((String) authorAndSettings.get("authorId"));
         Author author = authorRepository.findById(authorId).get();
@@ -73,7 +71,6 @@ public class AuthorSettingsController {
         return authorSettingsRepository.save(authorSettings);
     }
 
-    @GetMapping(path = "/getsettings/{authorId}")
     public AuthorSettings getAuthorSettings(@PathVariable UUID authorId){
         return authorRepository.findById(authorId).get().getAuthorSettings();
     }

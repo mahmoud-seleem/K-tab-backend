@@ -1,37 +1,33 @@
 package com.example.Backend.schema;
 
-import com.example.Backend.model.Book;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
-public class AuthorSettingsForm {
+@Component
+public class SettingsForm {
+
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private UUID authorId;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private UUID authorSettingsId;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private UUID studentId;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private UUID studentSettingsId;
     private Integer brightnessLevel;
     private Integer contrastLevel;
     private Integer fontSize;
     private String fontStyle;
     private Boolean invertColor;
     private Boolean grayScale;
+    private Boolean switchTextToSymbols;
+    private Boolean playLesson;
+    private Boolean audioTranscriptHighLighting;
 
-    public AuthorSettingsForm() {
-    }
-
-    public AuthorSettingsForm(UUID authorId, UUID authorSettingsId, Integer brightnessLevel, Integer contrastLevel, Integer fontSize, String fontStyle, Boolean invertColor, Boolean grayscale) {
-        this.authorId = authorId;
-        this.authorSettingsId = authorSettingsId;
-        this.brightnessLevel = brightnessLevel;
-        this.contrastLevel = contrastLevel;
-        this.fontSize = fontSize;
-        this.fontStyle = fontStyle;
-        this.invertColor = invertColor;
-        this.grayScale = grayscale;
+    public SettingsForm() {
     }
 
     public UUID getAuthorId() {
@@ -48,6 +44,22 @@ public class AuthorSettingsForm {
 
     public void setAuthorSettingsId(UUID authorSettingsId) {
         this.authorSettingsId = authorSettingsId;
+    }
+
+    public UUID getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(UUID studentId) {
+        this.studentId = studentId;
+    }
+
+    public UUID getStudentSettingsId() {
+        return studentSettingsId;
+    }
+
+    public void setStudentSettingsId(UUID studentSettingsId) {
+        this.studentSettingsId = studentSettingsId;
     }
 
     public Integer getBrightnessLevel() {
@@ -97,5 +109,28 @@ public class AuthorSettingsForm {
     public void setGrayScale(Boolean grayScale) {
         this.grayScale = grayScale;
     }
-}
 
+    public Boolean getSwitchTextToSymbols() {
+        return switchTextToSymbols;
+    }
+
+    public void setSwitchTextToSymbols(Boolean switchTextToSymbols) {
+        this.switchTextToSymbols = switchTextToSymbols;
+    }
+
+    public Boolean getPlayLesson() {
+        return playLesson;
+    }
+
+    public void setPlayLesson(Boolean playLesson) {
+        this.playLesson = playLesson;
+    }
+
+    public Boolean getAudioTranscriptHighLighting() {
+        return audioTranscriptHighLighting;
+    }
+
+    public void setAudioTranscriptHighLighting(Boolean audioTranscriptHighLighting) {
+        this.audioTranscriptHighLighting = audioTranscriptHighLighting;
+    }
+}

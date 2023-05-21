@@ -57,8 +57,6 @@ public class JwtService {
     }
     public String generateJwtToken(Map<String,Object> extraClaims,
             UserDetails userDetails){
-
-
         return Jwts.builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
@@ -110,6 +108,7 @@ public class JwtService {
                 .getBody()
                 .getSubject();
     }
+
     public String parseJwt(HttpServletRequest request) {
         String headerAuth = request.getHeader("Authorization");
         return parseJwt(headerAuth);
@@ -123,6 +122,15 @@ public class JwtService {
                 .parseClaimsJws(token)
                 .getBody()
                 .get("userId",String.class));
+    }
+    public String getUserType(HttpServletRequest request) {
+        String token = parseJwt(request);
+        return Jwts.parserBuilder()
+                        .setSigningKey(getSecretKey())
+                        .build()
+                        .parseClaimsJws(token)
+                        .getBody()
+                        .get("userType",String.class);
     }
     public boolean validateJwtToken(String jwtToken,UserDetails userDetails) {
         try {

@@ -1,10 +1,14 @@
 package com.example.Backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.util.UUID;
 
 @Entity
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer",
+        "handler","student"},ignoreUnknown = true)
 @Table(name = "student_settings")
 public class StudentSettings {
 
@@ -76,27 +80,27 @@ public class StudentSettings {
         this.studentSettingsId = studentSettingsId;
     }
 
-    public int getBrightnessLevel() {
+    public Integer getBrightnessLevel() {
         return brightnessLevel;
     }
 
-    public void setBrightnessLevel(int brightnessLevel) {
+    public void setBrightnessLevel(Integer brightnessLevel) {
         this.brightnessLevel = brightnessLevel;
     }
 
-    public int getContrastLevel() {
+    public Integer getContrastLevel() {
         return contrastLevel;
     }
 
-    public void setContrastLevel(int contrastLevel) {
+    public void setContrastLevel(Integer contrastLevel) {
         this.contrastLevel = contrastLevel;
     }
 
-    public int getFontSize() {
+    public Integer getFontSize() {
         return fontSize;
     }
 
-    public void setFontSize(int fontSize) {
+    public void setFontSize(Integer fontSize) {
         this.fontSize = fontSize;
     }
 
@@ -108,43 +112,43 @@ public class StudentSettings {
         this.fontStyle = fontStyle;
     }
 
-    public boolean isInvertColor() {
+    public Boolean getInvertColor() {
         return invertColor;
     }
 
-    public void setInvertColor(boolean invertColor) {
+    public void setInvertColor(Boolean invertColor) {
         this.invertColor = invertColor;
     }
 
-    public boolean isGrayscale() {
+    public Boolean getGrayscale() {
         return grayscale;
     }
 
-    public void setGrayscale(boolean grayscale) {
+    public void setGrayscale(Boolean grayscale) {
         this.grayscale = grayscale;
     }
 
-    public boolean isSwitchTextToSymbols() {
+    public Boolean getSwitchTextToSymbols() {
         return switchTextToSymbols;
     }
 
-    public void setSwitchTextToSymbols(boolean switchTextToSymbols) {
+    public void setSwitchTextToSymbols(Boolean switchTextToSymbols) {
         this.switchTextToSymbols = switchTextToSymbols;
     }
 
-    public boolean isPlayLesson() {
+    public Boolean getPlayLesson() {
         return playLesson;
     }
 
-    public void setPlayLesson(boolean playLesson) {
+    public void setPlayLesson(Boolean playLesson) {
         this.playLesson = playLesson;
     }
 
-    public boolean isAudioTranscriptHighLighting() {
+    public Boolean getAudioTranscriptHighLighting() {
         return audioTranscriptHighLighting;
     }
 
-    public void setAudioTranscriptHighLighting(boolean audioTranscriptHighLighting) {
+    public void setAudioTranscriptHighLighting(Boolean audioTranscriptHighLighting) {
         this.audioTranscriptHighLighting = audioTranscriptHighLighting;
     }
 

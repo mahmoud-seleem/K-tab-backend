@@ -4,12 +4,17 @@ import com.example.Backend.Repository.AuthorRepository;
 import com.example.Backend.Repository.AuthorSettingsRepository;
 import com.example.Backend.model.Author;
 import com.example.Backend.model.AuthorSettings;
-import com.example.Backend.schema.AuthorSettingsForm;
+import com.example.Backend.model.StudentSettings;
+import com.example.Backend.schema.SettingsElement;
+import com.example.Backend.schema.SettingsForm;
+import com.example.Backend.schema.SettingsResponse;
 import com.example.Backend.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -22,13 +27,13 @@ public class AuthorSettingsService {
 
     @Autowired
     private AuthorRepository authorRepository;
-    public AuthorSettingsForm setAuthorSettingsInfo(AuthorSettingsForm form) throws Exception{
+    public SettingsResponse setAuthorSettingsInfo(SettingsForm form) throws Exception{
         AuthorSettings settings = createNewAuthorSettings();
         updateAuthorSettings(settings,form);
         connectAuthorAndSettings(settings,form);
         return createResponse(settings);
     }
-    public AuthorSettingsForm updateAuthorSettingsInfo(AuthorSettingsForm form) throws Exception{
+    public SettingsResponse updateAuthorSettingsInfo(SettingsForm form) throws Exception{
         AuthorSettings settings = getAuthorSettingsObject(form.getAuthorId());
         updateAuthorSettings(settings,form);
 //        connectAuthorAndSettings(settings,form);
@@ -39,22 +44,33 @@ public class AuthorSettingsService {
         );
     }
 
-    public AuthorSettingsForm getAuthorSettingsInfo(UUID authorId) throws Exception {
+    public SettingsResponse getAuthorSettingsInfo(UUID authorId) throws Exception {
         AuthorSettings settings = getAuthorSettingsObject(authorId);
         return createResponse(settings);
     }
-    private AuthorSettingsForm createResponse(AuthorSettings settings){
-        return new AuthorSettingsForm(
-                settings.getAuthor().getAuthorId(),
-                settings.getAuthorSettingsId(),
-                settings.getBrightnessLevel(),
-                settings.getContrastLevel(),
-                settings.getFontSize(),
-                settings.getFontStyle(),
-                settings.getInvertColor(),
-                settings.getGrayScale()
+    private SettingsResponse createResponse(AuthorSettings settings) throws IllegalAccessException {
+        return new SettingsResponse(createSettingsArray(settings));
+    }
+    private List<SettingsElement> createSettingsArray(AuthorSettings settings) throws IllegalAccessException {
+        List<SettingsElement> elements = new ArrayList<>();
+        for (Field field : settings.getClass().getDeclaredFields()) {
+            if (field.getName() != "author"){
+                field.setAccessible(true);
+                elements.add(createSettingsElement(settings,field));
+            }
+        }
+        return elements;
+    }
+
+    private SettingsElement createSettingsElement(AuthorSettings settings,Field field) throws IllegalAccessException {
+        String[] classNames = field.getType().getName().split("\\.");
+        return new SettingsElement(
+                field.getName(),
+                classNames[classNames.length - 1],
+                field.get(settings)
         );
     }
+
     private AuthorSettings createNewAuthorSettings(){
         return authorSettingsRepository.save(new AuthorSettings());
     }
@@ -62,14 +78,14 @@ public class AuthorSettingsService {
         return authorRepository.findById(
                 authorId).get().getAuthorSettings();
     }
-    private void connectAuthorAndSettings(AuthorSettings settings,AuthorSettingsForm form){
+    private void connectAuthorAndSettings(AuthorSettings settings,SettingsForm form){
         Author author = authorRepository.findById(form.getAuthorId()).get();
         authorSettingsRepository.delete(author.getAuthorSettings());
         author.setAuthorSettings(settings);
         authorRepository.save(author);
         authorSettingsRepository.save(settings);
     }
-    private AuthorSettings updateAuthorSettings(AuthorSettings settings,AuthorSettingsForm form) throws Exception{
+    private AuthorSettings updateAuthorSettings(AuthorSettings settings, SettingsForm form) throws Exception{
         for (Field field : form.getClass().getDeclaredFields()) {
             field.setAccessible(true);
             if (field.get(form) != null && field.getName() != "authorId"){
