@@ -276,15 +276,17 @@ public class Student extends AppUser {
         this.getInteractions().remove(interaction);
         interaction.setStudent(null);
     }
-    public List<String> getDisabilitiesNames(){
-        List<String> disabilitiesNames = new ArrayList<>();
+    public List<Map<String,Object>> getDisabilitiesInfo(){
+        List<Map<String,Object>> disabilitiesInfo = new ArrayList<>();
         for (StudentDisability studentDisability
                 : this.getStudentDisabilityList()){
-            disabilitiesNames.add(
-                    studentDisability
-                            .getDisability().getDisabilityName()
-            );
+            Map<String,Object> disabilityInfo = new HashMap<>();
+            disabilityInfo.put("name",
+                    studentDisability.getDisability().getDisabilityName());
+            disabilityInfo.put("details",
+                    studentDisability.getDisabilityDetails());
+            disabilitiesInfo.add(disabilityInfo);
         }
-        return disabilitiesNames;
+        return disabilitiesInfo;
     }
 }

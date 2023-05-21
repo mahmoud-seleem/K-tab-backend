@@ -23,6 +23,12 @@ public class StudentDisability {
     public StudentDisability() {
     }
 
+    public StudentDisability(String disabilityDetails, Student student, Disability disability) {
+        this.disabilityDetails = disabilityDetails;
+        this.student = student;
+        this.disability = disability;
+    }
+
     public StudentDisability(UUID studentDisabilityId, String disabilityDetails, Student student, Disability disability) {
         this.studentDisabilityId = studentDisabilityId;
         this.disabilityDetails = disabilityDetails;

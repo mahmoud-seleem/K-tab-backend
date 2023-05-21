@@ -1,32 +1,34 @@
 package com.example.Backend.schema;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
-
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class StudentSignUpResponse extends StudentSignUpBasicInfo{
 
     private UUID studentSettingsId;
     private String profilePhotoPath;
     private String educationLevel;
-    private List<String> disabilities;
+    private List<Map<String,Object>> disabilities;
     private String token;
 
 
-    public StudentSignUpResponse(UUID studentId, String studentName, String studentEmail, String contact, UUID studentSettingsId, String profilePhotoPath, String educationLevel, List<String> disabilities) {
-        super(studentId, studentName, studentEmail, contact);
-        this.studentSettingsId = studentSettingsId;
-        this.profilePhotoPath = profilePhotoPath;
-        this.educationLevel = educationLevel;
-        this.disabilities = disabilities;
-    }
-
-    public StudentSignUpResponse(UUID studentId, String studentName, String studentEmail, String contact, UUID studentSettingsId, String profilePhotoPath, String educationLevel, List<String> disabilities, String token) {
+    public StudentSignUpResponse(UUID studentId, String studentName, String studentEmail, String contact, UUID studentSettingsId, String profilePhotoPath, String educationLevel, List<Map<String, Object>> disabilities, String token) {
         super(studentId, studentName, studentEmail, contact);
         this.studentSettingsId = studentSettingsId;
         this.profilePhotoPath = profilePhotoPath;
         this.educationLevel = educationLevel;
         this.disabilities = disabilities;
         this.token = token;
+    }
+
+    public StudentSignUpResponse(UUID studentId, String studentName, String studentEmail, String contact, UUID studentSettingsId, String profilePhotoPath, String educationLevel, List<Map<String, Object>> disabilities) {
+        super(studentId, studentName, studentEmail, contact);
+        this.studentSettingsId = studentSettingsId;
+        this.profilePhotoPath = profilePhotoPath;
+        this.educationLevel = educationLevel;
+        this.disabilities = disabilities;
     }
 
     public StudentSignUpResponse() {
@@ -49,11 +51,27 @@ public class StudentSignUpResponse extends StudentSignUpBasicInfo{
         this.educationLevel = educationLevel;
     }
 
-    public List<String> getDisabilities() {
+    public UUID getStudentSettingsId() {
+        return studentSettingsId;
+    }
+
+    public void setStudentSettingsId(UUID studentSettingsId) {
+        this.studentSettingsId = studentSettingsId;
+    }
+
+    public List<Map<String, Object>> getDisabilities() {
         return disabilities;
     }
 
-    public void setDisabilities(List<String> disabilities) {
+    public void setDisabilities(List<Map<String, Object>> disabilities) {
         this.disabilities = disabilities;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

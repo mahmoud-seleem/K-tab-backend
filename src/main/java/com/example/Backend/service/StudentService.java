@@ -2,10 +2,7 @@ package com.example.Backend.service;
 
 import com.example.Backend.Repository.*;
 import com.example.Backend.jsonConversion.JsonConverter;
-import com.example.Backend.model.Author;
-import com.example.Backend.model.AuthorSettings;
-import com.example.Backend.model.Student;
-import com.example.Backend.model.StudentSettings;
+import com.example.Backend.model.*;
 import com.example.Backend.s3Connection.S3fileSystem;
 import com.example.Backend.schema.AuthorSignUpForm;
 import com.example.Backend.schema.AuthorSignUpResponse;
@@ -27,11 +24,16 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
 public class StudentService {
 
+    @Autowired
+    private DisabilityRepository disabilityRepository;
+    @Autowired
+    private StudentDisabilityRepository studentDisabilityRepository;
     @Autowired
     private StudentRepository studentRepository;
     @Autowired
@@ -136,12 +138,15 @@ public class StudentService {
         switch (field.getName()) {
             case "profilePhotoAsBinaryString": {
                 setupProfilePhoto(student, form);
+                break;
             }
             case "password": {
                 updatePassword(form, student);
+                break;
             }
             case "disabilities": {
-
+                updateStudentDisabilities(form,student);
+                break;
             }
             default: {
                 utils.getMethodBySignature("set", field
@@ -149,6 +154,30 @@ public class StudentService {
             }
         }
 
+    }
+
+    private void updateStudentDisabilities(StudentSignUpForm form,Student student){
+        List<Map<String,Object>> disabilitiesInfo = form.getDisabilities();
+        List<StudentDisability> studentDisabilityList = student.getStudentDisabilityList();
+        for (StudentDisability studentDisability : studentDisabilityList){
+            studentDisabilityRepository.delete(studentDisability);
+        }
+        student.getStudentDisabilityList().clear();
+        for (Map<String,Object> disability : disabilitiesInfo){
+            connectStudentWithDisabilities(disability,student);
+        }
+    }
+    private void connectStudentWithDisabilities(Map<String,Object> disability,Student student){
+        Disability defaultDisability = disabilityRepository.
+                findByDisabilityName(disability.get("name").toString());
+        StudentDisability studentDisability = new StudentDisability(
+                disability.get("details").toString(),
+                student,defaultDisability);
+        studentDisability = studentDisabilityRepository.save(studentDisability);
+        student.addStudentDisability(studentDisability);
+        defaultDisability.addStudentDisability(studentDisability);
+        studentRepository.save(student);
+        disabilityRepository.save(defaultDisability);
     }
     private StudentSignUpResponse constructResponse(Student student) {
         return new StudentSignUpResponse(
@@ -159,7 +188,7 @@ public class StudentService {
                 student.getStudentSettings().getStudentSettingsId(),
                 student.getProfilePhoto(),
                 student.getEducationLevel(),
-                student.getDisabilitiesNames()
+                student.getDisabilitiesInfo()
         );
     }
 
@@ -172,7 +201,7 @@ public class StudentService {
                 student.getStudentSettings().getStudentSettingsId(),
                 student.getProfilePhoto(),
                 student.getEducationLevel(),
-                student.getDisabilitiesNames(),
+                student.getDisabilitiesInfo(),
                 jwtToken
         );
     }
