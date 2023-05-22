@@ -26,17 +26,27 @@ public class ChapterInfo {
     private Integer chapterOrder;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private LocalDateTime creationDate;
+    private String creationDate;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private LocalDateTime lastModified;
+    private String lastModified;
 
     private List<String> tags;
 
     public ChapterInfo() {
     }
 
-    public ChapterInfo(UUID ownerId, UUID chapterId, UUID bookId, String title, String contentPath, Double readingDuration, Integer chapterOrder, LocalDateTime creationDate, LocalDateTime lastModified, List<String> tags) {
+    public ChapterInfo(
+            UUID ownerId,
+            UUID chapterId,
+            UUID bookId,
+            String title,
+            String contentPath,
+            Double readingDuration,
+            Integer chapterOrder,
+            String creationDate,
+            String lastModified,
+            List<String> tags) {
         this.ownerId = ownerId;
         this.chapterId = chapterId;
         this.bookId = bookId;
@@ -105,19 +115,19 @@ public class ChapterInfo {
         this.chapterOrder = chapterOrder;
     }
 
-    public LocalDateTime getCreationDate() {
+    public String getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(LocalDateTime creationDate) {
+    public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
     }
 
-    public LocalDateTime getLastModified() {
+    public String getLastModified() {
         return lastModified;
     }
 
-    public void setLastModified(LocalDateTime lastModified) {
+    public void setLastModified(String lastModified) {
         this.lastModified = lastModified;
     }
 

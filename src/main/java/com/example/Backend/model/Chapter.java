@@ -1,5 +1,6 @@
 package com.example.Backend.model;
 
+import com.example.Backend.utils.Utils;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
@@ -17,22 +18,22 @@ public class Chapter {
 
     @Id
     @GeneratedValue
-    @Column(name = "chapter_id", nullable = false)
+    @Column(name = "chapter_id")
     private UUID chapterId;
 
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "content", nullable = false)
+    @Column(name = "content")
     private String content;
 
-    @Column(name = "reading_duration", nullable = false)
+    @Column(name = "reading_duration")
     private Double readingDuration;
 
-    @Column(name = "creation_date", nullable = false)
+    @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
-    @Column(name = "last_modified", nullable = false)
+    @Column(name = "last_modified")
     private LocalDateTime lastModified;
 
     @OneToMany(mappedBy = "chapter")
@@ -79,10 +80,7 @@ public class Chapter {
     }
     public Chapter(String title) {
         this.title = title;
-        this.content = "content";
-        this.readingDuration = 10.0;
-        this.creationDate = LocalDateTime.now();
-        this.lastModified = LocalDateTime.now();
+        this.chapterOrder = null;
         this.authorCommentList = new ArrayList<>();
         this.studentCommentList = new ArrayList<>();
         this.tags = new ArrayList<>();
@@ -112,7 +110,7 @@ public class Chapter {
         this.content = content;
     }
 
-    public double getReadingDuration() {
+    public Double getReadingDuration() {
         return readingDuration;
     }
 
@@ -220,4 +218,26 @@ public class Chapter {
         studentComment.setChapter(null);
     }
 
+    public void clearTags() {
+        this.tags = new ArrayList<>();
+    }
+    public String getCreationDateAsString() {
+        return (creationDate != null ?
+                creationDate.format(Utils.formatter)
+                : null);
+    }
+
+    public String getLastModifiedDateAsString() {
+        return (lastModified != null ?
+                lastModified.format(Utils.formatter)
+                : null);
+    }
+
+    public List<String> getTagsNames() {
+        List<String> tagsNames = new ArrayList<>();
+        for (Tag tag : getTags()) {
+            tagsNames.add(tag.getTagName());
+        }
+        return tagsNames;
+    }
 }

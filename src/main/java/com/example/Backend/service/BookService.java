@@ -131,7 +131,7 @@ public class BookService {
         return response;
     }
 
-    private Book updateLastEditDate(Book book) {
+    protected Book updateLastEditDate(Book book) {
         book.setLastEditDate(LocalDateTime.parse(LocalDateTime.now().
                 format(Utils.formatter), Utils.formatter));
         return book;
