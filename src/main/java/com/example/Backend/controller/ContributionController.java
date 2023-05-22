@@ -42,23 +42,23 @@ public class ContributionController {
     @GetMapping("/getallchapters")
     public List<Chapter> getAllChapters(){return chapterRepository.findAll();}
 
-    @GetMapping("/getauthorwritings")
-    public List<Contribution> getAllAuthorWritings(){
-        Author author = authorRepository.findByName("mohamed");
-        return author.getChaptersList();
-    }
-    @GetMapping("/getchapterwritings")
-    public List<Contribution> getAllChapterWritings(){
-        Chapter chapter = chapterRepository.findByTitle("chapter one");
-        return chapter.getAuthorList();
-    }
-    @GetMapping("/newwriting")
-    public Contribution createNewWriting(){
-        Author author = authorRepository.findByName("mohamed");
-        Chapter chapter = chapterRepository.findByTitle("chapter one");
-        Contribution contribution = new Contribution(new ContributionKey(author.getAuthorId(),chapter.getChapterId()),author,chapter, LocalDateTime.now());
-        author.addContribution(contribution);
-        chapter.addContribution(contribution);
-        return writingRepository.save(contribution);
-    }
+//    @GetMapping("/getauthorwritings")
+//    public List<Contribution> getAllAuthorWritings(){
+//        Author author = authorRepository.findByName("mohamed");
+//        return author.getChaptersList();
+//    }
+//    @GetMapping("/getchapterwritings")
+//    public List<Contribution> getAllChapterWritings(){
+//        Chapter chapter = chapterRepository.findByTitle("chapter one");
+//        return chapter.getAuthorList();
+//    }
+//    @GetMapping("/newwriting")
+//    public Contribution createNewWriting(){
+//        Author author = authorRepository.findByName("mohamed");
+//        Chapter chapter = chapterRepository.findByTitle("chapter one");
+//        Contribution contribution = new Contribution(new ContributionKey(author.getAuthorId(),chapter.getChapterId()),author,chapter, LocalDateTime.now());
+//        author.addContribution(contribution);
+//        chapter.addContribution(contribution);
+//        return writingRepository.save(contribution);
+//    }
 }

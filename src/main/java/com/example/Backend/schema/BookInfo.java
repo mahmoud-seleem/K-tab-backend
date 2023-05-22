@@ -1,52 +1,56 @@
 package com.example.Backend.schema;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Component;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
-import java.sql.SQLTransactionRollbackException;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Component
-@JsonIgnoreProperties(value={ "bookCoverPhotoAsBinaryString" }, allowGetters = false,allowSetters = true)
+@JsonIgnoreProperties(value = {"bookCoverPhotoAsBinaryString"}, allowGetters = false, allowSetters = true)
 public class BookInfo {
 
-    private UUID authorId;
     private UUID bookId;
     @NotNull
     private String title;
     private String bookCoverPhotoAsBinaryString;
     private String bookAbstract;
     private List<String> tags;
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private String bookCoverPath = null;
-
+    private Double price;
     private String publishDate;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private String  lastEditDate;
-
-    private Double price;
-
+    private UUID authorId;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String bookCoverPath = null;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String lastEditDate;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Double avgRate;
-
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private List<String> chaptersTitles ;
+    private List<String> chaptersTitles =null;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private List<String> contributors = null;
 
     public BookInfo() {
     }
 
-    public BookInfo(UUID authorId, UUID bookId, String title,
+    public BookInfo(UUID authorId,
+                    UUID bookId,
+                    String title,
                     String bookCoverPhotoAsBinaryString,
-                    String bookAbstract, List<String> tags, String bookCoverPath,
-                    String publishDate, String lastEditDate, Double price,
-                    Double avgRate, List<String> chaptersTitles) {
+                    String bookAbstract,
+                    List<String> tags,
+                    String bookCoverPath,
+                    String publishDate,
+                    String lastEditDate,
+                    Double price,
+                    Double avgRate,
+                    List<String> chaptersTitles,
+                    List<String> contributors) {
         this.authorId = authorId;
         this.bookId = bookId;
         this.title = title;
@@ -59,6 +63,7 @@ public class BookInfo {
         this.price = price;
         this.avgRate = avgRate;
         this.chaptersTitles = chaptersTitles;
+        this.contributors = contributors;
     }
 
     public BookInfo(UUID authorId, String title,
@@ -66,7 +71,7 @@ public class BookInfo {
                     String bookAbstract, List<String> tags,
                     String bookCoverPath, String publishDate,
                     String lastEditDate, Double price,
-                    Double avgRate, List<String> chaptersTitles) {
+                    Double avgRate, List<String> chaptersTitles, List<String> contributors) {
         this.authorId = authorId;
         this.title = title;
         this.bookCoverPhotoAsBinaryString = bookCoverPhotoAsBinaryString;
@@ -78,6 +83,7 @@ public class BookInfo {
         this.price = price;
         this.avgRate = avgRate;
         this.chaptersTitles = chaptersTitles;
+        this.contributors = contributors;
     }
 
     public UUID getBookId() {
@@ -174,5 +180,13 @@ public class BookInfo {
 
     public void setChaptersTitles(List<String> chaptersTitles) {
         this.chaptersTitles = chaptersTitles;
+    }
+
+    public List<String> getContributors() {
+        return contributors;
+    }
+
+    public void setContributors(List<String> contributors) {
+        this.contributors = contributors;
     }
 }

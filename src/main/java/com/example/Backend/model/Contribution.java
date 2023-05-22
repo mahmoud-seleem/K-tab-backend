@@ -4,13 +4,16 @@ import com.example.Backend.compositeKeys.ContributionKey;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "contribution")
 public class Contribution {
-    @EmbeddedId
-    ContributionKey contributionId;
+    @Id
+    @GeneratedValue
+    private UUID contributionId;
 
     @ManyToOne
     @MapsId("authorId")
@@ -18,30 +21,31 @@ public class Contribution {
     private Author author;
 
     @ManyToOne
-    @MapsId("chapterId")
-    @JoinColumn(name = "chapter_id")
-    private Chapter chapter;
+    @MapsId("bookId")
+    @JoinColumn(name = "book_id")
+    private Book book;
 
-    @Column(name = "update_date")
-    private LocalDateTime updateDate;
-
-    @Column(name = "book_id")
-    private UUID bookId;
+    @ElementCollection
+    @CollectionTable(
+            name = "contribution_chapters",
+            joinColumns = @JoinColumn(name = "contribution_id")
+    )
+    private List<UUID> ChaptersIds = new ArrayList<>();
     public Contribution() {
     }
 
-    public Contribution(ContributionKey contributionId, Author author, Chapter chapter, LocalDateTime updateDate) {
+    public Contribution(UUID contributionId, Author author, Book book, List<UUID> chaptersIds) {
         this.contributionId = contributionId;
         this.author = author;
-        this.chapter = chapter;
-        this.updateDate = updateDate;
+        this.book = book;
+        ChaptersIds = chaptersIds;
     }
 
-    public ContributionKey getContributionId() {
+    public UUID getContributionId() {
         return contributionId;
     }
 
-    public void setContributionId(ContributionKey contributionId) {
+    public void setContributionId(UUID contributionId) {
         this.contributionId = contributionId;
     }
 
@@ -53,27 +57,19 @@ public class Contribution {
         this.author = author;
     }
 
-    public Chapter getChapter() {
-        return chapter;
+    public Book getBook() {
+        return book;
     }
 
-    public void setChapter(Chapter chapter) {
-        this.chapter = chapter;
+    public void setBook(Book book) {
+        this.book = book;
     }
 
-    public LocalDateTime getUpdateDate() {
-        return updateDate;
+    public List<UUID> getChaptersIds() {
+        return ChaptersIds;
     }
 
-    public void setUpdateDate(LocalDateTime updateDate) {
-        this.updateDate = updateDate;
-    }
-
-    public UUID getBookId() {
-        return bookId;
-    }
-
-    public void setBookId(UUID bookId) {
-        this.bookId = bookId;
+    public void setChaptersIds(List<UUID> chaptersIds) {
+        ChaptersIds = chaptersIds;
     }
 }

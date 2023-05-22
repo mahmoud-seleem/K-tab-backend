@@ -42,7 +42,7 @@ public class Author extends AppUser {
     private List<AuthorNotification> authorNotificationList;
 
     @OneToMany(mappedBy = "author")
-    private List<Contribution> contributionList;
+    private List<Contribution> contributions = new ArrayList<>();
 
     @OneToMany(mappedBy = "author")
     private List<Book> authorBooksList;
@@ -60,7 +60,7 @@ public class Author extends AppUser {
         this.profilePhoto = "profile_photo_link";
         this.authorCommentList = new ArrayList<>();
         this.authorNotificationList = new ArrayList<>();
-        this.contributionList = new ArrayList<>();
+        this.contributions = new ArrayList<>();
     }
 
     public Author(String authorName, String authorEmail, String password) {
@@ -77,7 +77,6 @@ public class Author extends AppUser {
         this.contact = contact;
         this.authorCommentList = new ArrayList<>();
         this.authorNotificationList = new ArrayList<>();
-        this.contributionList = new ArrayList<>();
         this.authorBooksList = new ArrayList<>();
     }
     public Author(String authorName, String authorEmail, String password,String contact) {
@@ -158,20 +157,20 @@ public class Author extends AppUser {
         this.authorBooksList = authorBooksList;
     }
 
-    public List<Contribution> getChaptersList() {
-        return contributionList;
+    public List<Contribution> getContributions() {
+        return contributions;
     }
 
-    public void setChaptersList(List<Contribution> chaptersList) {
-        this.contributionList = chaptersList;
+    public void setContributions(List<Contribution> contributions) {
+        this.contributions = contributions;
     }
 
     public void addContribution(Contribution contribution){
-        this.getChaptersList().add(contribution);
+        this.getContributions().add(contribution);
         contribution.setAuthor(this);
     }
     public void removeContribution(Contribution contribution){
-        this.getChaptersList().remove(contribution);
+        this.getContributions().remove(contribution);
         contribution.setAuthor(null);
     }
     public void addAuthorNotification(AuthorNotification authorNotification){
@@ -203,12 +202,21 @@ public class Author extends AppUser {
         authorSettings.setAuthor(this);
     }
 
-    public void addAuthorBook(Book book){
+    public void addBook(Book book){
         this.getAuthorBooksList().add(book);
         book.setAuthor(this);
     }
-    public void removeAuthorBook(Book book){
+    public void removeBook(Book book){
         this.getAuthorBooksList().remove(book);
         book.setAuthor(null);
+    }
+    public List<Book> getContributionsBooks(){
+        List<Book> books = new ArrayList<>();
+        for(Contribution contribution : getContributions()){
+            books.add(
+                    contribution.getBook()
+            );
+        }
+        return books;
     }
 }

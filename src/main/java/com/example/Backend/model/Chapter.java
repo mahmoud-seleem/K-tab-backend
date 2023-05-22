@@ -41,9 +41,6 @@ public class Chapter {
     @OneToMany(mappedBy = "chapter")
     private List<StudentComment> studentCommentList;
 
-    @OneToMany(mappedBy = "chapter")
-    private List<Contribution> authorContributionsList;
-
     @ManyToMany()
     @JoinTable(
             name = "chapter_tags",
@@ -64,7 +61,13 @@ public class Chapter {
     public Chapter() {
     }
 
-    public Chapter(String title, String content, double readingDuration, LocalDateTime creationDate, LocalDateTime lastModified, List<AuthorComment> authorCommentList, List<StudentComment> studentCommentList) {
+    public Chapter( String title,
+                    String content,
+                    double readingDuration,
+                    LocalDateTime creationDate,
+                    LocalDateTime lastModified,
+                    List<AuthorComment> authorCommentList,
+                    List<StudentComment> studentCommentList) {
         this.title = title;
         this.content = content;
         this.readingDuration = readingDuration;
@@ -72,7 +75,6 @@ public class Chapter {
         this.lastModified = lastModified;
         this.authorCommentList = authorCommentList;
         this.studentCommentList = studentCommentList;
-        this.authorContributionsList = new ArrayList<>();
         this.tags = new ArrayList<>();
     }
     public Chapter(String title) {
@@ -83,7 +85,6 @@ public class Chapter {
         this.lastModified = LocalDateTime.now();
         this.authorCommentList = new ArrayList<>();
         this.studentCommentList = new ArrayList<>();
-        this.authorContributionsList = new ArrayList<>();
         this.tags = new ArrayList<>();
         this.interactions = new ArrayList<>();
     }
@@ -150,15 +151,6 @@ public class Chapter {
     public void setStudentCommentList(List<StudentComment> studentCommentList) {
         this.studentCommentList = studentCommentList;
     }
-
-    public List<Contribution> getAuthorList() {
-        return authorContributionsList;
-    }
-
-    public void setAuthorList(List<Contribution> authorList) {
-        this.authorContributionsList = authorList;
-    }
-
     public List<Tag> getTags() {
         return tags;
     }
@@ -181,14 +173,6 @@ public class Chapter {
 
     public void setReadingDuration(Double readingDuration) {
         this.readingDuration = readingDuration;
-    }
-
-    public List<Contribution> getAuthorContributionsList() {
-        return authorContributionsList;
-    }
-
-    public void setAuthorContributionsList(List<Contribution> authorContributionsList) {
-        this.authorContributionsList = authorContributionsList;
     }
 
     public Integer getChapterOrder() {
@@ -218,14 +202,6 @@ public class Chapter {
         this.getTags().remove(tag);
         tag.getChapterList().remove(this);
 
-    }
-    public void addContribution(Contribution contribution){
-        this.getAuthorList().add(contribution);
-        contribution.setChapter(this);
-    }
-    public void removeContribution(Contribution contribution){
-        this.getAuthorList().remove(contribution);
-        contribution.setChapter(null);
     }
     public void addStudentComment(StudentComment studentComment){
         this.getStudentCommentList().add(studentComment);

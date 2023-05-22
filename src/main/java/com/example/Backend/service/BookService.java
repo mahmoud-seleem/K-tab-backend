@@ -8,22 +8,14 @@ import com.example.Backend.s3Connection.AccessType;
 import com.example.Backend.s3Connection.S3PreSignedURL;
 import com.example.Backend.s3Connection.S3fileSystem;
 import com.example.Backend.schema.BookInfo;
-import com.example.Backend.schema.SearchInput;
 import com.example.Backend.utils.ImageConverter;
 import com.example.Backend.utils.Utils;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -47,61 +39,82 @@ public class BookService {
 
     @Autowired
     private S3PreSignedURL s3PreSignedURL;
-    public BookInfo saveNewBook(BookInfo bookInfo)throws Exception{
+
+    public BookInfo saveNewBook(BookInfo bookInfo) throws Exception {
         Book book = createNewBook(bookInfo);
         Author author = authorRepository.findById(bookInfo.getAuthorId()).get();
-        author.addAuthorBook(book);
+        author.addBook(book);
         authorRepository.save(author);
         return createBookInfoResponse(
                 bookRepository.save(updateLastEditDate(book)));
     }
+
     public BookInfo updateBookInfo(BookInfo bookInfo) throws Exception {
         Book book = bookRepository.findById(bookInfo.getBookId()).get();
-        updateBookData(book,bookInfo);
+        updateBookData(book, bookInfo);
         return createBookInfoResponse(
                 bookRepository.save(updateLastEditDate(book)));
     }
-    public BookInfo getBookInfo(UUID bookId){
+
+    public BookInfo getBookInfo(UUID bookId) {
         return createBookInfoResponse(
                 bookRepository.findById(bookId).get()
         );
     }
 
-    public String getPreSignedAsString(String bookCoverPath){
+    private Book createNewBook(BookInfo bookInfo) throws Exception {
+        Book book = new Book(
+                bookInfo.getTitle(),
+                bookInfo.getPrice(),
+                bookInfo.getBookAbstract()
+        );
+        bookRepository.save(book);
+        updateBookData(book, bookInfo);
+        return book;
+    }
+    public String getPreSignedAsString(String bookCoverPath) {
         return s3PreSignedURL.generatePreSignedUrl(
                 bookCoverPath,
                 60,
                 AccessType.READ
         ).toString();
     }
-//    public ResponseEntity<?> redirectToPreSignedUrl(SearchInput input){
-//        return ResponseEntity.status(302).header(
-//                "Location", s3PreSignedURL.generatePreSignedUrl(
-//                        ).toString()).body("success");
-//    }
-    private void updateBookData(Book book,BookInfo bookInfo) throws Exception{
-        for (Field field : bookInfo.getClass().getDeclaredFields()){
+
+    private void updateBookData(Book book, BookInfo bookInfo) throws Exception {
+        for (Field field : bookInfo.getClass().getDeclaredFields()) {
             field.setAccessible(true);
-            if(field.get(bookInfo) != null){
+            if (field.get(bookInfo) != null) {
                 System.out.println(field.getName());
-                if(field.getName() == "tags"){
-                    setupBookTags(book,bookInfo.getTags());
-                }else if (field.getName() == "publishDate" || field.getName() == "lastEditDate"){
-                    utils.getMethodBySignature("set",field,book,LocalDateTime.class)
-                            .invoke(book,LocalDateTime.parse(field.get(bookInfo).toString() , Utils.formatter));
-                } else if (field.getName() == "authorId") {
-                    book.setAuthor(authorRepository.findById(bookInfo.getAuthorId()).get());
-                } else if (field.getName() == "bookCoverPhotoAsBinaryString") {
-                } else {
-                    utils.getMethodBySignature("set",field,book,field.getType())
-                            .invoke(book,field.get(bookInfo));
+                switch (field.getName()) {
+                    case "tags": {
+                        setupBookTags(book, bookInfo.getTags());
+                        break;
+                    }
+                    case "publishDate":
+                    case "lastEditDate": {
+                        utils.getMethodBySignature("set", field, book, LocalDateTime.class)
+                                .invoke(book, LocalDateTime.parse(field.get(bookInfo).toString(), Utils.formatter));
+                        break;
+                    }
+                    case "authorId": {
+                        book.setAuthor(authorRepository.findById(bookInfo.getAuthorId()).get());
+                        break;
+                    }
+                    case "bookCoverPhotoAsBinaryString": {
+                        break;
+                    }
+                    default: {
+                        utils.getMethodBySignature("set", field, book, field.getType())
+                                .invoke(book, field.get(bookInfo));
+                    }
                 }
             }
         }
-        setupBookCover(book,bookInfo);
+        setupBookCover(book, bookInfo);
     }
-    private BookInfo createBookInfoResponse(Book book){
-        BookInfo response =  new BookInfo(
+
+    private BookInfo createBookInfoResponse(Book book) {
+        BookInfo response = new BookInfo(
                 book.getAuthor().getAuthorId(),
                 book.getBookId(),
                 book.getTitle(),
@@ -113,37 +126,41 @@ public class BookService {
                 book.getLastEditDateAsString(),
                 book.getPrice(),
                 book.calculateAvgRating(),
-                book.getChaptersTitles()
-        );
+                book.getChaptersTitles(),
+                book.getContributorsEmails());
         return response;
     }
-    private Book updateLastEditDate(Book book){
+
+    private Book updateLastEditDate(Book book) {
         book.setLastEditDate(LocalDateTime.parse(LocalDateTime.now().
-                format(Utils.formatter) , Utils.formatter));
+                format(Utils.formatter), Utils.formatter));
         return book;
     }
-    private String setupBookCover(Book book,BookInfo bookInfo){
+
+    private String setupBookCover(Book book, BookInfo bookInfo) {
         String photoPath = storeCoverPhotoPath(book);
-        if (bookInfo.getBookCoverPhotoAsBinaryString() != null){
+        if (bookInfo.getBookCoverPhotoAsBinaryString() != null) {
             InputStream inputStream = imageConverter.convertImgToFile(
                     bookInfo.getBookCoverPhotoAsBinaryString());
-            s3fileSystem.uploadPhoto(photoPath,inputStream);
+            s3fileSystem.uploadPhoto(photoPath, inputStream);
         }
         return photoPath;
     }
+
     private String storeCoverPhotoPath(Book book) {
         String photoPath = ("Books/" + book.getBookId().toString() + "/coverPhoto.png");
         s3fileSystem.reserveEmptyPlace(photoPath);
         book.setBookCover(photoPath);
         return photoPath;
     }
-    private Book setupBookTags(Book book,List<String> tags){
+
+    private Book setupBookTags(Book book, List<String> tags) {
         book.clearTags();
         Tag tag = null;
-        for(String tagName : tags){
-            if(tagRepository.findByName(tagName).isEmpty()){
-                tag =tagRepository.save(new Tag(tagName));
-            }else {
+        for (String tagName : tags) {
+            if (tagRepository.findByName(tagName).isEmpty()) {
+                tag = tagRepository.save(new Tag(tagName));
+            } else {
                 tag = tagRepository.findByName(tagName).get();
                 tag.removeBook(book);
             }
@@ -153,65 +170,59 @@ public class BookService {
         Book b = bookRepository.save(book);
         Tag newTag = tagRepository.findByName(tag.getTagName()).get();
         System.out.println("____________________________________________");
-        for(Tag t: b.getTags()){
+        for (Tag t : b.getTags()) {
             System.out.println(t.getTagName());
         }
         System.out.println("____________________________________________");
-        for (Book bb : newTag.getBookList()){
+        for (Book bb : newTag.getBookList()) {
             System.out.println(bb.getTitle());
         }
         System.out.println("____________________________________________");
         return b;
     }
-    private Book createNewBook(BookInfo bookInfo)throws Exception{
-        Book book = new Book(
-                bookInfo.getTitle(),
-                bookInfo.getPrice(),
-                bookInfo.getBookAbstract()
-        );
-        bookRepository.save(book);
-        updateBookData(book,bookInfo);
-        return book;
-    }
-    public Book findBookById(UUID id){
-        return bookRepository.findById(id).orElseThrow();
-    }
 
-
-    public Book insertSpecificBook(){
-        Book book = new Book("Mariam's fav book");
-        Student student = new Student("Mariam");
-//        Rating rating = new Rating(book, student, 5);
-//        Set<Rating> ratingSet = new HashSet<Rating>();
-//        ratingSet.add(rating);
-//        book.setRatings(ratingSet);
-//        book.addRating(rating);
-//        Tag tag = new Tag("AI");
-//        Set<Book> books = new HashSet<>();
-//        books.add(book);
-//        tag.setBookList(books);
-//        Set<Tag> tags = new HashSet<>();
-//        tags.add(tag);
-//        book.setTags(tags);
-//        book.addTags(tag);
-        return bookRepository.save(book);
-    }
-
-    public List<Tag> getBookTags(UUID id){
-        Book book = bookRepository.findById(id).orElseThrow();
-        return book.getTags();
-    }
-
-    public List getAllAuthorBooks(UUID id){
-        Author author = authorRepository.findById(id).orElseThrow();
-        Book newBook = new Book("Tales");
-        author.addAuthorBook(newBook);
-        newBook.addAuthor(author);
-        bookRepository.save(newBook);
-        return author.getAuthorBooksList();
-    }
-
-    public List getAllBooks(){
-        return bookRepository.findAll();
-    }
 }
+//    public Book findBookById(UUID id) {
+//        return bookRepository.findById(id).orElseThrow();
+//    }
+//    public Book insertSpecificBook(){
+//        Book book = new Book("Mariam's fav book");
+//        Student student = new Student("Mariam");
+////        Rating rating = new Rating(book, student, 5);
+////        Set<Rating> ratingSet = new HashSet<Rating>();
+////        ratingSet.add(rating);
+////        book.setRatings(ratingSet);
+////        book.addRating(rating);
+////        Tag tag = new Tag("AI");
+////        Set<Book> books = new HashSet<>();
+////        books.add(book);
+////        tag.setBookList(books);
+////        Set<Tag> tags = new HashSet<>();
+////        tags.add(tag);
+////        book.setTags(tags);
+////        book.addTags(tag);
+//        return bookRepository.save(book);
+//    }
+//
+//    public List<Tag> getBookTags(UUID id){
+//        Book book = bookRepository.findById(id).orElseThrow();
+//        return book.getTags();
+//    }
+//
+//    public List getAllBooks(){
+//        return bookRepository.findAll();
+//    }
+//}
+    //    public List getAllAuthorBooks(UUID id){
+//        Author author = authorRepository.findById(id).orElseThrow();
+//        Book newBook = new Book("Tales");
+//        author.addBook(newBook);
+//        newBook.addAuthor(author);
+//        bookRepository.save(newBook);
+//        return author.getAuthorBooksList();
+//    }
+//    public ResponseEntity<?> redirectToPreSignedUrl(SearchInput input){
+//        return ResponseEntity.status(302).header(
+//                "Location", s3PreSignedURL.generatePreSignedUrl(
+//                        ).toString()).body("success");
+//    }

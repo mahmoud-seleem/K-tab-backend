@@ -11,7 +11,8 @@ import java.util.*;
 
 @Entity
 @Table(name = "book")
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler","ratings","chapters","tags","paymentList"})
+@JsonIgnoreProperties({"hibernateLazyInitializer",
+        "handler", "ratings", "chapters", "tags", "paymentList"})
 public class Book {
     @Id
     @GeneratedValue
@@ -45,9 +46,18 @@ public class Book {
 
     @ManyToMany
     @JoinTable(name = "book_tags"
-            ,joinColumns = @JoinColumn(name = "book_id")
-            ,inverseJoinColumns = @JoinColumn(name = "tag_id") )
+            , joinColumns = @JoinColumn(name = "book_id")
+            , inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private List<Tag> tags = new ArrayList<>();
+
+    @OneToMany(mappedBy = "book")
+    private List<Chapter> chapters = new ArrayList<>();
+
+    @OneToMany(mappedBy = "book")
+    private List<Payment> paymentList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "book")
+    private List<Contribution> contributions = new ArrayList<>();
 
     public String getBookCover() {
         return bookCover;
@@ -60,12 +70,14 @@ public class Book {
     public LocalDateTime getPublishDate() {
         return this.publishDate;
     }
-    public String getPublishDateAsString(){
+
+    public String getPublishDateAsString() {
         return (publishDate != null ?
                 publishDate.format(Utils.formatter)
                 : null);
     }
-    public String getLastEditDateAsString(){
+
+    public String getLastEditDateAsString() {
         return (lastEditDate != null ?
                 lastEditDate.format(Utils.formatter)
                 : null);
@@ -83,12 +95,6 @@ public class Book {
         this.lastEditDate = lastEditDate;
     }
 
-    @OneToMany(mappedBy = "book")
-    private List<Chapter> chapters = new ArrayList<>();
-
-    @OneToMany(mappedBy = "book")
-    private List<Payment> paymentList = new ArrayList<>();
-
     public List<Payment> getPaymentList() {
         return paymentList;
     }
@@ -100,7 +106,11 @@ public class Book {
     public Book() {
     }
 
-    public Book(UUID bookId, String title, Double price, String bookAbstract, List<Rating> ratings) {
+    public Book(UUID bookId,
+                String title,
+                Double price,
+                String bookAbstract,
+                List<Rating> ratings) {
         this.bookId = bookId;
         this.title = title;
         this.price = price;
@@ -108,6 +118,7 @@ public class Book {
         this.ratings = ratings;
         this.chapters = new ArrayList<>();
     }
+
     public Book(String title, Double price, String bookAbstract) {
         this.title = title;
         this.price = price;
@@ -183,77 +194,112 @@ public class Book {
         this.chapters = chapters;
     }
 
-    public void addPayment(Payment payment){
+    public List<Contribution> getContributions() {
+        return contributions;
+    }
+
+    public void setContributions(List<Contribution> contributions) {
+        this.contributions = contributions;
+    }
+
+
+    public void addPayment(Payment payment) {
         this.getPaymentList().add(payment);
         payment.setBook(this);
     }
-    public void removePayment(Payment payment){
+
+    public void removePayment(Payment payment) {
         this.getPaymentList().remove(payment);
         payment.setBook(null);
     }
-    public void addChapter(Chapter chapter){
+
+    public void addChapter(Chapter chapter) {
         this.chapters.add(chapter);
         chapter.setBook(this);
     }
-    public void removeChapter(Chapter chapter){
+
+    public void removeChapter(Chapter chapter) {
         this.chapters.remove(chapter);
         chapter.setBook(null);
     }
-    public void addRating(Rating rating){
+
+    public void addRating(Rating rating) {
         this.getRatings().add(rating);
         rating.setBook(this);
     }
-    public void removeRating(Rating rating){
+
+    public void removeRating(Rating rating) {
         this.getRatings().remove(rating);
         rating.setBook(null);
     }
+    public void addContribution(Contribution contribution){
+        this.getContributions().add(contribution);
+        contribution.setBook(this);
+    }
 
-    public void addTag(Tag tag){
+    public void removeContribution(Contribution contribution){
+        this.getContributions().remove(contribution);
+        contribution.setBook(null);
+    }
+
+    public void addTag(Tag tag) {
         this.getTags().add(tag);
         tag.getBookList().add(this);
     }
-    public void removeTag(Tag tag){
+
+    public void removeTag(Tag tag) {
         this.getTags().remove(tag);
         tag.getChapterList().remove(this);
     }
 
-    public void clearTags(){
+    public void clearTags() {
         this.tags = new ArrayList<>();
     }
-    public List<String> getTagsNames(){
+
+    public List<String> getTagsNames() {
         List<String> tagsNames = new ArrayList<>();
-        for (Tag tag : getTags()){
+        for (Tag tag : getTags()) {
             tagsNames.add(tag.getTagName());
         }
         return tagsNames;
     }
-    public void addAuthor(Author author){
+
+    public void addAuthor(Author author) {
         this.setAuthor(author);
         author.getAuthorBooksList().add(this);
     }
 
-    public void removeAuthor(Author author){
+    public void removeAuthor(Author author) {
         this.setAuthor(null);
         author.getAuthorBooksList().remove(this);
     }
 
-    public Double calculateAvgRating(){
+    public Double calculateAvgRating() {
         Double sum = 0.0;
-        for(Rating rating : getRatings()){
-            sum +=  rating.getRatingValue();
+        for (Rating rating : getRatings()) {
+            sum += rating.getRatingValue();
         }
-        if (getRatings().size() == 0){
+        if (getRatings().size() == 0) {
             return 0.0;
-        }else {
+        } else {
             return sum / (double) getRatings().size();
         }
     }
 
-    public List<String> getChaptersTitles(){
+    public List<String> getChaptersTitles() {
         List<String> titles = new ArrayList<>();
-        for(Chapter chapter : getChapters()){
+        for (Chapter chapter : getChapters()) {
             titles.add(chapter.getTitle());
         }
         return titles;
+    }
+    public List<String> getContributorsEmails(){
+        List<String> contributorsEmails = new ArrayList<>();
+        for(Contribution contribution : getContributions()){
+            contributorsEmails.add(
+                    contribution.getAuthor().getAuthorEmail()
+            );
+        }
+        return contributorsEmails;
     }
 }
