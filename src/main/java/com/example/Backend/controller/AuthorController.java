@@ -119,7 +119,7 @@ public class AuthorController {
         return authorRepository.save(author);
     }
 
-    @PostMapping("/encodeimg")
+    @PostMapping("/encodeimg/")
     public String encodeImg(@RequestParam MultipartFile image) throws IOException {
         //File file = new File("D:\\SBME_4\\Graduation_Project\\Platform_Backend\\profile_picture.jpg");
             // Reading a Image file from file system

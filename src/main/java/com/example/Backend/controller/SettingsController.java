@@ -24,7 +24,7 @@ public class SettingsController {
     @PutMapping()
     public SettingsResponse updateUserSettings(HttpServletRequest request,@RequestBody SettingsForm form){
         String userType = jwtService.getUserType(request);
-        if(userType == ADMIN.name()){
+        if(userType.equals(ADMIN.name())){
             return authorSettingsController.updateAuthorSettingsInfo(
                     request,form);
         }else {
@@ -36,7 +36,7 @@ public class SettingsController {
     @GetMapping()
     public SettingsResponse getUserSettings(HttpServletRequest request){
         String userType = jwtService.getUserType(request);
-        if(userType == ADMIN.name()){
+        if(userType.equals(ADMIN.name())){
             return authorSettingsController.
                     getAuthorSettingsInfo(request);
         }else {
