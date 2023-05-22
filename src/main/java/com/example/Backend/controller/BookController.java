@@ -17,7 +17,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/book")
+@RequestMapping("/book/")
 public class BookController {
 
     @Autowired
