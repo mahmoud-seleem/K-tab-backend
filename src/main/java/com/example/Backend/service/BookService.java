@@ -1,13 +1,12 @@
 package com.example.Backend.service;
 
-import com.example.Backend.Repository.AuthorRepository;
-import com.example.Backend.Repository.BookRepository;
-import com.example.Backend.Repository.TagRepository;
+import com.example.Backend.Repository.*;
 import com.example.Backend.model.*;
 import com.example.Backend.s3Connection.AccessType;
 import com.example.Backend.s3Connection.S3PreSignedURL;
 import com.example.Backend.s3Connection.S3fileSystem;
 import com.example.Backend.schema.BookInfo;
+import com.example.Backend.schema.ContributionInfo;
 import com.example.Backend.utils.ImageConverter;
 import com.example.Backend.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +30,16 @@ public class BookService {
     private ImageConverter imageConverter;
 
     @Autowired
+    private ContributionRepository contributionRepository;
+    @Autowired
     private TagRepository tagRepository;
     @Autowired
     private S3fileSystem s3fileSystem;
     @Autowired
     private Utils utils;
 
+    @Autowired
+    private ChapterRepository chapterRepository;
     @Autowired
     private S3PreSignedURL s3PreSignedURL;
 
@@ -72,6 +75,7 @@ public class BookService {
         updateBookData(book, bookInfo);
         return book;
     }
+
     public String getPreSignedAsString(String bookCoverPath) {
         return s3PreSignedURL.generatePreSignedUrl(
                 bookCoverPath,
@@ -181,7 +185,82 @@ public class BookService {
         return b;
     }
 
-}
+    public BookInfo addContribution(ContributionInfo contributionInfo) throws Exception {
+        Book book = bookRepository.findById(
+                contributionInfo.getBookId()).get();
+        if (book.getAuthor().getAuthorId().equals(
+                contributionInfo.getOwnerId())) {
+            Author author = authorRepository.
+                    findByAuthorEmail(
+                            contributionInfo.getContributorEmail()).get();
+            setupNewContribution(book, author, contributionInfo);
+        } else throw new Exception();
+        return createBookInfoResponse(book);
+    }
+
+    public BookInfo updateContribution(ContributionInfo contributionInfo) throws Exception {
+        Book book = bookRepository.findById(
+                contributionInfo.getBookId()).get();
+        if (book.getAuthor().getAuthorId().equals(
+                contributionInfo.getOwnerId())) {
+            Author author = authorRepository.
+                    findByAuthorEmail(
+                            contributionInfo.getContributorEmail()).get();
+            updateContributionData(book, author, contributionInfo);
+        } else throw new Exception();
+        return createBookInfoResponse(book);
+    }
+
+    public BookInfo removeContribution(ContributionInfo contributionInfo) throws Exception {
+        Book book = bookRepository.findById(
+                contributionInfo.getBookId()).get();
+        if (book.getAuthor().getAuthorId().equals(
+                contributionInfo.getOwnerId())) {
+            Author author = authorRepository.
+                    findByAuthorEmail(
+                            contributionInfo.getContributorEmail()).get();
+            deleteContribution(book,author);
+        }else throw new Exception();
+        return createBookInfoResponse(book);
+    }
+        private void setupNewContribution (Book book, Author author, ContributionInfo contributionInfo){
+            Contribution contribution = new Contribution();
+            contribution.setChaptersIds(getChapterIds(
+                    book, contributionInfo));
+            contributionRepository.save(contribution);
+            author.addContribution(contribution);
+            book.addContribution(contribution);
+            contributionRepository.save(contribution);
+            bookRepository.save(book);
+            authorRepository.save(author);
+        }
+        private void updateContributionData (Book book, Author author, ContributionInfo contributionInfo){
+            Contribution contribution = contributionRepository
+                    .findByAuthorAndBook(author, book).get();
+            contribution.setChaptersIds(getChapterIds(
+                    book, contributionInfo));
+            contributionRepository.save(contribution);
+        }
+    private void deleteContribution(Book book, Author author){
+        Contribution contribution = contributionRepository
+                .findByAuthorAndBook(author, book).get();
+        author.removeContribution(contribution);
+        book.removeContribution(contribution);
+        contributionRepository.delete(contribution);
+    }
+        private List<UUID> getChapterIds (Book book, ContributionInfo contributionInfo){
+            List<UUID> chapterIds = new ArrayList<>();
+            for (int order : contributionInfo.getChaptersOrders()) {
+                chapterIds
+                        .add(chapterRepository
+                                .findByChapterOrderAndBook(order, book)
+                                .get()
+                                .getChapterId()
+                        );
+            }
+            return chapterIds;
+        }
+    }
 //    public Book findBookById(UUID id) {
 //        return bookRepository.findById(id).orElseThrow();
 //    }
@@ -213,7 +292,7 @@ public class BookService {
 //        return bookRepository.findAll();
 //    }
 //}
-    //    public List getAllAuthorBooks(UUID id){
+//    public List getAllAuthorBooks(UUID id){
 //        Author author = authorRepository.findById(id).orElseThrow();
 //        Book newBook = new Book("Tales");
 //        author.addBook(newBook);
