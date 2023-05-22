@@ -13,23 +13,23 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @SpringBootApplication
 public class ApplicationConfigurations {
 
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.
-                        addMapping("/author/**")
-                        .allowedOrigins("http://localhost:8080");
-                registry.addMapping("/student/**")
-                        .allowedOrigins("http://localhost:8080");
-                registry.addMapping("/api/**")
-                        .allowedOrigins("http://localhost:8080");
-                registry.addMapping("/settings/**")
-                        .allowedOrigins("http://localhost:8080");
-                registry.addMapping("/usertype/**")
-                        .allowedOrigins("http://localhost:8080");
-            }
-        };
-    }
+//    @Bean
+//    public WebMvcConfigurer corsConfigurer() {
+//        return new WebMvcConfigurer() {
+//            @Override
+//            public void addCorsMappings(CorsRegistry registry) {
+//                registry.
+//                        addMapping("/author/**")
+//                        .allowedOrigins("http://localhost:8080");
+//                registry.addMapping("/student/**")
+//                        .allowedOrigins("http://localhost:8080");
+//                registry.addMapping("/api/**")
+//                        .allowedOrigins("http://localhost:8080");
+//                registry.addMapping("/settings/**")
+//                        .allowedOrigins("http://localhost:8080");
+//                registry.addMapping("/usertype/**")
+//                        .allowedOrigins("http://localhost:8080");
+//            }
+//        };
+//    }
 }

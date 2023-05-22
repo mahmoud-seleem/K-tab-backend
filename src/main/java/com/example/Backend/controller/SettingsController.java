@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import static com.example.Backend.security.Role.ADMIN;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/settings/")
 public class SettingsController {
 

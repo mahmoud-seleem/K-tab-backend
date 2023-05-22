@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @RestController
+@CrossOrigin()
 @RequestMapping("/book/")
 public class BookController {
 

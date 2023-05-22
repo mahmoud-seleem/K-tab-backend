@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.util.*;
 
 @RestController
+@CrossOrigin()
 @RequestMapping("/author/")
 public class AuthorController {
 
