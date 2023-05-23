@@ -16,12 +16,10 @@ public class Contribution {
     private UUID contributionId;
 
     @ManyToOne
-    @MapsId("authorId")
     @JoinColumn(name = "author_id")
     private Author author;
 
     @ManyToOne
-    @MapsId("bookId")
     @JoinColumn(name = "book_id")
     private Book book;
 

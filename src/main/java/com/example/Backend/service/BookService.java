@@ -227,12 +227,11 @@ public class BookService {
             Contribution contribution = new Contribution();
             contribution.setChaptersIds(getChapterIds(
                     book, contributionInfo));
-            contributionRepository.save(contribution);
             author.addContribution(contribution);
             book.addContribution(contribution);
-            contributionRepository.save(contribution);
             bookRepository.save(book);
             authorRepository.save(author);
+            contributionRepository.save(contribution);
         }
         private void updateContributionData (Book book, Author author, ContributionInfo contributionInfo){
             Contribution contribution = contributionRepository
