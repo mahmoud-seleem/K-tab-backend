@@ -21,6 +21,9 @@ public class ChapterInfo {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String contentPath;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String audioPath;
+
     private Double readingDuration;
 
     private Integer chapterOrder;
@@ -42,6 +45,7 @@ public class ChapterInfo {
             UUID bookId,
             String title,
             String contentPath,
+            String audioPath,
             Double readingDuration,
             Integer chapterOrder,
             String creationDate,
@@ -52,6 +56,7 @@ public class ChapterInfo {
         this.bookId = bookId;
         this.title = title;
         this.contentPath = contentPath;
+        this.audioPath = audioPath;
         this.readingDuration = readingDuration;
         this.chapterOrder = chapterOrder;
         this.creationDate = creationDate;
@@ -81,6 +86,14 @@ public class ChapterInfo {
 
     public void setBookId(UUID bookId) {
         this.bookId = bookId;
+    }
+
+    public String getAudioPath() {
+        return audioPath;
+    }
+
+    public void setAudioPath(String audioPath) {
+        this.audioPath = audioPath;
     }
 
     public String getTitle() {

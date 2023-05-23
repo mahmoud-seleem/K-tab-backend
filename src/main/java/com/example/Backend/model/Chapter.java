@@ -26,7 +26,8 @@ public class Chapter {
 
     @Column(name = "content")
     private String content;
-
+    @Column(name = "audio")
+    private String audio;
     @Column(name = "reading_duration")
     private Double readingDuration;
 
@@ -159,6 +160,14 @@ public class Chapter {
 
     public List<Interaction> getInteractions() {
         return interactions;
+    }
+
+    public String getAudio() {
+        return audio;
+    }
+
+    public void setAudio(String audio) {
+        this.audio = audio;
     }
 
     public Book getBook() {

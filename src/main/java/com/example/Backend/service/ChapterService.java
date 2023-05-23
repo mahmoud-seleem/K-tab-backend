@@ -75,6 +75,7 @@ public class ChapterService {
                 chapter.getBook().getBookId(),
                 chapter.getTitle(),
                 chapter.getContent(),
+                chapter.getAudio(),
                 chapter.getReadingDuration(),
                 chapter.getChapterOrder(),
                 chapter.getCreationDateAsString(),
@@ -137,6 +138,7 @@ public class ChapterService {
             }
         }
         setupChapterContent(chapter, chapterInfo);
+        setupChapterAudio(chapter,chapterInfo);
         setupChapterOrder(chapter, chapterInfo);
     }
 
@@ -163,6 +165,18 @@ public class ChapterService {
         s3fileSystem.reserveEmptyPlace(contentPath);
         chapter.setContent(contentPath);
         return contentPath;
+    }
+
+    private String setupChapterAudio(Chapter chapter, ChapterInfo chapterInfo) {
+        String audioPath = ("Books/"
+                + chapter.getBook().getBookId().toString()
+                + "/"
+                + "Chapters/"
+                + chapter.getChapterId().toString()
+                + "/audio.mp3");
+        s3fileSystem.reserveEmptyPlace(audioPath);
+        chapter.setAudio(audioPath);
+        return audioPath;
     }
 
     private Chapter setupChapterTags(Chapter chapter, List<String> tags) {
