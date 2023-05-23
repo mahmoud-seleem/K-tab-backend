@@ -11,6 +11,7 @@ import com.example.Backend.model.Book;
 import com.example.Backend.s3Connection.S3fileSystem;
 import com.example.Backend.schema.AuthorSignUpForm;
 import com.example.Backend.schema.AuthorSignUpResponse;
+import com.example.Backend.schema.BookInfo;
 import com.example.Backend.schema.SearchInput;
 import com.example.Backend.security.JwtService;
 import com.example.Backend.service.AuthorService;
@@ -180,12 +181,24 @@ public class AuthorController {
     public AuthorSignUpResponse getAuthorProfileInfo(HttpServletRequest request){
         return authorService.getAuthorInfo(jwtService.getUserId(request));
     }
-    @GetMapping("books/headers/")
-    public List<Map<String,Object>> getAuthorBooksHeaders(@RequestParam UUID authorId,@RequestParam(required = false) String title){
-        List<Map<String,Object>> response = null;
+//    @GetMapping("home/")
+//    public List<Map<String,Object>> getAuthorBooksHeaders(@RequestParam UUID authorId,@RequestParam(required = false) String title){
+//        List<Map<String,Object>> response = null;
+//        try {
+//            response = authorService.getAuthorBooksHeaders(
+//                    new SearchInput(authorId,title));
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+//        return response;
+//    }
+    @GetMapping("home/")
+    public List<BookInfo> getAuthorBooksHeaders(HttpServletRequest request){
+        List<BookInfo> response = new ArrayList<>();
         try {
-            response = authorService.getAuthorBooksHeaders(
-                    new SearchInput(authorId,title));
+            response = authorService.getAuthorBooksHeaders2(
+                    jwtService.getUserId(request)
+            );
         }catch (Exception e){
             e.printStackTrace();
         }

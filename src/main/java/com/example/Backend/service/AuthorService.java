@@ -146,30 +146,29 @@ public class AuthorService {
         return authorRepository.save(author);
     }
 
-    public List<Map<String, Object>> getAuthorBooksHeaders(SearchInput input) throws JsonProcessingException {
+    public List<Map<String, Object>> getAuthorBooksHeaders(UUID authorId) throws JsonProcessingException {
         List<Map<String, Object>> authorBooksHeaders = new ArrayList<>();
         ObjectMapper mapper = createCustomMapper();
-        for (BookInfo bookInfo : getAuthorBooksHeadersInfo(input)) {
+        for (BookInfo bookInfo : getAuthorBooksHeadersInfo(authorId)) {
             authorBooksHeaders.add(
                     jsonConverter.convertToEntityAttribute(
                             mapper.writeValueAsString(bookInfo)).toMap());
         }
         return authorBooksHeaders;
     }
-
-    private List<BookInfo> getAuthorBooksHeadersInfo(SearchInput input) {
-        Author author = authorRepository.findById(
-                input.getAuthorId()
-        ).get();
-        return constructBooksHeadersInfo(author, input.getTitle());
+    public List<BookInfo> getAuthorBooksHeaders2(UUID authorId) throws JsonProcessingException {
+        return new ArrayList<>(getAuthorBooksHeadersInfo(authorId));
     }
 
-    private List<BookInfo> constructBooksHeadersInfo(Author author, String title) {
+    private List<BookInfo> getAuthorBooksHeadersInfo(UUID authorId) {
+        Author author = authorRepository.findById(authorId).get();
+        return constructBooksHeadersInfo(author);
+    }
+
+    private List<BookInfo> constructBooksHeadersInfo(Author author) {
         List<BookInfo> bookInfoList = new ArrayList<>();
-        List<Book> bookList = (title == null) ?
-                author.getAuthorBooksList() :
-                bookRepository.findByTitleContainingAndAuthor(
-                        title, author);
+        List<Book> bookList = author.getAuthorBooksList();
+        bookList.addAll(author.getContributionsBooks());
         for (Book book : bookList) {
             BookInfo bookInfo = new BookInfo();
             bookInfo.setBookId(book.getBookId());
