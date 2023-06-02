@@ -15,7 +15,9 @@ public class S3DeleteInvalidFiles {
     public  void deleteInvalidFiles(List<String> keys){
         s3Utils.initializeTheClient();
         String[] keysArray = keys.toArray(new String[keys.size()]);
-        DeleteObjectsRequest request = new DeleteObjectsRequest(s3Utils.getBucketName()).withKeys(keysArray);
+        DeleteObjectsRequest request = new DeleteObjectsRequest(
+                s3Utils.getBucketName())
+                .withKeys(keysArray);
         System.out.println("Deleting the following Amazon S3 objects created by Amazon Pinpoint:");
         for (String key : keys) {
             System.out.println("\t- " + key);

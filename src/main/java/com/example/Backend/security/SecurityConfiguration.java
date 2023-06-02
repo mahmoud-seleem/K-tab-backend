@@ -38,7 +38,9 @@ public class SecurityConfiguration {
                                         "/api/security/login/**",
                                         "/author/signup/**",
                                         "/student/signup/**",
-                                        "/author/encodeimg/**")
+                                        "/author/encodeimg/**",
+                                        "/swagger-ui/**",
+                                        "/v3/api-docs/**")
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated())
