@@ -62,11 +62,11 @@ public class StudentService {
 
     public StudentSignUpResponse saveNewStudent(StudentSignUpForm form) throws Exception {
         Student student = createNewStudent(form);
-        String jwtToken = authenticateNewAuthor(form);
+        String jwtToken = authenticateNewStudent(form);
         return constructResponse(student, jwtToken);
     }
 
-    private String authenticateNewAuthor(StudentSignUpForm form) {
+    private String authenticateNewStudent(StudentSignUpForm form) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         form.getStudentEmail(),
