@@ -1,8 +1,6 @@
 package com.example.Backend.utils;
 
-import com.example.Backend.Repository.AuthorRepository;
-import com.example.Backend.Repository.DisabilityRepository;
-import com.example.Backend.Repository.StudentRepository;
+import com.example.Backend.Repository.*;
 import com.example.Backend.model.Author;
 import com.example.Backend.model.Disability;
 import com.example.Backend.model.Student;
@@ -25,6 +23,8 @@ public class Utils {
     private PasswordEncoder passwordEncoder;
 
     private DisabilityRepository disabilityRepository;
+    private AuthorSettingsRepository authorSettingsRepository;
+    private StudentSettingsRepository studentSettingsRepository;
     public Utils() {
     }
 
@@ -32,11 +32,15 @@ public class Utils {
     public Utils(PasswordEncoder passwordEncoder,
                  StudentRepository studentRepository,
                  AuthorRepository authorRepository,
-                 DisabilityRepository disabilityRepository){
+                 DisabilityRepository disabilityRepository,
+                 StudentSettingsRepository studentSettingsRepository,
+                 AuthorSettingsRepository authorSettingsRepository){
         this.passwordEncoder = passwordEncoder;
         this.studentRepository = studentRepository;
         this.authorRepository = authorRepository;
         this.disabilityRepository = disabilityRepository;
+        this.studentSettingsRepository = studentSettingsRepository;
+        this.authorSettingsRepository = authorSettingsRepository;
     }
     public static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     public Method getMethodBySignature(String prefix, Field field, Object callerObject, Class<?>... parametersTypes) throws NoSuchMethodException {
@@ -47,6 +51,10 @@ public class Utils {
     }
 
     public void generateSomeUsers(){
+        authorSettingsRepository.deleteAll();
+        studentSettingsRepository.deleteAll();
+        authorRepository.deleteAll();
+        studentRepository.deleteAll();
         authorRepository.save(new Author(
                 "mahmoud",
                 "mahmoudsaleem522@gmail.com",
@@ -60,6 +68,7 @@ public class Utils {
     }
 
     public void generateSomeDisabilities(){
+        disabilityRepository.deleteAll();
         disabilityRepository
                 .saveAll(
                         Arrays.asList(

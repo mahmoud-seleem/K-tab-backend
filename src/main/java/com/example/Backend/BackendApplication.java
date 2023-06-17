@@ -1,8 +1,6 @@
 package com.example.Backend;
 
-import com.example.Backend.Repository.AuthorRepository;
-import com.example.Backend.Repository.DisabilityRepository;
-import com.example.Backend.Repository.StudentRepository;
+import com.example.Backend.Repository.*;
 import com.example.Backend.s3Connection.S3DeleteInvalidFiles;
 import com.example.Backend.security.PasswordUtils;
 import com.example.Backend.utils.Utils;
@@ -26,12 +24,16 @@ public class BackendApplication {
 		AuthorRepository authorRepository = context.getBean(AuthorRepository.class);
 		StudentRepository studentRepository = context.getBean(StudentRepository.class);
 		DisabilityRepository disabilityRepository = context.getBean(DisabilityRepository.class);
+		AuthorSettingsRepository authorSettingsRepository = context.getBean(AuthorSettingsRepository.class);
+		StudentSettingsRepository studentSettingsRepository = context.getBean(StudentSettingsRepository.class);
 		PasswordUtils passwordUtils = new PasswordUtils();
 		Utils utils = new Utils(
 				passwordUtils.passwordEncoder(),
 				studentRepository,
 				authorRepository,
-				disabilityRepository);
+				disabilityRepository,
+				studentSettingsRepository,
+				authorSettingsRepository);
 		utils.generateSomeUsers();
 		utils.generateSomeDisabilities();
 	}

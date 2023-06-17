@@ -5,11 +5,14 @@ import com.example.Backend.model.*;
 import com.example.Backend.s3Connection.AccessType;
 import com.example.Backend.s3Connection.S3PreSignedURL;
 import com.example.Backend.s3Connection.S3fileSystem;
+import com.example.Backend.schema.BookHeader;
 import com.example.Backend.schema.BookInfo;
+import com.example.Backend.schema.BookPage;
 import com.example.Backend.schema.ContributionInfo;
 import com.example.Backend.utils.ImageConverter;
 import com.example.Backend.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
@@ -219,88 +222,137 @@ public class BookService {
             Author author = authorRepository.
                     findByAuthorEmail(
                             contributionInfo.getContributorEmail()).get();
-            deleteContribution(book,author);
-        }else throw new Exception();
+            deleteContribution(book, author);
+        } else throw new Exception();
         return createBookInfoResponse(book);
     }
-        private void setupNewContribution (Book book, Author author, ContributionInfo contributionInfo){
-            Contribution contribution = new Contribution();
-            contribution.setChaptersIds(getChapterIds(
-                    book, contributionInfo));
-            author.addContribution(contribution);
-            book.addContribution(contribution);
-            bookRepository.save(book);
-            authorRepository.save(author);
-            contributionRepository.save(contribution);
-        }
-        private void updateContributionData (Book book, Author author, ContributionInfo contributionInfo){
-            Contribution contribution = contributionRepository
-                    .findByAuthorAndBook(author, book).get();
-            contribution.setChaptersIds(getChapterIds(
-                    book, contributionInfo));
-            contributionRepository.save(contribution);
-        }
-    private void deleteContribution(Book book, Author author){
+
+    private void setupNewContribution(Book book, Author author, ContributionInfo contributionInfo) {
+        Contribution contribution = new Contribution();
+        contribution.setChaptersIds(getChapterIds(
+                book, contributionInfo));
+        author.addContribution(contribution);
+        book.addContribution(contribution);
+        bookRepository.save(book);
+        authorRepository.save(author);
+        contributionRepository.save(contribution);
+    }
+
+    private void updateContributionData(Book book, Author author, ContributionInfo contributionInfo) {
+        Contribution contribution = contributionRepository
+                .findByAuthorAndBook(author, book).get();
+        contribution.setChaptersIds(getChapterIds(
+                book, contributionInfo));
+        contributionRepository.save(contribution);
+    }
+
+    private void deleteContribution(Book book, Author author) {
         Contribution contribution = contributionRepository
                 .findByAuthorAndBook(author, book).get();
         author.removeContribution(contribution);
         book.removeContribution(contribution);
         contributionRepository.delete(contribution);
     }
-        private List<UUID> getChapterIds (Book book, ContributionInfo contributionInfo){
-            List<UUID> chapterIds = new ArrayList<>();
-            for (int order : contributionInfo.getChaptersOrders()) {
-                chapterIds
-                        .add(chapterRepository
-                                .findByChapterOrderAndBook(order, book)
-                                .get()
-                                .getChapterId()
-                        );
+
+    private List<UUID> getChapterIds(Book book, ContributionInfo contributionInfo) {
+        List<UUID> chapterIds = new ArrayList<>();
+        for (int order : contributionInfo.getChaptersOrders()) {
+            chapterIds
+                    .add(chapterRepository
+                            .findByChapterOrderAndBook(order, book)
+                            .get()
+                            .getChapterId()
+                    );
+        }
+        return chapterIds;
+    }
+
+    public BookPage getNextPage(String next, String prev, int limit) {
+        List<Book> books = null;
+        BookPage page = new BookPage();
+        if (next == null && prev == null) { // always get the first page
+            books = bookRepository.getNextPage(UUID.fromString(
+                    "00000000-0000-0000-8000-000000000000"), limit + 1);
+            page.setPrev(null);
+            if (books.size() == 0 || books.size() != limit + 1) { // the last page or the database is empty
+                page.setNext(null);
+            } else {
+                page.setNext(books.get(books.size() - 2).getBookId());
+                books.remove(books.size() - 1);
             }
-            return chapterIds;
+            return createPageBookHeaders(page, books);
+        }
+        else if (next == null) {
+            page.setNext(null);
+            page.setPrev(UUID.fromString(prev));
+            return page;
+        }
+        else {
+            books = bookRepository.getNextPage(
+                    UUID.fromString(next), limit + 1);
+            page.setPrev(books.get(0).getBookId());
+            if (books.size() != limit + 1) { // the last page
+                page.setNext(null);
+            } else {
+                page.setNext(books.get(books.size() - 2).getBookId());
+                books.remove(books.size() - 1);
+            }
+            return createPageBookHeaders(page, books);
         }
     }
-//    public Book findBookById(UUID id) {
-//        return bookRepository.findById(id).orElseThrow();
-//    }
-//    public Book insertSpecificBook(){
-//        Book book = new Book("Mariam's fav book");
-//        Student student = new Student("Mariam");
-////        Rating rating = new Rating(book, student, 5);
-////        Set<Rating> ratingSet = new HashSet<Rating>();
-////        ratingSet.add(rating);
-////        book.setRatings(ratingSet);
-////        book.addRating(rating);
-////        Tag tag = new Tag("AI");
-////        Set<Book> books = new HashSet<>();
-////        books.add(book);
-////        tag.setBookList(books);
-////        Set<Tag> tags = new HashSet<>();
-////        tags.add(tag);
-////        book.setTags(tags);
-////        book.addTags(tag);
-//        return bookRepository.save(book);
-//    }
-//
-//    public List<Tag> getBookTags(UUID id){
-//        Book book = bookRepository.findById(id).orElseThrow();
-//        return book.getTags();
-//    }
-//
-//    public List getAllBooks(){
-//        return bookRepository.findAll();
-//    }
-//}
-//    public List getAllAuthorBooks(UUID id){
-//        Author author = authorRepository.findById(id).orElseThrow();
-//        Book newBook = new Book("Tales");
-//        author.addBook(newBook);
-//        newBook.addAuthor(author);
-//        bookRepository.save(newBook);
-//        return author.getAuthorBooksList();
-//    }
-//    public ResponseEntity<?> redirectToPreSignedUrl(SearchInput input){
-//        return ResponseEntity.status(302).header(
-//                "Location", s3PreSignedURL.generatePreSignedUrl(
-//                        ).toString()).body("success");
-//    }
+
+    public BookPage getPrevPage(String next, String prev, int limit) {
+        List<Book> books = null;
+        BookPage page = new BookPage();
+        if (next == null && prev == null) { // always get the first page
+            books = bookRepository.getPrevPageASC(
+                    UUID.fromString("ffffffff-ffff-ffff-ffff-ffffffffffff"),
+                    limit + 1);
+            page.setPrev(null);
+            if (books.size() == 0 || books.size() != limit + 1) { // the last page or the database is empty
+                page.setNext(null);
+            } else {
+                page.setNext(books.get(books.size() - 2).getBookId());
+                books.remove(books.size()-1);
+            }
+            return createPageBookHeaders(page, books);
+        }
+        else if (prev == null) { // back to the first page while scrolling down to the top
+            page.setPrev(null);
+            page.setNext(UUID.fromString(next));
+            return page;
+        }
+        else {
+            books = bookRepository.getPrevPage(
+                    UUID.fromString(prev) ,limit + 1);
+            Collections.reverse(books);
+            page.setNext(books.get(books.size() - 1).getBookId());
+            if (books.size() != limit + 1) { // the first page
+                page.setPrev(null);
+            } else {
+                books.remove(0);
+                page.setPrev(books.get(0).getBookId());
+            }
+            return createPageBookHeaders(page, books);
+        }
+    }
+
+    private BookPage createPageBookHeaders(BookPage page, List<Book> books) {
+        for (Book book : books) {
+            page.getBookHeaders().add(new BookHeader(
+                    book.getBookId(),
+                    book.getBookCover(),
+                    book.getTitle()));
+        }
+        return page;
+    }
+
+
+    public List<UUID> getAllBookIds() {
+        List<UUID> uuids = new ArrayList<>();
+        for (Book book : bookRepository.findALlBooks()) {
+            uuids.add(book.getBookId());
+        }
+        return uuids;
+    }
+}
