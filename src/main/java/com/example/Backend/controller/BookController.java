@@ -68,42 +68,63 @@ public class BookController {
     }
 
     @GetMapping("/page/")
-    public BookPage getPage(@RequestBody Map<String,Object> body){
-            if (((String) body.get("op")).equals("next")){
-                return bookService.getNextPage(
-                        (String)body.get("next"),
-                        (String)body.get("prev"),
-                        (int)body.get("limit"));
-            }else {
-                return bookService.getPrevPage(
-                        (String)body.get("next"),
-                        (String)body.get("prev"),
-                        (int)body.get("limit"));
-            }
+    public BookPage getPage(@RequestBody Map<String, Object> body) {
+        if (((String) body.get("op")).equals("next")) {
+            return bookService.getNextPage(
+                    (String) body.get("next"),
+                    (String) body.get("prev"),
+                    (int) body.get("limit"));
+        } else {
+            return bookService.getPrevPage(
+                    (String) body.get("next"),
+                    (String) body.get("prev"),
+                    (int) body.get("limit"));
+        }
     }
-
+    @PostMapping("/search/")
+    public BookPage search(@RequestBody Map<String, Object> body) {
+        if (((String) body.get("op")).equals("next")) {
+            return bookService.getNextPageWithSearch(
+                    (String) body.get("next"),
+                    (String) body.get("prev"),
+                    (int) body.get("limit"),
+                    (String) body.get("title"),
+                    (String) body.get("tagName"),
+                    (String) body.get("operation"));
+        } else {
+            return bookService.getPrevPageWithSearch(
+                    (String) body.get("next"),
+                    (String) body.get("prev"),
+                    (int) body.get("limit"),
+                    (String) body.get("title"),
+                    (String) body.get("tag"),
+                    (String) body.get("operation"));
+        }
+    }
     @GetMapping("/all/")
     public List<UUID> getAllBookIds() {
         return bookService.getAllBookIds();
     }
-    //    @GetMapping("/add/specificBook")
-//    public Book insertSpecificBook(){
-//        return bookService.insertSpecificBook();
-//    }
 
-//    @GetMapping("/get/tags/{id}")
-//    public List<Tag> getBookTags(@PathVariable UUID id){
-//        return bookService.getBookTags(id);
-//    }
+    @GetMapping("/all-with-tagName/")
+    public List<Map<String, Object>> getAllBooksWithTagName(@RequestParam String tagName) {
+        return bookService.getAllBookWithTagName(tagName);
+    }
 
+    @GetMapping("/all-with-title/")
+    public List<Map<String, Object>> getAllBooksWithTitle(@RequestParam String title) {
+        return bookService.getAllBookWithTitle(title);
+    }
 
-//    @GetMapping("/get/all")
-//    public List getAllBooks(){
-//        return bookService.getAllBooks();
-//    }
+    @GetMapping("/all-with-tagAndTitle/")
+    public List<Map<String, Object>> getAllBooksWithTagNameAndTitle(@RequestParam String tagName,
+                                                                    @RequestParam String title) {
+        return bookService.getAllBookWithTitleAndTag(title, tagName);
+    }
 
-//    @GetMapping("get/author/books/{id}")
-//    public List getAllAuthorBooks(@PathVariable UUID id){
-//        return bookService.getAllAuthorBooks(id);
-//    }
+    @GetMapping("/all-with-tagOrTitle/")
+    public List<Map<String, Object>> getAllBooksWithTagNameOrTitle(@RequestParam String tagName,
+                                                                   @RequestParam String title) {
+        return bookService.getAllBookWithTitleOrTag(title, tagName);
+    }
 }

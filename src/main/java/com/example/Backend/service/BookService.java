@@ -14,6 +14,7 @@ import com.example.Backend.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -270,9 +271,9 @@ public class BookService {
     public BookPage getNextPage(String next, String prev, int limit) {
         List<Book> books = null;
         BookPage page = new BookPage();
-        if (next == null && prev == null) { // always get the first page
-            books = bookRepository.getNextPage(UUID.fromString(
-                    "00000000-0000-0000-8000-000000000000"), limit + 1);
+        if (next == null && prev == null) {
+            books = bookRepository.findTop3ByBookIdGreaterThanOrderByBookId(
+                    UUID.fromString("00000000-0000-0000-8000-000000000000"));
             page.setPrev(null);
             if (books.size() == 0 || books.size() != limit + 1) { // the last page or the database is empty
                 page.setNext(null);
@@ -281,15 +282,13 @@ public class BookService {
                 books.remove(books.size() - 1);
             }
             return createPageBookHeaders(page, books);
-        }
-        else if (next == null) {
+        } else if (next == null) {
             page.setNext(null);
             page.setPrev(UUID.fromString(prev));
             return page;
-        }
-        else {
-            books = bookRepository.getNextPage(
-                    UUID.fromString(next), limit + 1);
+        } else {
+            books = bookRepository.findTop3ByBookIdGreaterThanOrderByBookId(
+                    UUID.fromString(next));
             page.setPrev(books.get(0).getBookId());
             if (books.size() != limit + 1) { // the last page
                 page.setNext(null);
@@ -305,26 +304,23 @@ public class BookService {
         List<Book> books = null;
         BookPage page = new BookPage();
         if (next == null && prev == null) { // always get the first page
-            books = bookRepository.getPrevPageASC(
-                    UUID.fromString("ffffffff-ffff-ffff-ffff-ffffffffffff"),
-                    limit + 1);
+            books = bookRepository.findTop3ByBookIdLessThanOrderByBookId(
+                    UUID.fromString("ffffffff-ffff-ffff-ffff-ffffffffffff"));
             page.setPrev(null);
             if (books.size() == 0 || books.size() != limit + 1) { // the last page or the database is empty
                 page.setNext(null);
             } else {
                 page.setNext(books.get(books.size() - 2).getBookId());
-                books.remove(books.size()-1);
+                books.remove(books.size() - 1);
             }
             return createPageBookHeaders(page, books);
-        }
-        else if (prev == null) { // back to the first page while scrolling down to the top
+        } else if (prev == null) { // back to the first page while scrolling down to the top
             page.setPrev(null);
             page.setNext(UUID.fromString(next));
             return page;
-        }
-        else {
-            books = bookRepository.getPrevPage(
-                    UUID.fromString(prev) ,limit + 1);
+        } else {
+            books = bookRepository.findTop3ByBookIdLessThanOrderByBookIdDesc(
+                    UUID.fromString(prev));
             Collections.reverse(books);
             page.setNext(books.get(books.size() - 1).getBookId());
             if (books.size() != limit + 1) { // the first page
@@ -337,6 +333,215 @@ public class BookService {
         }
     }
 
+
+    public BookPage getNextPageWithSearch(
+            String next,
+            String prev,
+            int limit,
+            String title,
+            String tagName,
+            String operation) {
+        List<Book> books = null;
+        BookPage page = new BookPage();
+        if (next == null && prev == null) {
+            books = getSearchResult(books,
+                    "00000000-0000-0000-8000-000000000000",
+                    prev,title,tagName,operation,true,true);
+            page.setPrev(null);
+            if (books.size() == 0 || books.size() != limit + 1) { // the last page or the database is empty
+                page.setNext(null);
+            } else {
+                page.setNext(books.get(books.size() - 2).getBookId());
+                books.remove(books.size() - 1);
+            }
+            return createPageBookHeaders(page, books);
+        } else if (next == null) {
+            page.setNext(null);
+            page.setPrev(UUID.fromString(prev));
+            return page;
+        } else {
+            books = getSearchResult(books,next,
+                    prev,title,tagName,operation,true,true);
+            page.setPrev(books.get(0).getBookId());
+            if (books.size() != limit + 1) { // the last page
+                page.setNext(null);
+            } else {
+                page.setNext(books.get(books.size() - 2).getBookId());
+                books.remove(books.size() - 1);
+            }
+            return createPageBookHeaders(page, books);
+        }
+    }
+
+    public BookPage getPrevPageWithSearch(String next,
+                                          String prev,
+                                          int limit,
+                                          String title,
+                                          String tagName,
+                                          String operation) {
+        List<Book> books = null;
+        BookPage page = new BookPage();
+        if (next == null && prev == null) { // always get the first page
+            books = getSearchResult(books,next,"ffffffff-ffff-ffff-ffff-ffffffffffff",
+                    title,tagName,operation,false,true);
+            page.setPrev(null);
+            if (books.size() == 0 || books.size() != limit + 1) { // the last page or the database is empty
+                page.setNext(null);
+            } else {
+                page.setNext(books.get(books.size() - 2).getBookId());
+                books.remove(books.size() - 1);
+            }
+            return createPageBookHeaders(page, books);
+        }
+        else if (prev == null) { // back to the first page while scrolling down to the top
+            page.setPrev(null);
+            page.setNext(UUID.fromString(next));
+            return page;
+        }
+        else {
+            books = getSearchResult(books,next,prev,
+                    title,tagName,operation,false,false);
+            Collections.reverse(books);
+            page.setNext(books.get(books.size() - 1).getBookId());
+            if (books.size() != limit + 1) { // the first page
+                page.setPrev(null);
+            }
+            else {
+                books.remove(0);
+                page.setPrev(books.get(0).getBookId());
+            }
+            return createPageBookHeaders(page, books);
+        }
+    }
+
+    private List<Book> getSearchResult(
+            List<Book> books,
+            String next,
+            String prev,
+            String title,
+            String tagName,
+            String operation,
+            boolean isNext,
+            boolean asc) {
+        if (title != null && tagName != null) {
+            if (operation.equals("AND")) { // searching with tag and title
+                return searchTitleAndTag(title, tagName, isNext, asc, next, prev);
+            } else { // searching with tag or title
+                return searchTitleOrTag(title, tagName, isNext, asc, next, prev);
+            }
+        } else if (title == null && tagName != null) { // searching only with tagName
+            return searchTag(title, tagName, isNext, asc, next, prev);
+        } else if (title != null) { // searching with title only
+            return searchTitle(title, tagName, isNext, asc, next, prev);
+        } else { // will not search
+            return notSearch(title, tagName, isNext, asc, next, prev);
+        }
+    }
+
+    private List<Book> searchTitleOrTag(String title,
+                                        String tagName,
+                                        Boolean isNext,
+                                        boolean asc,
+                                        String next,
+                                        String prev) {
+        if (isNext) {
+            return bookRepository
+                    .findTop3ByTitleContainingOrTags_TagNameAndBookIdGreaterThanOrderByBookId(
+                            title, tagName, UUID.fromString(next));
+        } else {
+            if (asc) {
+                return bookRepository.findTop3ByTitleContainingOrTags_TagNameAndBookIdLessThanOrderByBookId(
+                        title, tagName, UUID.fromString(prev));
+            } else {
+                return bookRepository.findTop3ByTitleContainingOrTags_TagNameAndBookIdLessThanOrderByBookIdDesc(
+                        title, tagName, UUID.fromString(prev));
+            }
+        }
+    }
+
+    private List<Book> searchTitle(String title,
+                                   String tagName,
+                                   Boolean isNext,
+                                   boolean asc,
+                                   String next,
+                                   String prev) {
+        if (isNext) {
+            return bookRepository
+                    .findTop3ByTitleContainingAndBookIdGreaterThanOrderByBookId(
+                            title, UUID.fromString(next));
+        } else {
+            if (asc) {
+                return bookRepository.findTop3ByTitleContainingAndBookIdLessThanOrderByBookId(
+                        title, UUID.fromString(prev));
+            } else {
+                return bookRepository.findTop3ByTitleContainingAndBookIdLessThanOrderByBookIdDesc(
+                        title, UUID.fromString(prev));
+            }
+        }
+    }
+
+    private List<Book> searchTag(String title,
+                                 String tagName,
+                                 Boolean isNext,
+                                 boolean asc,
+                                 String next,
+                                 String prev) {
+        if (isNext) {
+            return bookRepository
+                    .findTop3ByTags_TagNameAndBookIdGreaterThanOrderByBookId(
+                            tagName, UUID.fromString(next));
+        } else {
+            if (asc) {
+                return bookRepository.findTop3ByTags_TagNameAndBookIdLessThanOrderByBookId(
+                        tagName, UUID.fromString(prev));
+            } else {
+                return bookRepository.findTop3ByTags_TagNameAndBookIdLessThanOrderByBookIdDesc(
+                        tagName, UUID.fromString(prev));
+            }
+        }
+    }
+
+    private List<Book> searchTitleAndTag(String title,
+                                         String tagName,
+                                         Boolean isNext,
+                                         boolean asc,
+                                         String next,
+                                         String prev) {
+        if (isNext) {
+            return bookRepository
+                    .findTop3ByTitleContainingAndTags_TagNameAndBookIdGreaterThanOrderByBookId(
+                            title, tagName, UUID.fromString(next));
+        } else {
+            if (asc) {
+                return bookRepository.findTop3ByTitleContainingAndTags_TagNameAndBookIdLessThanOrderByBookId(
+                        title, tagName, UUID.fromString(prev));
+            } else {
+                return bookRepository.findTop3ByTitleContainingAndTags_TagNameAndBookIdLessThanOrderByBookIdDesc(
+                        title, tagName, UUID.fromString(prev));
+            }
+        }
+    }
+
+    private List<Book> notSearch(String title,
+                                 String tagName,
+                                 Boolean isNext,
+                                 boolean asc,
+                                 String next,
+                                 String prev) {
+        if (isNext) {
+            return bookRepository
+                    .findTop3ByBookIdGreaterThanOrderByBookId(
+                            UUID.fromString(next));
+        } else {
+            if (asc) {
+                return bookRepository.findTop3ByBookIdLessThanOrderByBookId(
+                        UUID.fromString(prev));
+            } else {
+                return bookRepository.findTop3ByBookIdLessThanOrderByBookIdDesc(
+                        UUID.fromString(prev));
+            }
+        }
+    }
     private BookPage createPageBookHeaders(BookPage page, List<Book> books) {
         for (Book book : books) {
             page.getBookHeaders().add(new BookHeader(
@@ -347,12 +552,56 @@ public class BookService {
         return page;
     }
 
-
     public List<UUID> getAllBookIds() {
         List<UUID> uuids = new ArrayList<>();
         for (Book book : bookRepository.findALlBooks()) {
             uuids.add(book.getBookId());
         }
         return uuids;
+    }
+
+    public List<Map<String, Object>> getAllBookWithTagName(String tagName) {
+        List<Map<String, Object>> out = new ArrayList<>();
+        for (Book book : bookRepository.findByTags_TagNameOrderByBookId(tagName)) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("UUID", book.getBookId());
+            map.put("title", book.getTitle());
+            map.put("tags",book.getTagsNames());
+            out.add(map);
+        }
+        return out;
+    }
+    public List<Map<String, Object>> getAllBookWithTitle(String title) {
+        List<Map<String, Object>> out = new ArrayList<>();
+        for (Book book : bookRepository.findByTitleContainingOrderByBookId(title)) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("UUID", book.getBookId());
+            map.put("title", book.getTitle());
+            map.put("tags",book.getTagsNames());
+            out.add(map);
+        }
+        return out;
+    }
+    public List<Map<String, Object>> getAllBookWithTitleAndTag(String title,String tagName) {
+        List<Map<String, Object>> out = new ArrayList<>();
+        for (Book book : bookRepository.findByTags_TagNameAndTitleContainingOrderByBookId(tagName,title)) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("UUID", book.getBookId());
+            map.put("title", book.getTitle());
+            map.put("tags",book.getTagsNames());
+            out.add(map);
+        }
+        return out;
+    }
+    public List<Map<String, Object>> getAllBookWithTitleOrTag(String title,String tagName) {
+        List<Map<String, Object>> out = new ArrayList<>();
+        for (Book book : bookRepository.findByTags_TagNameOrTitleContainingOrderByBookId(tagName,title)) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("UUID", book.getBookId());
+            map.put("title", book.getTitle());
+            map.put("tags",book.getTagsNames());
+            out.add(map);
+        }
+        return out;
     }
 }
