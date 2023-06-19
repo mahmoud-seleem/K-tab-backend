@@ -1,13 +1,12 @@
 package com.example.Backend.service;
 
-import com.example.Backend.Repository.BookRepository;
-import com.example.Backend.Repository.ChapterRepository;
-import com.example.Backend.Repository.PaymentRepository;
-import com.example.Backend.Repository.StudentRepository;
+import com.example.Backend.Repository.*;
 import com.example.Backend.model.Book;
+import com.example.Backend.model.Favourite;
 import com.example.Backend.model.Payment;
 import com.example.Backend.model.Student;
 import com.example.Backend.schema.BookHeader;
+import com.example.Backend.schema.FavouriteOrder;
 import com.example.Backend.schema.PaymentInfo;
 import com.example.Backend.security.JwtService;
 import com.example.Backend.utils.Utils;
@@ -28,6 +27,8 @@ public class PaymentService {
     @Autowired
     private PaymentRepository paymentRepository;
 
+    @Autowired
+    private FavouriteRepository favouriteRepository;
     @Autowired
     private JwtService jwtService;
     @Autowired
@@ -100,5 +101,65 @@ public class PaymentService {
         }
         return bookHeaders;
     }
+    public Favourite addBookToFavourite(UUID studentId,UUID bookId){
+        Student student = studentRepository.findById(studentId).get();
+        Book book = bookRepository.findById(bookId).get();
+        Favourite favourite = favouriteRepository.findByBookAndStudent(book,student);
+        if(favourite != null){
+            // the book is already in fav
+            return null;
+        }else {
+            Favourite newFavourite = new Favourite();
+            student.addToFavourites(newFavourite);
+            book.addToFavourites(newFavourite);
+            newFavourite.setOrder(student.getFavouriteList().size()-1);
+            return favouriteRepository.save(newFavourite);
+        }
+    }
+    public String removeBookFromFavourite(UUID studentId,UUID bookId){
+        Student student = studentRepository.findById(studentId).get();
+        Book book = bookRepository.findById(bookId).get();
+        Favourite favourite = favouriteRepository.findByBookAndStudent(book,student);
+        if(favourite != null){
+            for (Favourite fav:
+                    favouriteRepository
+                            .findAllByStudentAndOrderGreaterThan(
+                                    student,favourite.getOrder())){
+                fav.setOrder(fav.getOrder() - 1);
+            }
+            student.removeFromFavourites(favourite);
+            book.removeFromFavourites(favourite);
+            favouriteRepository.delete(favourite);
+            return "DONE";
+        }else {
+            return "the book is not in fav";
+        }
+    }
+    public void updateFavouritesOrder(UUID studentId, List<FavouriteOrder> favouriteOrders){
+        Student student = studentRepository.findById(studentId).get();
+        for (FavouriteOrder favouriteOrder : favouriteOrders){
+            Book book = bookRepository.findById(favouriteOrder.getBookId()).get();
+            Favourite favourite = favouriteRepository.findByBookAndStudent(
+                    book,student);
+            favourite.setOrder(favouriteOrder.getOrder());
+            favouriteRepository.save(favourite);
+        }
+    }
 
+    private BookHeader createBookHeader(Favourite favourite){
+        return new BookHeader(
+                favourite.getBook().getBookId(),
+                favourite.getBook().getBookCover(),
+                favourite.getBook().getTitle());
+    }
+    public List<BookHeader> getFavourites(UUID studentId){
+        Student student = studentRepository.findById(studentId).get();
+        List<BookHeader> bookHeaders = new ArrayList<>();
+        for (Favourite favourite: favouriteRepository
+                .findAllByStudentOrderByOrder(student)){
+            bookHeaders.add(
+                    createBookHeader(favourite));
+        }
+        return bookHeaders;
+    }
 }

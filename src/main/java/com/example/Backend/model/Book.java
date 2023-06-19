@@ -12,7 +12,7 @@ import java.util.*;
 @Entity
 @Table(name = "book")
 @JsonIgnoreProperties({"hibernateLazyInitializer",
-        "handler", "ratings", "chapters", "tags", "paymentList"})
+        "handler", "ratings", "chapters", "tags", "paymentList","favouriteList"})
 public class Book {
     @Id
     @GeneratedValue
@@ -55,6 +55,9 @@ public class Book {
     private List<Payment> paymentList = new ArrayList<>();
 
     @OneToMany(mappedBy = "book")
+    private List<Favourite> favouriteList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "book")
     private List<Contribution> contributions = new ArrayList<>();
 
     public String getBookCover() {
@@ -79,6 +82,14 @@ public class Book {
         return (lastEditDate != null ?
                 lastEditDate.format(Utils.formatter)
                 : null);
+    }
+
+    public List<Favourite> getFavouriteList() {
+        return favouriteList;
+    }
+
+    public void setFavouriteList(List<Favourite> favouriteList) {
+        favouriteList = favouriteList;
     }
 
     public void setPublishDate(LocalDateTime publishDate) {
@@ -190,7 +201,14 @@ public class Book {
     public void setContributions(List<Contribution> contributions) {
         this.contributions = contributions;
     }
-
+    public void addToFavourites(Favourite favourite){
+        this.getFavouriteList().add(favourite);
+        favourite.setBook(this);
+    }
+    public void removeFromFavourites(Favourite favourite){
+        this.getFavouriteList().remove(favourite);
+        favourite.setBook(null);
+    }
 
     public void addPayment(Payment payment) {
         this.getPaymentList().add(payment);

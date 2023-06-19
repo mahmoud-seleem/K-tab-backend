@@ -17,6 +17,7 @@ import java.util.*;
         "ratings",
         "studentSettings",
         "paymentList",
+        "favouriteList",
         "studentDisabilityList"} , ignoreUnknown = true)
 public class Student extends AppUser {
 
@@ -61,6 +62,8 @@ public class Student extends AppUser {
     @OneToMany(mappedBy = "student")
     private List<Payment> paymentList = new ArrayList<>() ;
 
+    @OneToMany(mappedBy = "student")
+    private List<Favourite> favouriteList = new ArrayList<>() ;
     public Student() {
     }
     public Student( String studentName,
@@ -114,6 +117,14 @@ public class Student extends AppUser {
 
     public void setPaymentList(List<Payment> paymentList) {
         this.paymentList = paymentList;
+    }
+
+    public List<Favourite> getFavouriteList() {
+        return favouriteList;
+    }
+
+    public void setFavouriteList(List<Favourite> favouriteList) {
+        this.favouriteList = favouriteList;
     }
 
     public UUID getStudentId() {
@@ -225,6 +236,14 @@ public class Student extends AppUser {
         this.studentDisabilityList = studentDisabilityList;
     }
 
+    public void addToFavourites(Favourite favourite){
+        this.getFavouriteList().add(favourite);
+        favourite.setStudent(this);
+    }
+    public void removeFromFavourites(Favourite favourite){
+        this.getFavouriteList().remove(favourite);
+        favourite.setStudent(null);
+    }
     public void addPayment(Payment payment){
         this.getPaymentList().add(payment);
         payment.setStudent(this);
