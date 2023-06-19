@@ -55,11 +55,11 @@ public class Utils {
         studentSettingsRepository.deleteAll();
         authorRepository.deleteAll();
         studentRepository.deleteAll();
-        authorRepository.save(new Author(
-                "mahmoud",
+        Author a = new Author("mahmoud",
                 "mahmoudsaleem522@gmail.com",
-                passwordEncoder.encode("123")
-        ));
+                passwordEncoder.encode("123"));
+        a.setAuthorId(UUID.fromString("5928bc68-ff43-4e6e-b13f-f923fa7ab261"));
+        authorRepository.save(a);
         studentRepository.save(new Student(
                 "mohamed",
                 "mohamed@gmail.com",

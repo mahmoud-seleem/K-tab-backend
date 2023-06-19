@@ -63,6 +63,13 @@ public class Author extends AppUser {
         this.contributions = new ArrayList<>();
     }
 
+    public Author(UUID authorId,String authorName, String authorEmail, String password) {
+        this.authorId = authorId;
+        this.authorName = authorName;
+        this.authorEmail = authorEmail;
+        this.password = password;
+    }
+
     public Author(String authorName, String authorEmail, String password) {
         this.authorName = authorName;
         this.authorEmail = authorEmail;

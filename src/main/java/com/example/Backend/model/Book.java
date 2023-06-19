@@ -37,8 +37,6 @@ public class Book {
 
     @Column(name = "last_edit_date")
     private LocalDateTime lastEditDate;
-    @OneToMany(mappedBy = "book")
-    private List<Rating> ratings = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "author_id")
@@ -109,13 +107,11 @@ public class Book {
     public Book(UUID bookId,
                 String title,
                 Double price,
-                String bookAbstract,
-                List<Rating> ratings) {
+                String bookAbstract) {
         this.bookId = bookId;
         this.title = title;
         this.price = price;
         this.bookAbstract = bookAbstract;
-        this.ratings = ratings;
         this.chapters = new ArrayList<>();
     }
 
@@ -162,13 +158,6 @@ public class Book {
         this.bookAbstract = bookAbstract;
     }
 
-    public List<Rating> getRatings() {
-        return ratings;
-    }
-
-    public void setRatings(List<Rating> ratings) {
-        this.ratings = ratings;
-    }
 
     public Author getAuthor() {
         return author;
@@ -222,16 +211,6 @@ public class Book {
         this.chapters.remove(chapter);
         chapter.setBook(null);
     }
-
-    public void addRating(Rating rating) {
-        this.getRatings().add(rating);
-        rating.setBook(this);
-    }
-
-    public void removeRating(Rating rating) {
-        this.getRatings().remove(rating);
-        rating.setBook(null);
-    }
     public void addContribution(Contribution contribution){
         this.getContributions().add(contribution);
         contribution.setBook(this);
@@ -275,15 +254,16 @@ public class Book {
     }
 
     public Double calculateAvgRating() {
-        Double sum = 0.0;
-        for (Rating rating : getRatings()) {
-            sum += rating.getRatingValue();
-        }
-        if (getRatings().size() == 0) {
-            return 0.0;
-        } else {
-            return sum / (double) getRatings().size();
-        }
+//        Double sum = 0.0;
+//        for (Rating rating : getRatings()) {
+//            sum += rating.getRatingValue();
+//        }
+//        if (getRatings().size() == 0) {
+//            return 0.0;
+//        } else {
+//            return sum / (double) getRatings().size();
+//        }
+        return 0.0;
     }
 
     public List<String> getChaptersTitles() {

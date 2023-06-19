@@ -2,10 +2,14 @@ package com.example.Backend.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
+
+
 @Entity
-@Table(name = "payment")
+@Table(name = "payment",
+        indexes = @Index(columnList = "recent_opened_date"))
 public class Payment {
 
     @Id
@@ -21,16 +25,24 @@ public class Payment {
     @JoinColumn(name = "student_id")
     private Student student;
 
-    @Column(name = "payment_info",nullable = false)
+    @Column(name = "payment_info")
     private String paymentInfo;
 
+    @Column(name = "recent_opened_date")
+    private LocalDateTime recentOpenedDate;
+
+    @Column(name = "rating_value")
+    private int ratingValue;
     public Payment() {
     }
 
-    public Payment(Book book, Student student, String paymentInfo) {
+    public Payment(UUID paymentId, Book book, Student student, String paymentInfo, LocalDateTime recentOpenedDate, int ratingValue) {
+        this.paymentId = paymentId;
         this.book = book;
         this.student = student;
         this.paymentInfo = paymentInfo;
+        this.recentOpenedDate = recentOpenedDate;
+        this.ratingValue = ratingValue;
     }
 
     public Payment(String paymentInfo) {
@@ -67,5 +79,21 @@ public class Payment {
 
     public void setPaymentInfo(String paymentInfo) {
         this.paymentInfo = paymentInfo;
+    }
+
+    public LocalDateTime getRecentOpenedDate() {
+        return recentOpenedDate;
+    }
+
+    public void setRecentOpenedDate(LocalDateTime recentOpenedDate) {
+        this.recentOpenedDate = recentOpenedDate;
+    }
+
+    public int getRatingValue() {
+        return ratingValue;
+    }
+
+    public void setRatingValue(int ratingValue) {
+        this.ratingValue = ratingValue;
     }
 }

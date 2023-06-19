@@ -2,18 +2,22 @@ package com.example.Backend.controller;
 
 import com.example.Backend.Repository.*;
 import com.example.Backend.model.*;
+import com.example.Backend.schema.BookHeader;
+import com.example.Backend.schema.PaymentInfo;
+import com.example.Backend.security.JwtService;
+import com.example.Backend.service.PaymentService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
+@CrossOrigin()
 @RequestMapping("/payment")
 public class PaymentController {
     @Autowired
@@ -24,48 +28,35 @@ public class PaymentController {
     private PaymentRepository paymentRepository;
 
     @Autowired
+    private JwtService jwtService;
+    @Autowired
     private BookRepository bookRepository;
 
-    @GetMapping("/newbook")
-    public Book createNewBook() {
-        Book book = new Book("JAVA");
-        return bookRepository.save(book);
-    }
-    @GetMapping("/newstudent")
-    public Student creatNewStudent() {
-        Student student = new Student("mahmoud");
-        return (studentRepository.save(student));
-    }
-    @GetMapping("/getallstudents")
-    public List<Student> getAllStudents(){
-        return studentRepository.findAll();
+    @Autowired
+    private PaymentService paymentService;
+    @PostMapping("buy/")
+    public PaymentInfo buyBook(@RequestParam UUID bookId,
+                        HttpServletRequest request){
+        return paymentService.buyBook(jwtService.getUserId(request),bookId);
     }
 
-    @GetMapping("/getallbooks")
-    public List<Book> getAllBooks(){
-        return bookRepository.findAll();
+    @GetMapping("all-student-payments/")
+    public List<PaymentInfo> getAllStudentPayments(HttpServletRequest request){
+        return paymentService.getAllStudentPayments(
+                jwtService.getUserId(request));
     }
-
-    @GetMapping("/newpayment")
-    public Payment createNewPayment(){
-        Book book = bookRepository.findByTitle("JAVA");
-        Student student = studentRepository.findByName("mahmoud");
-        Payment payment = new Payment("payment info");
-        book.addPayment(payment);
-        student.addPayment(payment);
-        return paymentRepository.save(payment);
+    @GetMapping("all-student-payments1/")
+    public List<PaymentInfo> getAllStudentPayments1(HttpServletRequest request){
+        return paymentService.getAllStudentPayments1(
+                jwtService.getUserId(request));
     }
-
-    @GetMapping("/getbookpayments")
-    public List<Payment> getBookPayments(){
-        return bookRepository.findByTitle("JAVA").getPaymentList();
+    @GetMapping("library/")
+    public List<BookHeader> getAllStudentPayments2(HttpServletRequest request){
+        return paymentService.getStudentLibrary(
+                jwtService.getUserId(request));
     }
-    @GetMapping("/getstudentpayments")
-    public List<Payment> getStudentPayments(){
-        return studentRepository.findByName("mahmoud").getPaymentList();
-    }
-    @GetMapping("/getallpayments")
-    public List<Payment> getAllPayments(){
-        return paymentRepository.findAll();
+    @GetMapping("all-book-payments/")
+    public List<PaymentInfo> getAllBookPayments(@RequestParam UUID bookId){
+        return paymentService.getAllBookPayments(bookId);
     }
 }

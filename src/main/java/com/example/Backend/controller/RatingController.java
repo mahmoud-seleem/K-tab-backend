@@ -44,15 +44,15 @@ public class RatingController {
     @GetMapping("/getallbooks")
     public List<Book> getAllBooks(){return bookRepository.findAll();}
 
-    @GetMapping("/newrating")
-    public Rating createNewRating(){
-        Rating rating = new Rating(5);
-        Book book = bookRepository.findByTitle("JAVA");
-        Student student = studentRepository.findByName("mahmoud");
-        student.addRating(rating);
-        book.addRating(rating);
-        return ratingRepository.save(rating);
-    }
+//    @GetMapping("/newrating")
+//    public Rating createNewRating(){
+//        Rating rating = new Rating(5);
+//        Book book = bookRepository.findByTitle("JAVA");
+//        Student student = studentRepository.findByName("mahmoud");
+//        student.addRating(rating);
+//        book.addRating(rating);
+//        return ratingRepository.save(rating);
+//    }
 
 
 }

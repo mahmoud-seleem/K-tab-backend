@@ -45,9 +45,6 @@ public class Student extends AppUser {
     @OneToMany(mappedBy = "student")
     private List<StudentComment> studentCommentList;
 
-    @OneToMany(mappedBy = "student")
-    List<Rating> ratings = new ArrayList<>();
-
     @OneToOne(mappedBy = "student")
     private StudentSettings studentSettings;
 
@@ -62,7 +59,7 @@ public class Student extends AppUser {
 
 
     @OneToMany(mappedBy = "student")
-    private List<Payment> paymentList ;
+    private List<Payment> paymentList = new ArrayList<>() ;
 
     public Student() {
     }
@@ -193,13 +190,13 @@ public class Student extends AppUser {
         studentComment.setStudent(null);
     }
 
-    public List<Rating> getRatings() {
-        return ratings;
-    }
+//    public List<Rating> getRatings() {
+//        return ratings;
+//    }
 
-    public void setRatings(List<Rating> ratings) {
-        this.ratings = ratings;
-    }
+//    public void setRatings(List<Rating> ratings) {
+//        this.ratings = ratings;
+//    }
 
     public StudentSettings getStudentSettings() {
         return studentSettings;
@@ -260,14 +257,14 @@ public class Student extends AppUser {
         this.getStudentNotificationList().remove(studentNotification);
         studentNotification.setDestinationStudent(null);
     }
-    public void addRating(Rating rating){
-        this.getRatings().add(rating);
-        rating.setStudent(this);
-    }
-    public void removeRating(Rating rating){
-        this.getRatings().remove(rating);
-        rating.setStudent(null);
-    }
+//    public void addRating(Rating rating){
+//        this.getRatings().add(rating);
+//        rating.setStudent(this);
+//    }
+//    public void removeRating(Rating rating){
+//        this.getRatings().remove(rating);
+//        rating.setStudent(null);
+//    }
     public void addInteraction(Interaction interaction){
         this.getInteractions().add(interaction);
         interaction.setStudent(this);
