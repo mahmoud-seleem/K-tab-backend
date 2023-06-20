@@ -634,6 +634,7 @@ public class BookService {
                     book.getContributorsEmails(),
                     true,
                     payment.getRecentOpenedDate().format(Utils.formatter),
+                    payment.getRecentOpenedChapterId(),
                     payment.getRatingValue());
         }
         else {
@@ -652,6 +653,7 @@ public class BookService {
                     createChapterHeaders(book),
                     book.getContributorsEmails(),
                     false,
+                    null,
                     null,
                     null);
         }

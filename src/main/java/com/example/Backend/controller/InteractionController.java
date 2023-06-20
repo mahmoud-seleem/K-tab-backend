@@ -25,46 +25,4 @@ public class InteractionController {
     private ChapterRepository chapterRepository;
     @Autowired
     private InteractionRepository interactionRepository;
-
-    //    @GetMapping("/newjson")
-//    public Interaction newjson(){
-//        JSONObject jsonObject = new JSONObject("{\"key\":\"value\"}");
-//        Interaction interaction = new Interaction(jsonObject);
-//        return interactionRepository.save(interaction);
-//    }
-    @GetMapping("/newchapter")
-    public Chapter creatNewChapter() {
-        Chapter chapter = new Chapter("chapter one");
-        return chapterRepository.save(chapter);
     }
-    @GetMapping("/newstudent")
-    public Student creatNewStudent() {
-        Student student = new Student("mahmoud");
-        return (studentRepository.save(student));
-    }
-    @GetMapping("/getallstudents")
-    public List<Student> getAllStudents(){
-        return studentRepository.findAll();
-    }
-
-    @GetMapping("/getallchapters")
-    public List<Chapter> getAllChapters(){
-        return chapterRepository.findAll();
-    }
-
-    @GetMapping("/newinter")
-    public Interaction createNewInteraction(@RequestBody Map<String,Object> interactionData){
-        Chapter chapter = chapterRepository.findByTitle("chapter one");
-        Student student = studentRepository.findByName("mahmoud");
-        JSONObject data = new JSONObject(interactionData);
-        Interaction interaction = new Interaction(data);
-        chapter.addInteraction(interaction);
-        student.addInteraction(interaction);
-        return interactionRepository.save(interaction);
-    }
-
-    @GetMapping("/getallinter")
-    public List<Interaction> getAllInteractions(){
-        return interactionRepository.findAll();
-    }
-}

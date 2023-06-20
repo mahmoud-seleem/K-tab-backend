@@ -12,9 +12,10 @@ import java.util.UUID;
 @Component
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(value = {"bookCoverPhotoAsBinaryString"}, allowGetters = false, allowSetters = true)
-public class StudentBookInfo extends BookInfo{
+public class StudentBookInfo extends BookInfo {
     private boolean isBought;
     private String recentOpenedDate;
+    private UUID recentOpenedChapterId;
     private Integer ratingValue;
 
     public StudentBookInfo() {
@@ -27,7 +28,7 @@ public class StudentBookInfo extends BookInfo{
     }
 
     public StudentBookInfo(UUID authorId
-            ,UUID bookId
+            , UUID bookId
             , String title
             , String bookCoverPhotoAsBinaryString
             , String bookAbstract
@@ -39,16 +40,18 @@ public class StudentBookInfo extends BookInfo{
             , Double avgRate
             , List<ChapterHeader> chapterHeaders
             , List<String> contributors
-            ,boolean isBought
+            , boolean isBought
             , String recentOpenedDate
+            , UUID recentOpenedChapterId
             , Integer ratingValue) {
         super(authorId, bookId, title, bookCoverPhotoAsBinaryString, bookAbstract, tags, bookCoverPath, publishDate, lastEditDate, price, avgRate, chapterHeaders, contributors);
         this.isBought = isBought;
         this.recentOpenedDate = recentOpenedDate;
+        this.recentOpenedChapterId = recentOpenedChapterId;
         this.ratingValue = ratingValue;
     }
 
-    public StudentBookInfo(UUID authorId, String title, String bookCoverPhotoAsBinaryString, String bookAbstract, List<String> tags, String bookCoverPath, String publishDate, String lastEditDate, Double price, Double avgRate, List<ChapterHeader> chapterHeaders , List<String> contributors, boolean isBought, String recentOpenedDate, Integer ratingValue) {
+    public StudentBookInfo(UUID authorId, String title, String bookCoverPhotoAsBinaryString, String bookAbstract, List<String> tags, String bookCoverPath, String publishDate, String lastEditDate, Double price, Double avgRate, List<ChapterHeader> chapterHeaders, List<String> contributors, boolean isBought, String recentOpenedDate, Integer ratingValue) {
         super(authorId, title, bookCoverPhotoAsBinaryString, bookAbstract, tags, bookCoverPath, publishDate, lastEditDate, price, avgRate, chapterHeaders, contributors);
         this.isBought = isBought;
         this.recentOpenedDate = recentOpenedDate;
@@ -77,5 +80,13 @@ public class StudentBookInfo extends BookInfo{
 
     public void setRatingValue(Integer ratingValue) {
         this.ratingValue = ratingValue;
+    }
+
+    public UUID getRecentOpenedChapterId() {
+        return recentOpenedChapterId;
+    }
+
+    public void setRecentOpenedChapterId(UUID recentOpenedChapterId) {
+        this.recentOpenedChapterId = recentOpenedChapterId;
     }
 }

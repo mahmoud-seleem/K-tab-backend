@@ -1,10 +1,7 @@
 package com.example.Backend.service;
 
 import com.example.Backend.Repository.*;
-import com.example.Backend.model.Book;
-import com.example.Backend.model.Favourite;
-import com.example.Backend.model.Payment;
-import com.example.Backend.model.Student;
+import com.example.Backend.model.*;
 import com.example.Backend.schema.BookHeader;
 import com.example.Backend.schema.FavouriteOrder;
 import com.example.Backend.schema.PaymentInfo;
@@ -33,14 +30,27 @@ public class PaymentService {
     private JwtService jwtService;
     @Autowired
     private BookRepository bookRepository;
+    @Autowired
+    private ReadingRepository readingRepository;
 
     public PaymentInfo buyBook(UUID studentId,UUID bookId){
         Student student = studentRepository.findById(studentId).get();
         Book book = bookRepository.findById(bookId).get();
-        Payment payment = new Payment("19/6");
+        Payment payment = new Payment(
+                "this book is bought in "+
+                        LocalDateTime.now().format(Utils.formatter)
+                        + "by student "+ student.getStudentName());
         payment.setRecentOpenedDate(LocalDateTime.now());
         student.addPayment(payment);
         book.addPayment(payment);
+        List<Chapter> chapters =  book.getChapters();
+        for (Chapter chapter : chapters){
+            Reading reading = new Reading(
+                    chapter,student,0);
+            student.addReading(reading);
+            chapter.addReading(reading);
+            readingRepository.save(reading);
+        }
         return createPaymentInfo(
                 paymentRepository.save(payment));
     }

@@ -51,6 +51,8 @@ public class ChapterService {
     @Autowired
     private S3PreSignedURL s3PreSignedURL;
 
+    @Autowired
+    private ReadingRepository readingRepository;
     public ChapterInfo saveNewChapter(ChapterInfo chapterInfo) throws Exception {
         Chapter chapter = createNewChapter(chapterInfo);
         return createChapterInfoResponse(
@@ -198,7 +200,7 @@ public class ChapterService {
         return chapterRepository.save(chapter);
     }
 
-    public Interaction addInteraction(InteractionInfo interactionInfo) {
+    public InteractionInfo addInteraction(InteractionInfo interactionInfo) {
         Student student = studentRepository
                 .findById(interactionInfo.getStudentId()).get();
         Chapter chapter = chapterRepository
@@ -207,12 +209,13 @@ public class ChapterService {
                 interactionInfo.getInteractionData()
         );
         Interaction interaction = new Interaction(data);
-        chapter.addInteraction(interaction);
-        student.addInteraction(interaction);
-        return interactionRepository.save(interaction);
+        Reading reading = readingRepository.findByStudentAndChapter(student,chapter);
+        reading.addInteraction(interaction);
+        return createInteractionInfo(
+                interactionRepository.save(interaction));
     }
 
-    public Interaction updateInteraction(InteractionInfo interactionInfo) {
+    public InteractionInfo updateInteraction(InteractionInfo interactionInfo) {
         JSONObject data ;
         Interaction interaction = interactionRepository
                 .findById(interactionInfo.getInteractionId()).get();
@@ -220,11 +223,8 @@ public class ChapterService {
             data = new JSONObject(interactionInfo.getInteractionData());
             interaction.setData(data);
         }
-        if (interactionInfo.getReadingProgress() != null){
-            interaction.setReadingProgress(
-                    interactionInfo.getReadingProgress());
-        }
-        return interactionRepository.save(interaction);
+        return createInteractionInfo(
+                interactionRepository.save(interaction));
     }
     public void deleteInteraction(InteractionInfo interactionInfo) {
         Student student = studentRepository
@@ -233,8 +233,8 @@ public class ChapterService {
                 .findById(interactionInfo.getChapterId()).get();
         Interaction interaction = interactionRepository
                 .findById(interactionInfo.getInteractionId()).get();
-        chapter.removeInteraction(interaction);
-        student.removeInteraction(interaction);
+        Reading reading = readingRepository.findByStudentAndChapter(student,chapter);
+        reading.removeInteraction(interaction);
         interactionRepository.delete(interaction);
     }
 
@@ -248,19 +248,18 @@ public class ChapterService {
                 .findById(studentId).get();
         Chapter chapter = chapterRepository
                 .findById(chapterId).get();
-        return createListOfInteractionInfo(
-                interactionRepository
-                        .findAllByStudentAndChapter(student,chapter));
+        Reading reading = readingRepository.findByStudentAndChapter(student,chapter);
+        return createListOfInteractionInfo(reading.getInteractions());
     }
 
 
     private InteractionInfo createInteractionInfo(Interaction interaction){
         return new InteractionInfo(
-                interaction.getStudent().getStudentId(),
-                interaction.getChapter().getChapterId(),
+                interaction.getReading().getStudent().getStudentId(),
+                interaction.getReading().getChapter().getChapterId(),
+                interaction.getReading().getReadingId(),
                 interaction.getInteractionId(),
-                interaction.getData().toMap(),
-                interaction.getReadingProgress());
+                interaction.getData().toMap());
     }
 
     private List<InteractionInfo> createListOfInteractionInfo(List<Interaction> interactions){

@@ -31,6 +31,9 @@ public class Payment {
     @Column(name = "recent_opened_date")
     private LocalDateTime recentOpenedDate;
 
+    @Column(name = "recent_opened_chapter_id")
+    private UUID recentOpenedChapterId ;
+
     @Column(name = "rating_value")
     private Integer ratingValue;
     public Payment() {
@@ -95,5 +98,13 @@ public class Payment {
 
     public void setRatingValue(Integer ratingValue) {
         this.ratingValue = ratingValue;
+    }
+
+    public UUID getRecentOpenedChapterId() {
+        return recentOpenedChapterId;
+    }
+
+    public void setRecentOpenedChapterId(UUID recentOpenedChapterId) {
+        this.recentOpenedChapterId = recentOpenedChapterId;
     }
 }

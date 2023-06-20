@@ -9,16 +9,18 @@ import java.util.UUID;
 public class InteractionInfo {
     private UUID studentId;
     private UUID chapterId;
-    private UUID interactionId;
-    private Map<String,Object> interactionData = null;
-    private Integer readingProgress = null;
 
-    public InteractionInfo(UUID studentId, UUID chapterId, UUID interactionId, Map<String, Object> interactionData, Integer readingProgress) {
+    private UUID readingId;
+    private UUID interactionId;
+
+    private Map<String,Object> interactionData = null;
+
+    public InteractionInfo(UUID studentId, UUID chapterId,UUID readingId, UUID interactionId, Map<String, Object> interactionData) {
         this.studentId = studentId;
         this.chapterId = chapterId;
+        this.readingId = readingId;
         this.interactionId = interactionId;
         this.interactionData = interactionData;
-        this.readingProgress = readingProgress;
     }
 
     public InteractionInfo() {
@@ -48,16 +50,17 @@ public class InteractionInfo {
         this.interactionId = interactionId;
     }
 
-    public Integer getReadingProgress() {
-        return readingProgress;
-    }
-
-    public void setReadingProgress(Integer readingProgress) {
-        this.readingProgress = readingProgress;
-    }
 
     public Map<String, Object> getInteractionData() {
         return interactionData;
+    }
+
+    public UUID getReadingId() {
+        return readingId;
+    }
+
+    public void setReadingId(UUID readingId) {
+        this.readingId = readingId;
     }
 
     public void setInteractionData(Map<String, Object> interactionData) {

@@ -19,9 +19,6 @@ public class Interaction {
     @GeneratedValue
     @Column(name = "interaction_id",nullable = false)
     private UUID interactionId;
-
-
-
     @ManyToOne
     @JoinColumn(name = "reading_id")
     private Reading reading;

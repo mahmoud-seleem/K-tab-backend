@@ -1,17 +1,13 @@
 package com.example.Backend.controller;
 
-import com.example.Backend.Repository.BookRepository;
-import com.example.Backend.Repository.ChapterRepository;
-import com.example.Backend.model.Book;
-import com.example.Backend.model.Chapter;
+import com.example.Backend.Repository.*;
+import com.example.Backend.model.*;
 import com.example.Backend.s3Connection.AccessType;
 import com.example.Backend.s3Connection.S3DeleteInvalidFiles;
 import com.example.Backend.s3Connection.S3PreSignedURL;
 import com.example.Backend.s3Connection.S3fileSystem;
-import com.example.Backend.schema.AudioInfo;
-import com.example.Backend.schema.ChapterReadResponse;
-import com.example.Backend.schema.ImageUploadResponse;
-import com.example.Backend.schema.InvalidInfo;
+import com.example.Backend.schema.*;
+import com.example.Backend.security.JwtService;
 import com.example.Backend.service.S3Service;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +16,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import software.amazon.awssdk.services.s3.endpoints.internal.Value;
@@ -45,7 +42,16 @@ public class S3Controller {
 
     @Autowired
     private S3Service s3Service;
+    @Autowired
+    private JwtService jwtService;
+    @Autowired
+    private StudentRepository studentRepository;
 
+    @Autowired
+    private ReadingRepository readingRepository;
+
+    @Autowired
+    private PaymentRepository paymentRepository;
     @GetMapping("image/")
     public ImageUploadResponse getPerSignedForWriteImage(@RequestParam UUID chapterId) {
         ImageUploadResponse response = new ImageUploadResponse();
@@ -98,16 +104,22 @@ public class S3Controller {
     }
 
     @GetMapping("read/")
-    public ChapterReadResponse chapterReadResponse(@RequestParam UUID chapterId){
+    public ChapterReadResponse chapterReadResponse(HttpServletRequest request,@RequestParam UUID chapterId){
         ChapterReadResponse chapterReadResponse = new ChapterReadResponse();
         chapterReadResponse.setContentUrl(
                 s3Service.getPreSignedForRead(
-                        s3Service.createContentPath(chapterId)
-                )
-        );
+                        s3Service.createContentPath(chapterId)));
         chapterReadResponse.setImagesUrls(
-                s3Service.getImagesReadUrls(chapterId)
-        );
+                s3Service.getImagesReadUrls(chapterId));
+        if (jwtService.getUserType(request).equals("STUDENT")){
+            Student student = studentRepository.findById(
+                    jwtService.getUserId(request)).get();
+            Chapter chapter = chapterRepository.findById(chapterId).get();
+            Book book  = chapter.getBook();
+            Payment payment = paymentRepository.findByStudentAndBook(student,book);
+            payment.setRecentOpenedChapterId(chapterId);
+            paymentRepository.save(payment);
+        }
     return chapterReadResponse;
     }
 }

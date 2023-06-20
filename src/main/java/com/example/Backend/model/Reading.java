@@ -1,6 +1,7 @@
 package com.example.Backend.model;
 
 import jakarta.persistence.*;
+import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,7 @@ public class Reading {
     public Reading() {
     }
 
-    public Reading(Chapter chapter, Student student, int readingProgress) {
+    public Reading(Chapter chapter, Student student, Integer readingProgress) {
         this.chapter = chapter;
         this.student = student;
         this.readingProgress = readingProgress;
