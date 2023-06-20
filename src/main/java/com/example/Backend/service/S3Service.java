@@ -27,7 +27,7 @@ public class S3Service {
     public String getPreSignedForWrite(String path) {
         return s3PreSignedURL.generatePreSignedUrl(
                 path,
-                60,
+                300,
                 AccessType.WRITE
         ).toString();
     }
@@ -35,7 +35,7 @@ public class S3Service {
     public String getPreSignedForRead(String path) {
         return s3PreSignedURL.generatePreSignedUrl(
                 path,
-                60,
+                300,
                 AccessType.READ
         ).toString();
     }

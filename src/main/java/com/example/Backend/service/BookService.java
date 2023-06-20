@@ -5,10 +5,7 @@ import com.example.Backend.model.*;
 import com.example.Backend.s3Connection.AccessType;
 import com.example.Backend.s3Connection.S3PreSignedURL;
 import com.example.Backend.s3Connection.S3fileSystem;
-import com.example.Backend.schema.BookHeader;
-import com.example.Backend.schema.BookInfo;
-import com.example.Backend.schema.BookPage;
-import com.example.Backend.schema.ContributionInfo;
+import com.example.Backend.schema.*;
 import com.example.Backend.utils.ImageConverter;
 import com.example.Backend.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +26,11 @@ public class BookService {
 
     @Autowired
     private AuthorRepository authorRepository;
+
+    @Autowired
+    private StudentRepository studentRepository;
+    @Autowired
+    private PaymentRepository paymentRepository;
 
     @Autowired
     private ImageConverter imageConverter;
@@ -134,7 +136,7 @@ public class BookService {
                 book.getLastEditDateAsString(),
                 book.getPrice(),
                 book.calculateAvgRating(),
-                book.getChaptersTitles(),
+                createChapterHeaders(book),
                 book.getContributorsEmails());
         return response;
     }
@@ -603,5 +605,67 @@ public class BookService {
             out.add(map);
         }
         return out;
+    }
+
+    public StudentBookInfo getStudentBookInfo(
+            UUID studentId, UUID bookId) {
+        Student student = studentRepository.findById(studentId).get();
+        Book book = bookRepository.findById(bookId).get();
+        Payment payment = paymentRepository.findByStudentAndBook(
+                student,book);
+        return createStudentBookInfo(book,payment);
+    }
+    private StudentBookInfo createStudentBookInfo(Book book
+            ,Payment payment){
+        if (payment != null){
+            return new StudentBookInfo(
+                    book.getBookId(),
+                    book.getAuthor().getAuthorId(),
+                    book.getTitle(),
+                    null,
+                    book.getBookAbstract(),
+                    book.getTagsNames(),
+                    book.getBookCover(),
+                    book.getPublishDateAsString(),
+                    book.getLastEditDateAsString(),
+                    book.getPrice(),
+                    book.calculateAvgRating(),
+                    createChapterHeaders(book),
+                    book.getContributorsEmails(),
+                    true,
+                    payment.getRecentOpenedDate().format(Utils.formatter),
+                    payment.getRatingValue());
+        }
+        else {
+            return new StudentBookInfo(
+                    book.getBookId(),
+                    book.getAuthor().getAuthorId(),
+                    book.getTitle(),
+                    null,
+                    book.getBookAbstract(),
+                    book.getTagsNames(),
+                    book.getBookCover(),
+                    book.getPublishDateAsString(),
+                    book.getLastEditDateAsString(),
+                    book.getPrice(),
+                    book.calculateAvgRating(),
+                    createChapterHeaders(book),
+                    book.getContributorsEmails(),
+                    false,
+                    null,
+                    null);
+        }
+    }
+
+    private List<ChapterHeader> createChapterHeaders(Book book){
+        List<ChapterHeader> chapterHeaders = new ArrayList<>();
+        for (Chapter chapter : book.getChapters()){
+            chapterHeaders.add(
+                    new ChapterHeader(
+                           chapter.getChapterId(),
+                           chapter.getTitle(),
+                           chapter.getChapterOrder()));
+        }
+        return chapterHeaders;
     }
 }

@@ -14,9 +14,9 @@ public class PaymentInfo {
     private UUID studentId;
     private String paymentInfo;
     private String recentOpenedDate;
-    private int ratingValue;
+    private Integer ratingValue;
 
-    public PaymentInfo(UUID paymentId, String bookTitle, UUID bookId, String studentEmail, UUID studentId, String paymentInfo, String recentOpenedDate, int ratingValue) {
+    public PaymentInfo(UUID paymentId, String bookTitle, UUID bookId, String studentEmail, UUID studentId, String paymentInfo, String recentOpenedDate, Integer ratingValue) {
         this.paymentId = paymentId;
         this.bookTitle = bookTitle;
         this.bookId = bookId;
@@ -86,11 +86,11 @@ public class PaymentInfo {
         this.recentOpenedDate = recentOpenedDate;
     }
 
-    public int getRatingValue() {
+    public Integer getRatingValue() {
         return ratingValue;
     }
 
-    public void setRatingValue(int ratingValue) {
+    public void setRatingValue(Integer ratingValue) {
         this.ratingValue = ratingValue;
     }
 }

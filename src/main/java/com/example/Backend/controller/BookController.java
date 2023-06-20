@@ -63,8 +63,13 @@ public class BookController {
     }
 
     @GetMapping()
-    public BookInfo getBookInfo(@RequestParam UUID bookId) {
-        return bookService.getBookInfo(bookId);
+    public BookInfo getBookInfo(HttpServletRequest request,@RequestParam UUID bookId) {
+        if (jwtService.getUserType(request).equals("ADMIN")){
+            return bookService.getBookInfo(bookId);
+        }else {
+            return bookService.getStudentBookInfo(jwtService.getUserId(request),bookId);
+        }
+
     }
 
     @GetMapping("/page/")

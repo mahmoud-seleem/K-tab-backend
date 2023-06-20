@@ -24,6 +24,7 @@ public class BookInfo {
     private Double price;
     private String publishDate;
 
+    private List<ChapterHeader> chapterHeaders;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private UUID authorId;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
@@ -51,7 +52,7 @@ public class BookInfo {
                     String lastEditDate,
                     Double price,
                     Double avgRate,
-                    List<String> chaptersTitles,
+                    List<ChapterHeader> chapterHeaders,
                     List<String> contributors) {
         this.authorId = authorId;
         this.bookId = bookId;
@@ -64,7 +65,7 @@ public class BookInfo {
         this.lastEditDate = lastEditDate;
         this.price = price;
         this.avgRate = avgRate;
-        this.chaptersTitles = chaptersTitles;
+        this.chapterHeaders = chapterHeaders;
         this.contributors = contributors;
     }
 
@@ -73,7 +74,7 @@ public class BookInfo {
                     String bookAbstract, List<String> tags,
                     String bookCoverPath, String publishDate,
                     String lastEditDate, Double price,
-                    Double avgRate, List<String> chaptersTitles, List<String> contributors) {
+                    Double avgRate, List<ChapterHeader> chapterHeaders, List<String> contributors) {
         this.authorId = authorId;
         this.title = title;
         this.bookCoverPhotoAsBinaryString = bookCoverPhotoAsBinaryString;
@@ -84,8 +85,17 @@ public class BookInfo {
         this.lastEditDate = lastEditDate;
         this.price = price;
         this.avgRate = avgRate;
-        this.chaptersTitles = chaptersTitles;
+        this.chapterHeaders = chapterHeaders;
         this.contributors = contributors;
+    }
+
+
+    public List<ChapterHeader> getChapterHeaders() {
+        return chapterHeaders;
+    }
+
+    public void setChapterHeaders(List<ChapterHeader> chapterHeaders) {
+        this.chapterHeaders = chapterHeaders;
     }
 
     public UUID getBookId() {

@@ -32,11 +32,11 @@ public class Payment {
     private LocalDateTime recentOpenedDate;
 
     @Column(name = "rating_value")
-    private int ratingValue;
+    private Integer ratingValue;
     public Payment() {
     }
 
-    public Payment(UUID paymentId, Book book, Student student, String paymentInfo, LocalDateTime recentOpenedDate, int ratingValue) {
+    public Payment(UUID paymentId, Book book, Student student, String paymentInfo, LocalDateTime recentOpenedDate, Integer ratingValue) {
         this.paymentId = paymentId;
         this.book = book;
         this.student = student;
@@ -89,11 +89,11 @@ public class Payment {
         this.recentOpenedDate = recentOpenedDate;
     }
 
-    public int getRatingValue() {
+    public Integer getRatingValue() {
         return ratingValue;
     }
 
-    public void setRatingValue(int ratingValue) {
+    public void setRatingValue(Integer ratingValue) {
         this.ratingValue = ratingValue;
     }
 }
