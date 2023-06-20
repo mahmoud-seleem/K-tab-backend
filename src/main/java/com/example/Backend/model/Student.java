@@ -17,6 +17,7 @@ import java.util.*;
         "ratings",
         "studentSettings",
         "paymentList",
+        "readingList",
         "favouriteList",
         "studentDisabilityList"} , ignoreUnknown = true)
 public class Student extends AppUser {
@@ -55,9 +56,9 @@ public class Student extends AppUser {
     @OneToMany(mappedBy = "destinationStudent")
     private List<StudentNotification> studentNotificationList;
 
-    @OneToMany(mappedBy = "student")
-    private List<Interaction> interactions;
 
+    @OneToMany(mappedBy = "student")
+    private List<Reading> readingList = new ArrayList<>();
 
     @OneToMany(mappedBy = "student")
     private List<Payment> paymentList = new ArrayList<>() ;
@@ -107,7 +108,6 @@ public class Student extends AppUser {
         this.studentCommentList = new ArrayList<>();
         this.studentDisabilityList = new ArrayList<>();
         this.studentNotificationList = new ArrayList<>();
-        this.interactions = new ArrayList<>();
         this.paymentList = new ArrayList<>();
     }
 
@@ -183,13 +183,6 @@ public class Student extends AppUser {
         this.educationLevel = educationLevel;
     }
 
-    public List<Interaction> getInteractions() {
-        return interactions;
-    }
-
-    public void setInteractions(List<Interaction> interactions) {
-        this.interactions = interactions;
-    }
 
     public void addStudentComment(StudentComment studentComment) {
         this.getStudentCommentList().add(studentComment);
@@ -201,7 +194,15 @@ public class Student extends AppUser {
         studentComment.setStudent(null);
     }
 
-//    public List<Rating> getRatings() {
+    public List<Reading> getReadingList() {
+        return readingList;
+    }
+
+    public void setReadingList(List<Reading> readingList) {
+        this.readingList = readingList;
+    }
+
+    //    public List<Rating> getRatings() {
 //        return ratings;
 //    }
 
@@ -284,14 +285,17 @@ public class Student extends AppUser {
 //        this.getRatings().remove(rating);
 //        rating.setStudent(null);
 //    }
-    public void addInteraction(Interaction interaction){
-        this.getInteractions().add(interaction);
-        interaction.setStudent(this);
+
+    public void addReading(Reading reading){
+        this.getReadingList().add(reading);
+        reading.setStudent(this);
     }
-    public void removeInteraction(Interaction interaction){
-        this.getInteractions().remove(interaction);
-        interaction.setStudent(null);
+    public void removeReading(Reading reading){
+        this.getReadingList().remove(reading);
+        reading.setStudent(null);
     }
+
+
     public List<Map<String,Object>> getDisabilitiesInfo(){
         List<Map<String,Object>> disabilitiesInfo = new ArrayList<>();
         for (StudentDisability studentDisability

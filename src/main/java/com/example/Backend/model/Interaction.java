@@ -20,20 +20,16 @@ public class Interaction {
     @Column(name = "interaction_id",nullable = false)
     private UUID interactionId;
 
-    @ManyToOne
-    @JoinColumn(name = "chapter_id")
-    private Chapter chapter;
+
 
     @ManyToOne
-    @JoinColumn(name = "student_id")
-    private Student student;
+    @JoinColumn(name = "reading_id")
+    private Reading reading;
     @Convert(converter = JsonConverter.class)
     @Column(columnDefinition = "jsonb")
     @JsonIgnore
     private JSONObject data;
 
-    @Column(name = "reading_progress" , nullable = false)
-    private int readingProgress;
     @JsonProperty("data")
     public Map<String, Object> getAsJsonString() throws IOException, JSONException {
         return JsonToMapConverter.toMap(data);
@@ -62,28 +58,12 @@ public class Interaction {
         this.data = data;
     }
 
-    public Chapter getChapter() {
-        return chapter;
+    public Reading getReading() {
+        return reading;
     }
 
-    public void setChapter(Chapter chapter) {
-        this.chapter = chapter;
-    }
-
-    public Student getStudent() {
-        return student;
-    }
-
-    public void setStudent(Student student) {
-        this.student = student;
-    }
-
-    public int getReadingProgress() {
-        return readingProgress;
-    }
-
-    public void setReadingProgress(int readingProgress) {
-        this.readingProgress = readingProgress;
+    public void setReading(Reading reading) {
+        this.reading = reading;
     }
     //Reference for below code: https://stackoverflow.com/questions/21720759/convert-a-json-string-to-a-hashmap
 

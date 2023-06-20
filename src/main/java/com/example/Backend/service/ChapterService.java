@@ -1,25 +1,24 @@
 package com.example.Backend.service;
 
-import com.example.Backend.Repository.AuthorRepository;
-import com.example.Backend.Repository.BookRepository;
-import com.example.Backend.Repository.ChapterRepository;
-import com.example.Backend.Repository.TagRepository;
-import com.example.Backend.model.Author;
-import com.example.Backend.model.Book;
-import com.example.Backend.model.Chapter;
-import com.example.Backend.model.Tag;
+import com.example.Backend.Repository.*;
+import com.example.Backend.model.*;
 import com.example.Backend.s3Connection.S3PreSignedURL;
 import com.example.Backend.s3Connection.S3fileSystem;
 import com.example.Backend.schema.BookInfo;
 import com.example.Backend.schema.ChapterInfo;
+import com.example.Backend.schema.InteractionInfo;
 import com.example.Backend.utils.ImageConverter;
 import com.example.Backend.utils.Utils;
+import org.aspectj.weaver.ast.Literal;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -45,6 +44,10 @@ public class ChapterService {
     private BookService bookService;
     @Autowired
     private ChapterRepository chapterRepository;
+    @Autowired
+    private StudentRepository studentRepository;
+    @Autowired
+    private InteractionRepository interactionRepository;
     @Autowired
     private S3PreSignedURL s3PreSignedURL;
 
@@ -138,7 +141,7 @@ public class ChapterService {
             }
         }
         setupChapterContent(chapter, chapterInfo);
-        setupChapterAudio(chapter,chapterInfo);
+        setupChapterAudio(chapter, chapterInfo);
         setupChapterOrder(chapter, chapterInfo);
     }
 
@@ -195,4 +198,77 @@ public class ChapterService {
         return chapterRepository.save(chapter);
     }
 
+    public Interaction addInteraction(InteractionInfo interactionInfo) {
+        Student student = studentRepository
+                .findById(interactionInfo.getStudentId()).get();
+        Chapter chapter = chapterRepository
+                .findById(interactionInfo.getChapterId()).get();
+        JSONObject data = new JSONObject(
+                interactionInfo.getInteractionData()
+        );
+        Interaction interaction = new Interaction(data);
+        chapter.addInteraction(interaction);
+        student.addInteraction(interaction);
+        return interactionRepository.save(interaction);
+    }
+
+    public Interaction updateInteraction(InteractionInfo interactionInfo) {
+        JSONObject data ;
+        Interaction interaction = interactionRepository
+                .findById(interactionInfo.getInteractionId()).get();
+        if(interactionInfo.getInteractionData() != null ){
+            data = new JSONObject(interactionInfo.getInteractionData());
+            interaction.setData(data);
+        }
+        if (interactionInfo.getReadingProgress() != null){
+            interaction.setReadingProgress(
+                    interactionInfo.getReadingProgress());
+        }
+        return interactionRepository.save(interaction);
+    }
+    public void deleteInteraction(InteractionInfo interactionInfo) {
+        Student student = studentRepository
+                .findById(interactionInfo.getStudentId()).get();
+        Chapter chapter = chapterRepository
+                .findById(interactionInfo.getChapterId()).get();
+        Interaction interaction = interactionRepository
+                .findById(interactionInfo.getInteractionId()).get();
+        chapter.removeInteraction(interaction);
+        student.removeInteraction(interaction);
+        interactionRepository.delete(interaction);
+    }
+
+    public InteractionInfo getInteraction(UUID interactionId){
+        Interaction interaction = interactionRepository
+                .findById(interactionId).get();
+        return createInteractionInfo(interaction);
+    }
+    public List<InteractionInfo> getInteractions(UUID studentId,UUID chapterId){
+        Student student = studentRepository
+                .findById(studentId).get();
+        Chapter chapter = chapterRepository
+                .findById(chapterId).get();
+        return createListOfInteractionInfo(
+                interactionRepository
+                        .findAllByStudentAndChapter(student,chapter));
+    }
+
+
+    private InteractionInfo createInteractionInfo(Interaction interaction){
+        return new InteractionInfo(
+                interaction.getStudent().getStudentId(),
+                interaction.getChapter().getChapterId(),
+                interaction.getInteractionId(),
+                interaction.getData().toMap(),
+                interaction.getReadingProgress());
+    }
+
+    private List<InteractionInfo> createListOfInteractionInfo(List<Interaction> interactions){
+        List<InteractionInfo> interactionInfoList = new ArrayList<>();
+        for (Interaction interaction: interactions){
+            interactionInfoList.add(
+                    createInteractionInfo(interaction));
+        }
+        return interactionInfoList;
+    }
 }

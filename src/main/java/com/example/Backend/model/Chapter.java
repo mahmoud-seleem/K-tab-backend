@@ -52,7 +52,7 @@ public class Chapter {
 
 
     @OneToMany(mappedBy = "chapter")
-    private List<Interaction> interactions;
+    private List<Reading> readingList = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "book_id")
@@ -85,7 +85,6 @@ public class Chapter {
         this.authorCommentList = new ArrayList<>();
         this.studentCommentList = new ArrayList<>();
         this.tags = new ArrayList<>();
-        this.interactions = new ArrayList<>();
     }
     public UUID getChapterId() {
         return chapterId;
@@ -158,9 +157,7 @@ public class Chapter {
         this.tags = tags;
     }
 
-    public List<Interaction> getInteractions() {
-        return interactions;
-    }
+
 
     public String getAudio() {
         return audio;
@@ -190,16 +187,22 @@ public class Chapter {
         this.chapterOrder = chapterOrder;
     }
 
-    public void setInteractions(List<Interaction> interactions) {
-        this.interactions = interactions;
+
+    public List<Reading> getReadingList() {
+        return readingList;
     }
-    public void addInteraction(Interaction interaction){
-        this.getInteractions().add(interaction);
-        interaction.setChapter(this);
+
+    public void setReadingList(List<Reading> readingList) {
+        this.readingList = readingList;
     }
-    public void removeInteraction(Interaction interaction){
-        this.getInteractions().remove(interaction);
-        interaction.setChapter(null);
+
+        public void addReading(Reading reading){
+            this.getReadingList().add(reading);
+            reading.setChapter(this);
+        }
+    public void removeReading(Reading reading){
+        this.getReadingList().add(reading);
+        reading.setChapter(null);
     }
     public void addTag(Tag tag){
         this.getTags().add(tag);
