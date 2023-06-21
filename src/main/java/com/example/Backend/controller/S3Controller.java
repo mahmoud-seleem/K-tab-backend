@@ -23,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
 import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.awt.*;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
@@ -119,6 +120,7 @@ public class S3Controller {
             Book book  = chapter.getBook();
             Payment payment = paymentRepository.findByStudentAndBook(student,book);
             payment.setRecentOpenedChapterId(chapterId);
+            payment.setRecentOpenedDate(LocalDateTime.now());
             paymentRepository.save(payment);
         }
     return chapterReadResponse;

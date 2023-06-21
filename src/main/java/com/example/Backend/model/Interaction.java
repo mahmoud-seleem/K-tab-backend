@@ -4,6 +4,7 @@ import com.example.Backend.jsonConversion.JsonToMapConverter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Type;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,5 +64,6 @@ public class Interaction {
         this.reading = reading;
     }
     //Reference for below code: https://stackoverflow.com/questions/21720759/convert-a-json-string-to-a-hashmap
-
+    //https://stackoverflow.com/questions/51276703/how-to-store-postgresql-jsonb-using-springboot-jpa
+    //https://stackoverflow.com/questions/53392146/question-about-spring-data-jdbc-hikari-postgres-jsonb
 }

@@ -32,6 +32,7 @@ public class BackendApplication {
 				disabilityRepository,
 				studentSettingsRepository,
 				authorSettingsRepository);
+		utils.generateSomeUsers();
 		utils.generateSomeDisabilities();
 	}
 

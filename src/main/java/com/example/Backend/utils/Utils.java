@@ -51,14 +51,13 @@ public class Utils {
     }
 
     public void generateSomeUsers(){
-        authorSettingsRepository.deleteAll();
-        studentSettingsRepository.deleteAll();
-        authorRepository.deleteAll();
-        studentRepository.deleteAll();
+//        authorSettingsRepository.deleteAll();
+//        studentSettingsRepository.deleteAll();
+//        authorRepository.deleteAll();
+//        studentRepository.deleteAll();
         Author a = new Author("mahmoud",
                 "mahmoudsaleem522@gmail.com",
                 passwordEncoder.encode("123"));
-        a.setAuthorId(UUID.fromString("5928bc68-ff43-4e6e-b13f-f923fa7ab261"));
         authorRepository.save(a);
         studentRepository.save(new Student(
                 "mohamed",

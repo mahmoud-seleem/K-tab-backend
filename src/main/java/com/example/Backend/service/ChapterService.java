@@ -201,6 +201,7 @@ public class ChapterService {
     }
 
     public InteractionInfo addInteraction(InteractionInfo interactionInfo) {
+
         Student student = studentRepository
                 .findById(interactionInfo.getStudentId()).get();
         Chapter chapter = chapterRepository
@@ -226,14 +227,10 @@ public class ChapterService {
         return createInteractionInfo(
                 interactionRepository.save(interaction));
     }
-    public void deleteInteraction(InteractionInfo interactionInfo) {
-        Student student = studentRepository
-                .findById(interactionInfo.getStudentId()).get();
-        Chapter chapter = chapterRepository
-                .findById(interactionInfo.getChapterId()).get();
+    public void deleteInteraction(UUID interactionId) {
         Interaction interaction = interactionRepository
-                .findById(interactionInfo.getInteractionId()).get();
-        Reading reading = readingRepository.findByStudentAndChapter(student,chapter);
+                .findById(interactionId).get();
+        Reading reading = interaction.getReading();
         reading.removeInteraction(interaction);
         interactionRepository.delete(interaction);
     }
