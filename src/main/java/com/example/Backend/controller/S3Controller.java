@@ -7,6 +7,7 @@ import com.example.Backend.s3Connection.S3DeleteInvalidFiles;
 import com.example.Backend.s3Connection.S3PreSignedURL;
 import com.example.Backend.s3Connection.S3fileSystem;
 import com.example.Backend.schema.*;
+import com.example.Backend.schema.enums.*;
 import com.example.Backend.security.JwtService;
 import com.example.Backend.service.S3Service;
 import jakarta.servlet.http.HttpServletRequest;
@@ -70,17 +71,17 @@ public class S3Controller {
     }
 
     @GetMapping("description/")
-    public String getImageDescription(@RequestParam String imagePath){
+    public ImageDescriptionDto getImageDescription(@RequestParam String imagePath) {
         String url = s3Service.getPreSignedForRead(imagePath);
         // calling the AI server getImageDescription() and
         // give it the url for the image
         // AI server will respond with json which will be
         // returned to the frontend
-        return url + " " +UUID.randomUUID();
+        return new ImageDescriptionDto(ImageType.SCENE, url);
     }
 
     @PostMapping("audio/")
-    public void saveAudio(@RequestBody AudioInfo audioInfo){
+    public void saveAudio(@RequestBody AudioInfo audioInfo) {
         String contentPreSignedReadUrl = s3Service
                 .getPreSignedForRead(audioInfo.getContentPath());
         String audioPreSignedWriteUrl = s3Service
@@ -91,16 +92,16 @@ public class S3Controller {
         chapter.setReadingDuration(10.0);
         chapterRepository.save(chapter);
     }
+
     @GetMapping("save-content/")
-    public String getPreSignedForWriteContent(@RequestParam String contentPath){
+    public String getPreSignedForWriteContent(@RequestParam String contentPath) {
         return s3Service.getPreSignedForWrite(contentPath);
     }
 
     @DeleteMapping("invalid/")
-    public void deleteInvalidImages(@RequestBody InvalidInfo invalidInfo){
+    public void deleteInvalidImages(@RequestBody InvalidInfo invalidInfo) {
         s3Service.deleteInvalidImages(
-                invalidInfo.getInvalidImagesPaths()
-        );
+                invalidInfo.getInvalidImagesPaths());
     }
 
     @GetMapping("read/")

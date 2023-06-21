@@ -34,3 +34,4 @@ build/
 
 src/main/resources/secrets.properties
 src/main/resources/user.properties
+src/main/resources/data.sql

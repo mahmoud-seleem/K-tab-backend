@@ -1,5 +1,5 @@
 package com.example.Backend.controller;
-;
+
 import com.example.Backend.schema.SettingsForm;
 import com.example.Backend.schema.SettingsResponse;
 import com.example.Backend.security.JwtService;
@@ -17,23 +17,25 @@ public class StudentSettingsController {
 
     @Autowired
     private JwtService jwtService;
-    public SettingsResponse updateStudentSettingsInfo(HttpServletRequest request,SettingsForm form){
+
+    public SettingsResponse updateStudentSettingsInfo(HttpServletRequest request, SettingsForm form) {
         form.setStudentId(jwtService.getUserId(request));
         SettingsResponse response = new SettingsResponse();
         try {
             response = studentSettingsService.updateStudentSettingsInfo(form);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return response;
     }
-    public SettingsResponse getStudentSettingsInfo(HttpServletRequest request){
+
+    public SettingsResponse getStudentSettingsInfo(HttpServletRequest request) {
         SettingsResponse response = new SettingsResponse();
         try {
             response = studentSettingsService
                     .getStudentSettingsInfo(
                             jwtService.getUserId(request));
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return response;

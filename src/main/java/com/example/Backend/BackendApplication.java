@@ -1,26 +1,24 @@
 package com.example.Backend;
 
 import com.example.Backend.Repository.*;
-import com.example.Backend.s3Connection.S3DeleteInvalidFiles;
 import com.example.Backend.security.PasswordUtils;
+import org.springframework.context.annotation.Bean;
 import com.example.Backend.utils.Utils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.reactive.context.AnnotationConfigReactiveWebApplicationContext;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.beans.factory.annotation.Value;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-@Component
+@SpringBootApplication
 public class BackendApplication {
 
+    @Value("${ALLOWED_DOMAINS}")
+    private String allowedDomains;
+
 	public static void main(String[] args) {
-		ApplicationContext context = SpringApplication.run(ApplicationConfigurations.class, args);
+		ApplicationContext context = SpringApplication.run(BackendApplication.class, args);
 		AuthorRepository authorRepository = context.getBean(AuthorRepository.class);
 		StudentRepository studentRepository = context.getBean(StudentRepository.class);
 		DisabilityRepository disabilityRepository = context.getBean(DisabilityRepository.class);
@@ -34,7 +32,20 @@ public class BackendApplication {
 				disabilityRepository,
 				studentSettingsRepository,
 				authorSettingsRepository);
-		utils.generateSomeUsers();
 		utils.generateSomeDisabilities();
 	}
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins(allowedDomains.split(","))
+                        .allowedMethods("GET", "POST", "PUT", "DELETE")
+                        .allowedHeaders("*")
+                        .maxAge(3600);
+            }
+        };
+    }
 }

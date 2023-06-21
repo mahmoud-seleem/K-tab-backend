@@ -39,6 +39,7 @@ public class SecurityConfiguration {
                                         "/author/signup/**",
                                         "/student/signup/**",
                                         "/author/encodeimg/**",
+                                        "/docs/**",
                                         "/swagger-ui/**",
                                         "/v3/api-docs/**")
                                 .permitAll()
