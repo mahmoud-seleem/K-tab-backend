@@ -28,8 +28,6 @@ public class StudentController {
     @Autowired
     private StudentService studentService;
 
-    @Autowired
-    private StudentCommentRepository studentCommentRepository;
 
     @Autowired
     private StudentNotificationRepository studentNotificationRepository;

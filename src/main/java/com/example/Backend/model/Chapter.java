@@ -12,8 +12,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "chapter")
 @JsonIgnoreProperties({"hibernateLazyInitializer","handler",
-        "authorCommentList","studentCommentList"
-        ,"authorList","tags","interactions"})
+        "CommentList", "authorList","tags","interactions"})
 public class Chapter {
 
     @Id
@@ -38,10 +37,7 @@ public class Chapter {
     private LocalDateTime lastModified;
 
     @OneToMany(mappedBy = "chapter")
-    private List<AuthorComment> authorCommentList;
-
-    @OneToMany(mappedBy = "chapter")
-    private List<StudentComment> studentCommentList;
+    private List<Comment> CommentList = new ArrayList<>();
 
     @ManyToMany()
     @JoinTable(
@@ -67,23 +63,17 @@ public class Chapter {
                     String content,
                     double readingDuration,
                     LocalDateTime creationDate,
-                    LocalDateTime lastModified,
-                    List<AuthorComment> authorCommentList,
-                    List<StudentComment> studentCommentList) {
+                    LocalDateTime lastModified) {
         this.title = title;
         this.content = content;
         this.readingDuration = readingDuration;
         this.creationDate = creationDate;
         this.lastModified = lastModified;
-        this.authorCommentList = authorCommentList;
-        this.studentCommentList = studentCommentList;
         this.tags = new ArrayList<>();
     }
     public Chapter(String title) {
         this.title = title;
         this.chapterOrder = null;
-        this.authorCommentList = new ArrayList<>();
-        this.studentCommentList = new ArrayList<>();
         this.tags = new ArrayList<>();
     }
     public UUID getChapterId() {
@@ -134,21 +124,14 @@ public class Chapter {
         this.lastModified = lastModified;
     }
 
-    public List<AuthorComment> getAuthorCommentList() {
-        return authorCommentList;
+    public List<Comment> getCommentList() {
+        return CommentList;
     }
 
-    public void setAuthorCommentList(List<AuthorComment> authorCommentList) {
-        this.authorCommentList = authorCommentList;
+    public void setCommentList(List<Comment> commentList) {
+        CommentList = commentList;
     }
 
-    public List<StudentComment> getStudentCommentList() {
-        return studentCommentList;
-    }
-
-    public void setStudentCommentList(List<StudentComment> studentCommentList) {
-        this.studentCommentList = studentCommentList;
-    }
     public List<Tag> getTags() {
         return tags;
     }
@@ -213,21 +196,14 @@ public class Chapter {
         tag.getChapterList().remove(this);
 
     }
-    public void addStudentComment(StudentComment studentComment){
-        this.getStudentCommentList().add(studentComment);
-        studentComment.setChapter(this);
+
+    public void addComment(Comment comment){
+        this.getCommentList().add(comment);
+        comment.setChapter(this);
     }
-    public void addAuthorComment(AuthorComment authorComment){
-        this.getAuthorCommentList().add(authorComment);
-        authorComment.setChapter(this);
-    }
-    public void removeAuthorComment(AuthorComment authorComment){
-        this.getAuthorCommentList().remove(authorComment);
-        authorComment.setChapter(null);
-    }
-    public void removeStudentComment(StudentComment studentComment){
-        this.getStudentCommentList().remove(studentComment);
-        studentComment.setChapter(null);
+    public void removeComment(Comment comment){
+        this.getCommentList().remove(comment);
+        comment.setChapter(null);
     }
 
     public void clearTags() {

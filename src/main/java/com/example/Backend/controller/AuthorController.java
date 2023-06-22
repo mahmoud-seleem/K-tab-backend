@@ -1,37 +1,23 @@
 package com.example.Backend.controller;
 
-import com.example.Backend.Repository.AuthorCommentRepository;
 import com.example.Backend.Repository.AuthorNotificationRepository;
 import com.example.Backend.Repository.AuthorRepository;
 import com.example.Backend.Repository.AuthorSettingsRepository;
-import com.example.Backend.model.Author;
-import com.example.Backend.model.AuthorComment;
-import com.example.Backend.model.AuthorSettings;
-import com.example.Backend.model.Book;
 import com.example.Backend.s3Connection.S3fileSystem;
 import com.example.Backend.schema.AuthorSignUpForm;
 import com.example.Backend.schema.AuthorSignUpResponse;
 import com.example.Backend.schema.BookInfo;
-import com.example.Backend.schema.SearchInput;
 import com.example.Backend.security.JwtService;
 import com.example.Backend.service.AuthorService;
 import com.example.Backend.service.BookService;
-import jakarta.persistence.PersistenceUnit;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 
 @RestController
@@ -43,8 +29,6 @@ public class AuthorController {
     private JwtService jwtService;
     @Autowired
     private AuthorRepository authorRepository;
-    @Autowired
-    private AuthorCommentRepository authorCommentRepository;
 
     @Autowired
     private AuthorSettingsRepository authorSettingsRepository;

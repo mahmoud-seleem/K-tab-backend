@@ -13,10 +13,10 @@ import com.amazonaws.services.s3.model.PutObjectResult;
 import com.example.Backend.Repository.*;
 import com.example.Backend.jsonConversion.JsonToMapConverter;
 import com.example.Backend.model.*;
-import com.example.Backend.schema.BookInfo;
-import com.example.Backend.schema.ChapterInfo;
+import com.example.Backend.schema.*;
 import com.example.Backend.security.JwtService;
 import com.example.Backend.service.ChapterService;
+import com.example.Backend.service.CommentService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,10 +45,6 @@ public class ChapterController {
     @Autowired
     private AuthorRepository authorRepository;
     @Autowired
-    private StudentCommentRepository studentCommentRepository;
-    @Autowired
-    private AuthorCommentRepository authorCommentRepository;
-    @Autowired
     private ChapterRepository chapterRepository;
     @Autowired
     private BookRepository bookRepository;
@@ -58,34 +54,96 @@ public class ChapterController {
     private JwtService jwtService;
 
     @Autowired
+    private CommentService commentService;
+    @Autowired
     private ChapterService chapterService;
+
     @PostMapping()
-    public ChapterInfo saveNewChapter(HttpServletRequest request, @RequestBody ChapterInfo chapterInfo){
+    public ChapterInfo saveNewChapter(HttpServletRequest request, @RequestBody ChapterInfo chapterInfo) {
         chapterInfo.setOwnerId(jwtService.getUserId(request));
         ChapterInfo response = new ChapterInfo();
         try {
             response = chapterService.saveNewChapter(chapterInfo);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return response;
     }
+
     @PutMapping()
-    public ChapterInfo updateChapterInfo(HttpServletRequest request,@RequestBody ChapterInfo chapterInfo) throws Exception {
+    public ChapterInfo updateChapterInfo(HttpServletRequest request, @RequestBody ChapterInfo chapterInfo) throws Exception {
         chapterInfo.setOwnerId(jwtService.getUserId(request));
-        ChapterInfo  response = new ChapterInfo();
+        ChapterInfo response = new ChapterInfo();
         try {
             response = chapterService.updateChapterInfo(chapterInfo);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return response;
     }
 
     @GetMapping()
-    public ChapterInfo getChapterInfo(@RequestParam UUID chapterId){
+    public ChapterInfo getChapterInfo(@RequestParam UUID chapterId) {
         return chapterService.getChapterInfo(chapterId);
-}
+    }
+
+
+    @PostMapping("comment/")
+    public CommentInfo addNewComment(HttpServletRequest request
+            , @RequestBody CommentInfo commentInfo) {
+        if (jwtService.getUserType(request).equals("STUDENT")) {
+            commentInfo.setCommenterType("STUDENT");
+            commentInfo.setStudentId(
+                    jwtService.getUserId(request));
+        } else {
+            commentInfo.setCommenterType("ADMIN");
+            commentInfo.setAuthorId(
+                    jwtService.getUserId(request));
+        }
+        return commentService.addComment(commentInfo);
+    }
+
+    @GetMapping("comment/")
+    public CommentInfo getCommentInfo(@RequestParam UUID commentId) {
+        return commentService.getComment(commentId);
+    }
+
+    @DeleteMapping("comment/")
+    public void deleteComment(HttpServletRequest request, @RequestParam UUID commentId) {
+        commentService.deleteComment(
+                jwtService.getUserId(request),
+                commentId);
+    }
+
+    @PutMapping("comment/")
+    public CommentInfo updateCommentInfo(HttpServletRequest request
+            , @RequestBody CommentInfo commentInfo) {
+        return commentService.updateComment(
+                jwtService.getUserId(request),
+                commentInfo);
+    }
+
+    @GetMapping("all-comments/")
+    public List<CommentInfo> getAllChapterComments(@RequestParam UUID chapterId) {
+        return commentService.getAllChapterComments(chapterId);
+    }
+
+    @GetMapping("/page/")
+    public CommentPage getPage(@RequestBody Map<String, Object> body) {
+        if (((String) body.get("op")).equals("next")) {
+            return commentService.getNextPage(
+                    UUID.fromString((String) body.get("chapterId")),
+                    (String) body.get("next"),
+                    (String) body.get("prev"),
+                    (int) body.get("limit"));
+        } else {
+            return commentService.getPrevPage(
+                    UUID.fromString((String) body.get("chapterId")),
+                    (String) body.get("next"),
+                    (String) body.get("prev"),
+                    (int) body.get("limit"));
+        }
+    }
 }
 //
 //    @Value("${ACCESS_KEY}")

@@ -36,7 +36,7 @@ public class Author extends AppUser {
     @Column(name = "contact")
     private String contact;
     @OneToMany(mappedBy = "author")
-    private List<AuthorComment> authorCommentList;
+    private List<Comment> authorCommentList = new ArrayList<>();
 
     @OneToMany(mappedBy = "destinationAuthor")
     private List<AuthorNotification> authorNotificationList;
@@ -140,11 +140,11 @@ public class Author extends AppUser {
         this.contact = contact;
     }
 
-    public List<AuthorComment> getAuthorCommentList() {
+    public List<Comment> getAuthorCommentList() {
         return authorCommentList;
     }
 
-    public void setAuthorCommentList(List<AuthorComment> authorCommentList) {
+    public void setAuthorCommentList(List<Comment> authorCommentList) {
         this.authorCommentList = authorCommentList;
     }
 
@@ -189,13 +189,13 @@ public class Author extends AppUser {
         this.getAuthorNotificationList().remove(authorNotification);
         authorNotification.setDestinationAuthor(null);
     }
-    public void addAuthorComment(AuthorComment authorComment){
+    public void addAuthorComment(Comment authorComment){
         this.getAuthorCommentList().add(authorComment);
         authorComment.setAuthor(this);
     }
 
 
-    public void removeAuthorComment(AuthorComment authorComment){
+    public void removeAuthorComment(Comment authorComment){
         this.getAuthorCommentList().remove(authorComment);
         authorComment.setAuthor(null);
     }

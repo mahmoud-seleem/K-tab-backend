@@ -45,7 +45,7 @@ public class Student extends AppUser {
     @Column(name = "education_level")
     private String educationLevel;
     @OneToMany(mappedBy = "student")
-    private List<StudentComment> studentCommentList;
+    private List<Comment> studentCommentList = new ArrayList<>();
 
     @OneToOne(mappedBy = "student")
     private StudentSettings studentSettings;
@@ -87,14 +87,13 @@ public class Student extends AppUser {
         this.contact = contact;
     }
 
-    public Student(String studentName, String studentEmail, String password, String profilePhoto, String contact, String educationLevel, List<StudentComment> studentCommentList) {
+    public Student(String studentName, String studentEmail, String password, String profilePhoto, String contact, String educationLevel) {
         this.studentName = studentName;
         this.studentEmail = studentEmail;
         this.password = password;
         this.profilePhoto = profilePhoto;
         this.contact = contact;
         this.educationLevel = educationLevel;
-        this.studentCommentList = studentCommentList;
     }
 
 
@@ -184,12 +183,12 @@ public class Student extends AppUser {
     }
 
 
-    public void addStudentComment(StudentComment studentComment) {
+    public void addStudentComment(Comment studentComment) {
         this.getStudentCommentList().add(studentComment);
         studentComment.setStudent(this);
     }
 
-    public void removeStudentComment(StudentComment studentComment) {
+    public void removeStudentComment(Comment studentComment) {
         this.getStudentCommentList().remove(studentComment);
         studentComment.setStudent(null);
     }
@@ -221,11 +220,11 @@ public class Student extends AppUser {
         studentSettings.setStudent(this);
     }
 
-    public List<StudentComment> getStudentCommentList() {
+    public List<Comment> getStudentCommentList() {
         return studentCommentList;
     }
 
-    public void setStudentCommentList(List<StudentComment> studentCommentList) {
+    public void setStudentCommentList(List<Comment> studentCommentList) {
         this.studentCommentList = studentCommentList;
     }
 
