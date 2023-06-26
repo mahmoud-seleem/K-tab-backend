@@ -1,0 +1,90 @@
+package com.example.Backend.validation.json;
+
+import com.example.Backend.schema.BookInfo;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
+import com.github.reinert.jjschema.*;
+import com.networknt.schema.ValidationMessage;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.core.MethodParameter;
+import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.util.StreamUtils;
+import org.springframework.web.bind.support.WebDataBinderFactory;
+import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.method.support.ModelAndViewContainer;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+public class JsonSchemaValidatingArgumentResolver implements HandlerMethodArgumentResolver {
+
+    private final ObjectMapper objectMapper;
+    private final ResourcePatternResolver resourcePatternResolver;
+    private final Map<String, JsonSchema> schemaCache;
+
+    public JsonSchemaValidatingArgumentResolver(ObjectMapper objectMapper, ResourcePatternResolver resourcePatternResolver) {
+        this.objectMapper = objectMapper;
+        this.resourcePatternResolver = resourcePatternResolver;
+        this.schemaCache = new ConcurrentHashMap<>();
+        System.out.println("---------------------------------");
+        System.out.println("---------------------------------");
+        System.out.println("---------------------------------");
+        System.out.println("---------------------------------");
+        System.out.println("JsonSchemaValidatingArgumentResolver");
+        System.out.println("---------------------------------");
+        System.out.println("---------------------------------");
+        System.out.println("---------------------------------");
+        System.out.println("---------------------------------");
+    }
+    @Override
+    public boolean supportsParameter(MethodParameter parameter) {
+        return parameter.getParameterAnnotation(ValidJson.class) != null;
+    }
+
+    @Override
+    public Object resolveArgument (
+            MethodParameter parameter,
+            ModelAndViewContainer mavContainer,
+            NativeWebRequest webRequest,
+            WebDataBinderFactory binderFactory) throws Exception{
+        com.networknt.schema.JsonSchema schema =
+                getJsonSchema("BookInfo");
+        // parse json payload
+        JsonNode json = objectMapper.readTree(getJsonPayload(webRequest));
+        // Do actual validation
+        Set<ValidationMessage> validationResult = schema.validate(json);
+
+        if (validationResult.isEmpty()) {
+            // No validation errors, convert JsonNode to method parameter type and return it
+            return objectMapper.treeToValue(json, parameter.getParameterType());
+        }
+        // throw exception if validation failed
+        throw new JsonValidationFailedException(validationResult);
+    }
+    private String getJsonPayload(NativeWebRequest nativeWebRequest) throws IOException {
+        HttpServletRequest httpServletRequest = nativeWebRequest.getNativeRequest(HttpServletRequest.class);
+        return StreamUtils.copyToString(httpServletRequest.getInputStream(), StandardCharsets.UTF_8);
+    }
+    private com.networknt.schema.JsonSchema getJsonSchema(String schemaName) {
+        JsonSchemaGenerator v4generator = SchemaGeneratorBuilder.draftV4Schema().build();
+        JsonNode schemaNode = v4generator.generateSchema(BookInfo.class);
+        ObjectNode objectNode = (ObjectNode) schemaNode.get("properties").get("title");
+        objectNode.remove("type");
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayNode typeArray = mapper.createArrayNode();
+        typeArray.add("string");
+        typeArray.add("null");
+        objectNode.set("type",typeArray);
+        return getJsonSchemaObject(schemaNode);
+    }
+    private com.networknt.schema.JsonSchema getJsonSchemaObject(JsonNode jsonNode) {
+            com.networknt.schema.JsonSchemaFactory schemaFactory = com.networknt.schema.JsonSchemaFactory.getInstance();
+            return schemaFactory.getSchema(jsonNode);
+        }
+    }

@@ -5,6 +5,7 @@ import com.example.Backend.schema.LoginForm;
 import com.example.Backend.schema.LoginResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,7 +34,7 @@ public class SecurityController {
     );
 
     @PostMapping(path = "login/")
-    public LoginResponse login(@RequestBody LoginForm loginForm){
+    public LoginResponse login(@Valid @RequestBody LoginForm loginForm){
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginForm.getEmail(),

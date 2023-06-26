@@ -4,6 +4,18 @@ import com.example.Backend.Repository.*;
 import com.example.Backend.model.Author;
 import com.example.Backend.model.Disability;
 import com.example.Backend.model.Student;
+import com.example.Backend.schema.BookHeader;
+import com.example.Backend.schema.BookInfo;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.module.jsonSchema.factories.JsonSchemaFactory;
+import com.github.reinert.jjschema.JsonSchemaGenerator;
+import com.github.reinert.jjschema.SchemaGeneratorBuilder;
+import com.github.victools.jsonschema.generator.*;
+import com.github.victools.jsonschema.module.jackson.JacksonModule;
+import io.swagger.v3.oas.models.media.JsonSchema;
 import jdk.jshell.execution.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -48,6 +60,25 @@ public class Utils {
                 field.getName().substring(0,1).toUpperCase() +
                 field.getName().substring(1);
         return  callerObject.getClass().getMethod(methodName,parametersTypes);
+    }
+
+
+    public void generateSchema(){
+//        JacksonModule jacksonModule = new JacksonModule();
+//        SchemaGeneratorConfigBuilder configBuilder = new SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2020_12, OptionPreset.PLAIN_JSON).with(jacksonModule);
+//        SchemaGeneratorConfig config = configBuilder.build();
+//        SchemaGenerator generator = new SchemaGenerator(config);
+//        JsonNode jsonSchema = generator.generateSchema(BookHeader.class);
+        JsonSchemaGenerator v4generator = SchemaGeneratorBuilder.draftV4Schema().build();
+        JsonNode schemaNode = v4generator.generateSchema(BookInfo.class);
+//        ObjectNode objectNode = (ObjectNode) schemaNode.get("properties").get("bookCoverPath");
+//        objectNode.remove("type");
+//        ObjectMapper mapper = new ObjectMapper();
+//        ArrayNode typeArray = mapper.createArrayNode();
+//        typeArray.add("string");
+//        typeArray.add("null");
+//        objectNode.set("type",typeArray);
+        System.out.println(schemaNode.toPrettyString());
     }
 
     public void generateSomeUsers(){

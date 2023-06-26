@@ -3,6 +3,7 @@ package com.example.Backend.schema;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.reinert.jjschema.Attributes;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Component;
 

@@ -1,5 +1,9 @@
 package com.example.Backend.schema;
 
+import com.fasterxml.jackson.annotation.*;
+import com.github.reinert.jjschema.Attributes;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -7,6 +11,8 @@ import java.util.UUID;
 @Component
 public class BookHeader {
     private UUID bookId;
+
+    @Attributes()
     private String bookCoverPath;
     private String title;
 

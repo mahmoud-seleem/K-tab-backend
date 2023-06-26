@@ -9,6 +9,7 @@ import com.example.Backend.schema.BookInfo;
 import com.example.Backend.schema.BookPage;
 import com.example.Backend.security.JwtService;
 import com.example.Backend.service.BookService;
+import com.example.Backend.validation.json.ValidJson;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.support.SimpleTriggerContext;
@@ -39,7 +40,7 @@ public class BookController {
 //    }
 
     @PostMapping()
-    public BookInfo saveNewBook(HttpServletRequest request, @RequestBody BookInfo bookInfo) {
+    public BookInfo saveNewBook(HttpServletRequest request,@ValidJson("BookInfo") BookInfo bookInfo) {
         bookInfo.setAuthorId(jwtService.getUserId(request));
         BookInfo response = new BookInfo();
         try {
