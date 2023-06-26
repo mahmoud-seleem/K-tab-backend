@@ -1,6 +1,7 @@
 package com.example.Backend;
 
 import com.example.Backend.validation.json.JsonSchemaValidatingArgumentResolver;
+import com.example.Backend.validation.json.RequestParameterResolver;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,5 +27,6 @@ public class JsonConfiguration implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(new JsonSchemaValidatingArgumentResolver(objectMapper, resourcePatternResolver));
+        resolvers.add(new RequestParameterResolver(objectMapper,resourcePatternResolver));
     }
 }

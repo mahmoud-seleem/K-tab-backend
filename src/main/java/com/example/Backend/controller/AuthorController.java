@@ -3,6 +3,7 @@ package com.example.Backend.controller;
 import com.example.Backend.Repository.AuthorNotificationRepository;
 import com.example.Backend.Repository.AuthorRepository;
 import com.example.Backend.Repository.AuthorSettingsRepository;
+import com.example.Backend.model.Author;
 import com.example.Backend.s3Connection.S3fileSystem;
 import com.example.Backend.schema.AuthorSignUpForm;
 import com.example.Backend.schema.AuthorSignUpResponse;
@@ -10,6 +11,7 @@ import com.example.Backend.schema.BookInfo;
 import com.example.Backend.security.JwtService;
 import com.example.Backend.service.AuthorService;
 import com.example.Backend.service.BookService;
+import com.example.Backend.validation.json.ValidParam;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -42,12 +44,10 @@ public class AuthorController {
     private AuthorService authorService;
     @Autowired
     private BookService bookService;
-//    @GetMapping("/new")
-//    public Author saveNewAuthor(){
-//        Author author = new Author("mahmoud");
-//        Author a = authorRepository.save(author);
-//        return a;
-//    }
+    @GetMapping("/new")
+    public void saveNewAuthor(@ValidParam UUID x){
+        System.out.println(x);
+    }
 //    @GetMapping("/getauthor/{id}")
 //    public Author getAuthor(@PathVariable UUID id){
 //        return authorRepository.findById(id).get();

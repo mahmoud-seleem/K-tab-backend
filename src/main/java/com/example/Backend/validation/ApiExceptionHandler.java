@@ -1,5 +1,6 @@
 package com.example.Backend.validation;
 
+import com.example.Backend.validation.json.InvalidParameterException;
 import com.example.Backend.validation.json.JsonValidationFailedException;
 import com.networknt.schema.ValidationMessage;
 import jakarta.persistence.EntityNotFoundException;
@@ -61,6 +62,15 @@ public class ApiExceptionHandler{
                 "details", messages
         ));
     }
-        //other exception handlers below
-
+    @ExceptionHandler(InvalidParameterException.class)
+    public ResponseEntity<Object> handleInvalidParamException(InvalidParameterException ex) {
+        return buildResponseEntity(
+                new ApiError(
+                        HttpStatus.BAD_REQUEST,
+                        ex.getField(),
+                        ex.getRejectedValue(),
+                        ex.getMessage()
+                ));
+    }
+    //other exception handlers below
 }
