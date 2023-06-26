@@ -1,15 +1,9 @@
 package com.example.Backend.model;
 
-import com.example.Backend.schema.enums.UserType;
-import com.example.Backend.security.Role;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 

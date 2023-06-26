@@ -2,27 +2,17 @@ package com.example.Backend.controller;
 
 import com.example.Backend.Repository.*;
 import com.example.Backend.model.*;
-import com.example.Backend.s3Connection.AccessType;
 import com.example.Backend.s3Connection.S3DeleteInvalidFiles;
 import com.example.Backend.s3Connection.S3PreSignedURL;
 import com.example.Backend.s3Connection.S3fileSystem;
+import com.example.Backend.enums.ImageType;
 import com.example.Backend.schema.*;
-import com.example.Backend.schema.enums.*;
 import com.example.Backend.security.JwtService;
 import com.example.Backend.service.S3Service;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
-import java.awt.*;
 import java.time.LocalDateTime;
 import java.util.*;
 

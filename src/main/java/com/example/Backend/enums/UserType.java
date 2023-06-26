@@ -1,4 +1,4 @@
-package com.example.Backend.schema.enums;
+package com.example.Backend.enums;
 
 public enum UserType {
     STUDENT,AUTHOR;

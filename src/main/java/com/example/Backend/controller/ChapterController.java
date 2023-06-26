@@ -5,6 +5,7 @@ import com.example.Backend.schema.*;
 import com.example.Backend.security.JwtService;
 import com.example.Backend.service.ChapterService;
 import com.example.Backend.service.CommentService;
+import com.example.Backend.validation.json.ValidJson;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +35,8 @@ public class ChapterController {
     private ChapterService chapterService;
 
     @PostMapping()
-    public ChapterInfo saveNewChapter(HttpServletRequest request, @RequestBody ChapterInfo chapterInfo) {
+    public ChapterInfo saveNewChapter(HttpServletRequest request,
+                                      @ValidJson("ChapterInfo") ChapterInfo chapterInfo) {
         chapterInfo.setOwnerId(jwtService.getUserId(request));
         ChapterInfo response = new ChapterInfo();
         try {

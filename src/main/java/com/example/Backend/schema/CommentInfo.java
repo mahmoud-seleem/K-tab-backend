@@ -1,13 +1,8 @@
 package com.example.Backend.schema;
 
-import com.example.Backend.model.Author;
-import com.example.Backend.model.Chapter;
-import com.example.Backend.model.Student;
-import com.example.Backend.schema.enums.UserType;
 import lombok.Data;
 import org.springframework.stereotype.Component;
-import java.time.LocalDateTime;
-import java.util.HashMap;
+
 import java.util.List;
 import java.util.UUID;
 

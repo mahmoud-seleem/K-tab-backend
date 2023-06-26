@@ -30,7 +30,7 @@ public class BackendApplication {
     @Value("${ALLOWED_DOMAINS}")
     private String allowedDomains;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ClassNotFoundException {
 		ApplicationContext context = SpringApplication.run(BackendApplication.class, args);
 		AuthorRepository authorRepository = context.getBean(AuthorRepository.class);
 		StudentRepository studentRepository = context.getBean(StudentRepository.class);
@@ -47,7 +47,6 @@ public class BackendApplication {
 				authorSettingsRepository);
 		utils.generateSomeUsers();
 		utils.generateSomeDisabilities();
-		utils.generateSchema();
 	}
 
     @Bean

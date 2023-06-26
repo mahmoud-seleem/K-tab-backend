@@ -15,12 +15,13 @@ import com.github.reinert.jjschema.JsonSchemaGenerator;
 import com.github.reinert.jjschema.SchemaGeneratorBuilder;
 import com.github.victools.jsonschema.generator.*;
 import com.github.victools.jsonschema.module.jackson.JacksonModule;
-import io.swagger.v3.oas.models.media.JsonSchema;
+import com.networknt.schema.JsonSchema;
 import jdk.jshell.execution.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.time.format.DateTimeFormatter;
@@ -60,25 +61,6 @@ public class Utils {
                 field.getName().substring(0,1).toUpperCase() +
                 field.getName().substring(1);
         return  callerObject.getClass().getMethod(methodName,parametersTypes);
-    }
-
-
-    public void generateSchema(){
-//        JacksonModule jacksonModule = new JacksonModule();
-//        SchemaGeneratorConfigBuilder configBuilder = new SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2020_12, OptionPreset.PLAIN_JSON).with(jacksonModule);
-//        SchemaGeneratorConfig config = configBuilder.build();
-//        SchemaGenerator generator = new SchemaGenerator(config);
-//        JsonNode jsonSchema = generator.generateSchema(BookHeader.class);
-        JsonSchemaGenerator v4generator = SchemaGeneratorBuilder.draftV4Schema().build();
-        JsonNode schemaNode = v4generator.generateSchema(BookInfo.class);
-//        ObjectNode objectNode = (ObjectNode) schemaNode.get("properties").get("bookCoverPath");
-//        objectNode.remove("type");
-//        ObjectMapper mapper = new ObjectMapper();
-//        ArrayNode typeArray = mapper.createArrayNode();
-//        typeArray.add("string");
-//        typeArray.add("null");
-//        objectNode.set("type",typeArray);
-        System.out.println(schemaNode.toPrettyString());
     }
 
     public void generateSomeUsers(){
