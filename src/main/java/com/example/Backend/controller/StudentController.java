@@ -8,6 +8,7 @@ import com.example.Backend.schema.StudentSignUpForm;
 import com.example.Backend.schema.StudentSignUpResponse;
 import com.example.Backend.security.JwtService;
 import com.example.Backend.service.StudentService;
+import com.example.Backend.validation.json.ValidJson;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -41,7 +42,7 @@ public class StudentController {
     private DisabilityRepository disabilityRepository;
 
     @PostMapping("signup/")
-    public StudentSignUpResponse saveSignUpData(@RequestBody StudentSignUpForm studentSignUpForm) {
+    public StudentSignUpResponse saveSignUpData(@ValidJson("StudentSignUpForm") StudentSignUpForm studentSignUpForm) {
         StudentSignUpResponse response = new StudentSignUpResponse();
         try {
             response = studentService.saveNewStudent(studentSignUpForm);
@@ -53,7 +54,7 @@ public class StudentController {
 
     @PutMapping
     public StudentSignUpResponse updateStudentProfileInfo(HttpServletRequest request
-            , @RequestBody StudentSignUpForm studentSignUpForm) {
+            , @ValidJson("StudentSignUpForm") StudentSignUpForm studentSignUpForm) {
         studentSignUpForm
                 .setStudentId(
                         jwtService.getUserId(request));

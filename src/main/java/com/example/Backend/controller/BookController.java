@@ -2,9 +2,6 @@ package com.example.Backend.controller;
 
 
 import com.example.Backend.Repository.BookRepository;
-import com.example.Backend.model.Book;
-import com.example.Backend.model.Tag;
-import com.example.Backend.schema.BookHeader;
 import com.example.Backend.schema.BookInfo;
 import com.example.Backend.schema.BookPage;
 import com.example.Backend.security.JwtService;
@@ -12,13 +9,10 @@ import com.example.Backend.service.BookService;
 import com.example.Backend.validation.json.ValidJson;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.support.SimpleTriggerContext;
 import org.springframework.web.bind.annotation.*;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 @RestController

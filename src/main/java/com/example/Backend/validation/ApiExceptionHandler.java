@@ -2,7 +2,6 @@ package com.example.Backend.validation;
 
 import com.example.Backend.validation.json.InvalidParameterException;
 import com.example.Backend.validation.json.JsonValidationFailedException;
-import com.networknt.schema.ValidationMessage;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -11,15 +10,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.util.List;
+import javax.swing.*;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -53,14 +49,13 @@ public class ApiExceptionHandler{
             return buildResponseEntity(error);
         }
     @ExceptionHandler(JsonValidationFailedException.class)
-    public ResponseEntity<Map<String, Object>> onJsonValidationFailedException(JsonValidationFailedException ex) {
-        List<String> messages = ex.getValidationMessages().stream()
-                .map(ValidationMessage::getMessage)
-                .collect(Collectors.toList());
-        return ResponseEntity.badRequest().body(Map.of(
-                "message", "Json validation failed",
-                "details", messages
-        ));
+    public ResponseEntity<Object> onJsonValidationFailedException(JsonValidationFailedException ex) {
+        return buildResponseEntity(
+                new ApiError(
+                        HttpStatus.BAD_REQUEST,
+                        ex.getField(),
+                        ex.getMessage()
+                ));
     }
     @ExceptionHandler(InvalidParameterException.class)
     public ResponseEntity<Object> handleInvalidParamException(InvalidParameterException ex) {
@@ -68,9 +63,7 @@ public class ApiExceptionHandler{
                 new ApiError(
                         HttpStatus.BAD_REQUEST,
                         ex.getField(),
-                        ex.getRejectedValue(),
                         ex.getMessage()
                 ));
     }
-    //other exception handlers below
 }

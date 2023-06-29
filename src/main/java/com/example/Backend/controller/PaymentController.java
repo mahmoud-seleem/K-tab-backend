@@ -4,9 +4,12 @@ import com.example.Backend.Repository.*;
 import com.example.Backend.model.*;
 import com.example.Backend.schema.BookHeader;
 import com.example.Backend.schema.FavouriteOrder;
+import com.example.Backend.schema.FavouritesOrder;
 import com.example.Backend.schema.PaymentInfo;
 import com.example.Backend.security.JwtService;
 import com.example.Backend.service.PaymentService;
+import com.example.Backend.validation.json.ValidJson;
+import com.example.Backend.validation.json.ValidParam;
 import jakarta.servlet.http.HttpServletRequest;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +40,7 @@ public class PaymentController {
     private PaymentService paymentService;
 
     @PostMapping("buy/")
-    public PaymentInfo buyBook(@RequestParam UUID bookId,
+    public PaymentInfo buyBook(@ValidParam UUID bookId,
                                HttpServletRequest request) {
         return paymentService.buyBook(jwtService.getUserId(request), bookId);
     }
@@ -61,7 +64,7 @@ public class PaymentController {
     }
 
     @GetMapping("all-book-payments/")
-    public List<PaymentInfo> getAllBookPayments(@RequestParam UUID bookId) {
+    public List<PaymentInfo> getAllBookPayments(@ValidParam UUID bookId) {
         return paymentService.getAllBookPayments(bookId);
     }
 
@@ -73,7 +76,7 @@ public class PaymentController {
     }
 
     @GetMapping("add-to-fav/")
-    public Favourite addToFavourites(@RequestParam UUID bookId
+    public Favourite addToFavourites(@ValidParam UUID bookId
             ,HttpServletRequest request) {
         return paymentService.addBookToFavourite(
                 jwtService.getUserId(request),
@@ -82,7 +85,7 @@ public class PaymentController {
     }
 
     @GetMapping("remove-from-fav/")
-    public String removeFromFavourites(@RequestParam UUID bookId
+    public String removeFromFavourites(@ValidParam UUID bookId
             ,HttpServletRequest request) {
         return paymentService.removeBookFromFavourite(
                 jwtService.getUserId(request),
@@ -91,10 +94,12 @@ public class PaymentController {
     }
 
     @PutMapping("update-fav/")
-    public void updateFavourites(@RequestBody List<FavouriteOrder> favouriteOrders
-            ,HttpServletRequest request) {
+    public void updateFavourites(
+            @ValidJson("FavouritesOrder") FavouritesOrder favouriteOrders
+            , HttpServletRequest request) {
         paymentService.updateFavouritesOrder(
-                jwtService.getUserId(request),favouriteOrders
+                jwtService.getUserId(request),
+                favouriteOrders.getFavouriteOrders()
         );
     }
 }

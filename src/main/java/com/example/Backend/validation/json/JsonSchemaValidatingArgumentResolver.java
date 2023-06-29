@@ -1,13 +1,8 @@
 package com.example.Backend.validation.json;
 
-import com.example.Backend.schema.BookInfo;
-import com.example.Backend.utils.Utils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
-import com.github.reinert.jjschema.*;
 import com.github.victools.jsonschema.generator.*;
 import com.networknt.schema.SpecVersion;
 import com.networknt.schema.ValidationMessage;
@@ -60,7 +55,10 @@ public class JsonSchemaValidatingArgumentResolver implements HandlerMethodArgume
             return objectMapper.treeToValue(json, parameter.getParameterType());
         }
         // throw exception if validation failed
-        throw new JsonValidationFailedException(validationResult);
+        ValidationMessage message = validationResult.iterator().next();
+        throw new JsonValidationFailedException(
+                message.getPath(),
+                message.getMessage());
     }
     private String getJsonPayload(NativeWebRequest nativeWebRequest) throws IOException {
         HttpServletRequest httpServletRequest = nativeWebRequest.getNativeRequest(HttpServletRequest.class);

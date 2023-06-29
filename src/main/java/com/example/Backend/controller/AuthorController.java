@@ -3,7 +3,6 @@ package com.example.Backend.controller;
 import com.example.Backend.Repository.AuthorNotificationRepository;
 import com.example.Backend.Repository.AuthorRepository;
 import com.example.Backend.Repository.AuthorSettingsRepository;
-import com.example.Backend.model.Author;
 import com.example.Backend.s3Connection.S3fileSystem;
 import com.example.Backend.schema.AuthorSignUpForm;
 import com.example.Backend.schema.AuthorSignUpResponse;
@@ -11,6 +10,7 @@ import com.example.Backend.schema.BookInfo;
 import com.example.Backend.security.JwtService;
 import com.example.Backend.service.AuthorService;
 import com.example.Backend.service.BookService;
+import com.example.Backend.validation.json.ValidJson;
 import com.example.Backend.validation.json.ValidParam;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,10 +44,10 @@ public class AuthorController {
     private AuthorService authorService;
     @Autowired
     private BookService bookService;
-    @GetMapping("/new")
-    public void saveNewAuthor(@ValidParam UUID x){
-        System.out.println(x);
-    }
+//    @GetMapping("/new")
+//    public void saveNewAuthor(@ValidParam UUID x){
+//        System.out.println(x);
+//    }
 //    @GetMapping("/getauthor/{id}")
 //    public Author getAuthor(@PathVariable UUID id){
 //        return authorRepository.findById(id).get();
@@ -137,7 +137,7 @@ public class AuthorController {
 //    Starting the real endpoints
 //    Starting the real endpoints
     @PostMapping("signup/")
-    public AuthorSignUpResponse saveSignUpData(@RequestBody AuthorSignUpForm authorSignUpForm) {
+    public AuthorSignUpResponse saveSignUpData(@ValidJson("AuthorSignUpForm") AuthorSignUpForm authorSignUpForm) {
         AuthorSignUpResponse response = new AuthorSignUpResponse();
         try {
             response =  authorService.saveNewAuthor(authorSignUpForm);
@@ -149,7 +149,7 @@ public class AuthorController {
 
     @PutMapping
     @PreAuthorize(value = "hasAuthority('chapter_write')")
-    public AuthorSignUpResponse updateAuthorProfileInfo(HttpServletRequest request, @RequestBody AuthorSignUpForm authorSignUpForm) {
+    public AuthorSignUpResponse updateAuthorProfileInfo(HttpServletRequest request, @ValidJson("AuthorSignUpForm") AuthorSignUpForm authorSignUpForm) {
         authorSignUpForm
                 .setAuthorId(
                         jwtService.getUserId(request));
@@ -189,7 +189,7 @@ public class AuthorController {
         return response;
     }
     @GetMapping("books/cover/")
-    public RedirectView getBookCover(@RequestParam String bookCoverPath){
+    public RedirectView getBookCover(@ValidParam String bookCoverPath){
         RedirectView redirectView = new RedirectView();
         redirectView.setUrl(bookService.getPreSignedAsString(bookCoverPath));
         return redirectView;

@@ -6,6 +6,7 @@ import com.example.Backend.security.JwtService;
 import com.example.Backend.service.ChapterService;
 import com.example.Backend.service.CommentService;
 import com.example.Backend.validation.json.ValidJson;
+import com.example.Backend.validation.json.ValidParam;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -48,7 +49,7 @@ public class ChapterController {
     }
 
     @PutMapping()
-    public ChapterInfo updateChapterInfo(HttpServletRequest request, @RequestBody ChapterInfo chapterInfo) throws Exception {
+    public ChapterInfo updateChapterInfo(HttpServletRequest request, @ValidJson("ChapterInfo") ChapterInfo chapterInfo) throws Exception {
         chapterInfo.setOwnerId(jwtService.getUserId(request));
         ChapterInfo response = new ChapterInfo();
         try {
@@ -60,14 +61,14 @@ public class ChapterController {
     }
 
     @GetMapping()
-    public ChapterInfo getChapterInfo(@RequestParam UUID chapterId) {
+    public ChapterInfo getChapterInfo(@ValidParam UUID chapterId) {
         return chapterService.getChapterInfo(chapterId);
     }
 
 
     @PostMapping("comment/")
     public CommentInfo addNewComment(HttpServletRequest request
-            , @RequestBody CommentInfo commentInfo) {
+            , @ValidJson("CommentInfo") CommentInfo commentInfo) {
         if (jwtService.getUserType(request).equals("STUDENT")) {
             commentInfo.setCommenterType("STUDENT");
             commentInfo.setStudentId(
@@ -81,7 +82,7 @@ public class ChapterController {
     }
 
     @GetMapping("comment/")
-    public CommentInfo getCommentInfo(@RequestParam UUID commentId) {
+    public CommentInfo getCommentInfo(@ValidParam UUID commentId) {
         return commentService.getComment(commentId);
     }
 
@@ -94,14 +95,14 @@ public class ChapterController {
 
     @PutMapping("comment/")
     public CommentInfo updateCommentInfo(HttpServletRequest request
-            , @RequestBody CommentInfo commentInfo) {
+            , @ValidJson("CommentInfo") CommentInfo commentInfo) {
         return commentService.updateComment(
                 jwtService.getUserId(request),
                 commentInfo);
     }
 
     @GetMapping("all-comments/")
-    public List<CommentInfo> getAllChapterComments(@RequestParam UUID chapterId) {
+    public List<CommentInfo> getAllChapterComments(@ValidParam UUID chapterId) {
         return commentService.getAllChapterComments(chapterId);
     }
 

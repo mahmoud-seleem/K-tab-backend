@@ -11,6 +11,8 @@ import com.example.Backend.schema.BookInfo;
 import com.example.Backend.schema.ContributionInfo;
 import com.example.Backend.security.JwtService;
 import com.example.Backend.service.BookService;
+import com.example.Backend.validation.json.ValidJson;
+import com.example.Backend.validation.json.ValidParam;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +38,7 @@ public class ContributionController {
     private BookService bookService;
 
     @PostMapping()
-    public BookInfo addContribution(HttpServletRequest request, @RequestBody ContributionInfo contributionInfo){
+    public BookInfo addContribution(HttpServletRequest request, @ValidJson("ContributionInfo") ContributionInfo contributionInfo){
         contributionInfo.setOwnerId(jwtService.getUserId(request));
         BookInfo response = new BookInfo();
         try {
@@ -47,7 +49,7 @@ public class ContributionController {
         return response;
     }
     @PutMapping
-    public BookInfo updateContribution(HttpServletRequest request,@RequestBody ContributionInfo contributionInfo) throws Exception {
+    public BookInfo updateContribution(HttpServletRequest request,@ValidJson("ContributionInfo") ContributionInfo contributionInfo) throws Exception {
         contributionInfo.setOwnerId(jwtService.getUserId(request));
         BookInfo response = new BookInfo();
         try {
@@ -59,7 +61,7 @@ public class ContributionController {
     }
 
     @DeleteMapping
-    public BookInfo deleteContribution(HttpServletRequest request,@RequestBody ContributionInfo contributionInfo) throws Exception {
+    public BookInfo deleteContribution(HttpServletRequest request,@ValidJson("ContributionInfo") ContributionInfo contributionInfo) throws Exception {
         contributionInfo.setOwnerId(jwtService.getUserId(request));
         BookInfo response = new BookInfo();
         try {

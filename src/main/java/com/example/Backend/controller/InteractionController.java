@@ -9,6 +9,8 @@ import com.example.Backend.model.Student;
 import com.example.Backend.schema.InteractionInfo;
 import com.example.Backend.security.JwtService;
 import com.example.Backend.service.ChapterService;
+import com.example.Backend.validation.json.ValidJson;
+import com.example.Backend.validation.json.ValidParam;
 import jakarta.servlet.http.HttpServletRequest;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,27 +36,27 @@ public class InteractionController {
     private ChapterService chapterService;
     @GetMapping()
     public InteractionInfo getInteractionInfo(
-            @RequestParam UUID interactionId){
+            @ValidParam UUID interactionId){
         return chapterService.getInteraction(interactionId);
     }
     @PostMapping()
     public InteractionInfo addInteraction(HttpServletRequest request
-            ,@RequestBody InteractionInfo interactionInfo){
+            ,@ValidJson("InteractionInfo") InteractionInfo interactionInfo){
         interactionInfo.setStudentId(jwtService.getUserId(request));
         return chapterService.addInteraction(interactionInfo);
     }
     @PutMapping()
     public InteractionInfo updateInteraction(HttpServletRequest request
-            ,@RequestBody InteractionInfo interactionInfo){
+            ,@ValidJson("InteractionInfo") InteractionInfo interactionInfo){
         return chapterService.updateInteraction(interactionInfo);
     }
     @DeleteMapping()
-    public void deleteInteraction(@RequestParam UUID interactionId){
+    public void deleteInteraction(@ValidParam UUID interactionId){
         chapterService.deleteInteraction(interactionId);
     }
     @GetMapping("student-chapter/")
     public List<InteractionInfo> getAllInteractions(HttpServletRequest request
-    ,@RequestParam UUID chapterId){
+    ,@ValidParam UUID chapterId){
         return chapterService.getInteractions(
                 jwtService.getUserId(request),chapterId);
     }

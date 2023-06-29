@@ -51,7 +51,6 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
                     } catch (Exception e) {
                         throw new InvalidParameterException(
                                 parameter.getParameterName(),
-                                paramValue,
                                 "parameter " +
                                         parameter.getParameterName() +
                                         " needs an int value");
@@ -63,7 +62,6 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
                     } catch (Exception e) {
                         throw new InvalidParameterException(
                                 parameter.getParameterName(),
-                                paramValue,
                                 "parameter " +
                                         parameter.getParameterName() +
                                         " needs double value");
@@ -75,7 +73,6 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
                     } catch (Exception e) {
                         throw new InvalidParameterException(
                                 parameter.getParameterName(),
-                                paramValue,
                                 "parameter " +
                                         parameter.getParameterName() +
                                         " needs boolean value");
@@ -87,7 +84,6 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
                     } catch (Exception e) {
                         throw new InvalidParameterException(
                                 parameter.getParameterName(),
-                                paramValue,
                                 "parameter " +
                                         parameter.getParameterName() +
                                         " needs UUID value");
