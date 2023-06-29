@@ -1,9 +1,15 @@
 package com.example.Backend.schema;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.UUID;
 
 public class AudioInfo {
+
+    @NotBlank
     private String contentPath;
+    @NotBlank
     private String audioPath;
     private UUID chapterId;
 

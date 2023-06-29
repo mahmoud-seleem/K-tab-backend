@@ -17,7 +17,6 @@ import java.util.UUID;
 public class BookInfo {
 
     private UUID bookId;
-    @NotNull
     private String title;
     private String bookCoverPhotoAsBinaryString;
     private String bookAbstract;

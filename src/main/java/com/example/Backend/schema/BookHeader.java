@@ -11,8 +11,6 @@ import java.util.UUID;
 @Component
 public class BookHeader {
     private UUID bookId;
-
-    @Attributes()
     private String bookCoverPath;
     private String title;
 

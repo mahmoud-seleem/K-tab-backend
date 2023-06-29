@@ -14,10 +14,7 @@ import java.util.List;
 @Component
 @Data
 public class LoginForm {
-
-    @JsonProperty(required = true)
     private String email;
-    @JsonProperty(required = true)
     private String password;
     public LoginForm() {
     }

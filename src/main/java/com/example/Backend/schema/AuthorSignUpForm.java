@@ -11,7 +11,6 @@ import java.util.UUID;
 @Component
 public class AuthorSignUpForm extends AuthorSignUpBasicInfo{
 
-    @NotNull
     private String password;
     private String profilePhotoAsBinaryString;
 
