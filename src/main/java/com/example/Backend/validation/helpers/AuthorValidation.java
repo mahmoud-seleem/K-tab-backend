@@ -15,9 +15,6 @@ import java.util.List;
 public class AuthorValidation {
     @Autowired
     private ValidationUtils validationUtils;
-    public <T> void checkForReqDataIsNull(List<String> fieldNames , List<T> fieldValues) throws InputNotLogicallyValidException {
-
-    }
 
     public void ValidateRequiredData(AuthorSignUpForm form) throws InputNotLogicallyValidException {
         ArrayList<String> fieldNames = new ArrayList<>(Arrays.asList(
@@ -27,7 +24,8 @@ public class AuthorValidation {
                         form.getAuthorEmail(),
                         form.getPassword()
                 ));
-        checkForReqDataIsNull(fieldNames,fieldValues);
+        validationUtils.checkForNullEmptyBlankItems(fieldNames,fieldValues);
+        validationUtils.checkForPasswordLength("Password",form.getPassword());
     }
 
 }

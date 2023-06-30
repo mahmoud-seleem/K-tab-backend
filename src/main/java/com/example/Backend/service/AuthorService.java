@@ -221,7 +221,6 @@ public class AuthorService {
     }
 
     private void ValidateAuthorRequiredData(AuthorSignUpForm form) throws InputNotLogicallyValidException {
-        // name - email - pass
 
     }
 }

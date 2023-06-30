@@ -24,7 +24,7 @@ public class Author extends AppUser {
     @Column(name = "author_name", nullable = false)
     private String authorName;
 
-    @Column(name = "author_email", nullable = false)
+    @Column(name = "author_email",unique = true, nullable = false)
     private String authorEmail;
 
     @Column(name = "password", nullable = false)

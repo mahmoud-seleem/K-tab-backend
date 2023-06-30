@@ -1,11 +1,18 @@
 package com.example.Backend.validation;
 
+import com.example.Backend.Repository.AuthorRepository;
+import com.example.Backend.model.Author;
+import com.example.Backend.security.AppUser;
+import com.example.Backend.validation.json.InvalidParameterException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
 public class ValidationUtils {
+    @Autowired
+    private AuthorRepository authorRepository;
 
     public <T> void checkForNull(String fieldName , T fieldValue) throws InputNotLogicallyValidException {
         if (fieldValue == null){
@@ -68,5 +75,12 @@ public class ValidationUtils {
                     fieldName + " can't be Less than 8 characters !");
         }
     }
+    public  void checkForNullEmptyBlankItems(List<String> fieldNames , List<String> fieldValues) throws InputNotLogicallyValidException {
+        checkForNullItems(fieldNames,fieldValues);
+        checkForEmptyItems(fieldNames,fieldValues);
+        checkForBlankItems(fieldNames,fieldValues);
+    }
+    public void checkEmailIsNotExisted(String email){
 
+    }
 }
