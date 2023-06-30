@@ -3,6 +3,7 @@ package com.example.Backend.security;
 import com.example.Backend.model.Student;
 import com.example.Backend.schema.LoginForm;
 import com.example.Backend.schema.LoginResponse;
+import com.example.Backend.validation.json.ValidJson;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -34,7 +35,7 @@ public class SecurityController {
     );
 
     @PostMapping(path = "login/")
-    public LoginResponse login(@Valid @RequestBody LoginForm loginForm){
+    public LoginResponse login(@ValidJson("LoginForm") LoginForm loginForm){
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginForm.getEmail(),

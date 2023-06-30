@@ -18,6 +18,8 @@ import com.example.Backend.security.AppUserDetailsService;
 import com.example.Backend.security.JwtService;
 import com.example.Backend.utils.ImageConverter;
 import com.example.Backend.utils.Utils;
+import com.example.Backend.validation.InputNotLogicallyValidException;
+import com.example.Backend.validation.ValidationUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -30,14 +32,12 @@ import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class AuthorService {
-
+    @Autowired
+    private ValidationUtils validationUtils;
     @Autowired
     private AuthorRepository authorRepository;
 
@@ -114,9 +114,9 @@ public class AuthorService {
 
     private Author createNewAuthor(AuthorSignUpForm form) throws Exception {
         Author author = new Author(
-                form.getAuthorName(),
-                form.getAuthorEmail(),
-                passwordEncoder.encode(form.getPassword()));
+                form.getAuthorName(), // required
+                form.getAuthorEmail(), // required
+                passwordEncoder.encode(form.getPassword())); // required
         return updateAuthorData(form,
                 createDefaultSettings(author));
     }
@@ -156,6 +156,7 @@ public class AuthorService {
         }
         return authorBooksHeaders;
     }
+
     public List<BookInfo> getAuthorBooksHeaders2(UUID authorId) throws JsonProcessingException {
         return new ArrayList<>(getAuthorBooksHeadersInfo(authorId));
     }
@@ -217,5 +218,10 @@ public class AuthorService {
                     passwordEncoder
                             .encode(form.getPassword()));
         }
+    }
+
+    private void ValidateAuthorRequiredData(AuthorSignUpForm form) throws InputNotLogicallyValidException {
+        // name - email - pass
+
     }
 }
