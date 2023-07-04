@@ -2,6 +2,7 @@ package com.example.Backend.utils;
 
 import com.example.Backend.Repository.*;
 import com.example.Backend.model.Author;
+import com.example.Backend.model.AuthorSettings;
 import com.example.Backend.model.Disability;
 import com.example.Backend.model.Student;
 import com.example.Backend.schema.BookHeader;
@@ -71,7 +72,11 @@ public class Utils {
         Author a = new Author("mahmoud",
                 "mahmoudsaleem522@gmail.com",
                 passwordEncoder.encode("123"));
+        AuthorSettings authorSettings = new AuthorSettings();
+        authorSettingsRepository.save(authorSettings);
+        a.setAuthorSettings(authorSettings);
         authorRepository.save(a);
+        authorSettingsRepository.save(authorSettings);
         studentRepository.save(new Student(
                 "mohamed",
                 "mohamed@gmail.com",

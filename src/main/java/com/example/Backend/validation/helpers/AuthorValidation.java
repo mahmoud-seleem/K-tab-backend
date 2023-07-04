@@ -1,21 +1,25 @@
 package com.example.Backend.validation.helpers;
 
 
+import com.example.Backend.model.Author;
 import com.example.Backend.schema.AuthorSignUpForm;
+import com.example.Backend.utils.Utils;
 import com.example.Backend.validation.InputNotLogicallyValidException;
 import com.example.Backend.validation.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authorization.AuthenticatedReactiveAuthorizationManager;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.lang.reflect.Field;
+import java.util.*;
 
 @Component
 public class AuthorValidation {
     @Autowired
     private ValidationUtils validationUtils;
 
+    @Autowired
+    private Utils utils;
     public void validateRequiredData(AuthorSignUpForm form) throws InputNotLogicallyValidException {
         ArrayList<String> fieldNames = new ArrayList<>(Arrays.asList(
                 "AuthorName","AuthorEmail","Password"));
@@ -32,5 +36,24 @@ public class AuthorValidation {
         validationUtils.checkForValidContact(form.getContact());
         validationUtils.checkForValidBinaryPhoto("profilePhotoAsBinaryString",
                 form.getProfilePhotoAsBinaryString());
+    }
+    public Author validateAuthorUpdateData(AuthorSignUpForm form) throws InputNotLogicallyValidException, IllegalAccessException {
+        Author author = validationUtils.checkAuthorIsExisted(form.getAuthorId());
+        enforceConstantEmail(form);
+        form.setAuthorEmail(null);
+        validationUtils.checkForValidAuthorName(form.getAuthorName());
+        validationUtils.checkForValidPassword(form.getPassword());
+        validationUtils.checkForValidContact(form.getContact());
+        validationUtils.checkForValidBinaryPhoto(
+                "profilePhotoAsBinaryString",
+                form.getProfilePhotoAsBinaryString());
+        return author;
+    }
+    private void enforceConstantEmail(AuthorSignUpForm form) throws InputNotLogicallyValidException {
+        if (form.getAuthorEmail() != null){
+            throw new InputNotLogicallyValidException(
+                    "authorEmail",
+                    "Email can't be adjusted once it's created !");
+        }
     }
 }

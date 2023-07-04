@@ -87,17 +87,14 @@ public class AuthorService {
     }
 
     public AuthorSignUpResponse updateAuthorInfo(AuthorSignUpForm form) throws Exception {
-        Author author = authorRepository.findById(form.getAuthorId()).get();
+        Author author = validateAuthorUpdateForm(form);
         updateAuthorData(form, author);
         return constructResponse(authorRepository.save(author));
     }
 
-    public AuthorSignUpResponse getAuthorInfo(UUID authorId) {
+    public AuthorSignUpResponse getAuthorInfo(UUID authorId) throws InputNotLogicallyValidException {
         return constructResponse(
-                authorRepository
-                        .findById(authorId)
-                        .get()
-        );
+                validationUtils.checkAuthorIsExisted(authorId));
     }
 
     private String storeProfilePhotoPath(Author author) {
@@ -138,8 +135,8 @@ public class AuthorService {
         for (Field field : fields) {
             field.setAccessible(true);
             if (field.get(form) != null &&
-                    field.getName() !=
-                            "profilePhotoAsBinaryString" &&
+                    (!field.getName().equals(
+                            "profilePhotoAsBinaryString")) &&
                     field.getName() != "password") {
                 utils.getMethodBySignature("set", field
                         , author, field.getType()).invoke(author, field.get(form));
@@ -150,7 +147,7 @@ public class AuthorService {
         return authorRepository.save(author);
     }
 
-    public List<Map<String, Object>> getAuthorBooksHeaders(UUID authorId) throws JsonProcessingException {
+    public List<Map<String, Object>> getAuthorBooksHeaders(UUID authorId) throws Exception {
         List<Map<String, Object>> authorBooksHeaders = new ArrayList<>();
         ObjectMapper mapper = createCustomMapper();
         for (BookInfo bookInfo : getAuthorBooksHeadersInfo(authorId)) {
@@ -161,12 +158,13 @@ public class AuthorService {
         return authorBooksHeaders;
     }
 
-    public List<BookInfo> getAuthorBooksHeaders2(UUID authorId) throws JsonProcessingException {
+    public List<BookInfo> getAuthorBooksHeaders2(UUID authorId) throws JsonProcessingException, InputNotLogicallyValidException {
+
         return new ArrayList<>(getAuthorBooksHeadersInfo(authorId));
     }
 
-    private List<BookInfo> getAuthorBooksHeadersInfo(UUID authorId) {
-        Author author = authorRepository.findById(authorId).get();
+    private List<BookInfo> getAuthorBooksHeadersInfo(UUID authorId) throws InputNotLogicallyValidException {
+        Author author = validationUtils.checkAuthorIsExisted(authorId);
         return constructBooksHeadersInfo(author);
     }
 
@@ -227,5 +225,8 @@ public class AuthorService {
     private void validateAuthorSignUpForm(AuthorSignUpForm form) throws InputNotLogicallyValidException {
         authorValidation.validateRequiredData(form);
         authorValidation.validateSignUpOptionalData(form);
+    }
+    private Author validateAuthorUpdateForm(AuthorSignUpForm form) throws InputNotLogicallyValidException, IllegalAccessException {
+        return authorValidation.validateAuthorUpdateData(form);
     }
 }

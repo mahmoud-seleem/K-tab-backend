@@ -10,8 +10,10 @@ import com.example.Backend.schema.BookInfo;
 import com.example.Backend.security.JwtService;
 import com.example.Backend.service.AuthorService;
 import com.example.Backend.service.BookService;
+import com.example.Backend.validation.InputNotLogicallyValidException;
 import com.example.Backend.validation.json.ValidJson;
 import com.example.Backend.validation.json.ValidParam;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -143,20 +145,14 @@ public class AuthorController {
 
     @PutMapping
     @PreAuthorize(value = "hasAuthority('chapter_write')")
-    public AuthorSignUpResponse updateAuthorProfileInfo(HttpServletRequest request, @ValidJson("AuthorSignUpForm") AuthorSignUpForm authorSignUpForm) {
+    public AuthorSignUpResponse updateAuthorProfileInfo(HttpServletRequest request, @ValidJson("AuthorSignUpForm") AuthorSignUpForm authorSignUpForm) throws Exception {
         authorSignUpForm
                 .setAuthorId(
                         jwtService.getUserId(request));
-        AuthorSignUpResponse response = new AuthorSignUpResponse();
-        try {
-            response =  authorService.updateAuthorInfo(authorSignUpForm);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return response;
+        return authorService.updateAuthorInfo(authorSignUpForm);
     }
     @GetMapping
-    public AuthorSignUpResponse getAuthorProfileInfo(HttpServletRequest request){
+    public AuthorSignUpResponse getAuthorProfileInfo(HttpServletRequest request) throws InputNotLogicallyValidException {
         return authorService.getAuthorInfo(jwtService.getUserId(request));
     }
 //    @GetMapping("home/")
@@ -171,19 +167,13 @@ public class AuthorController {
 //        return response;
 //    }
     @GetMapping("home/")
-    public List<BookInfo> getAuthorBooksHeaders(HttpServletRequest request){
-        List<BookInfo> response = new ArrayList<>();
-        try {
-            response = authorService.getAuthorBooksHeaders2(
-                    jwtService.getUserId(request)
-            );
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return response;
+    public List<BookInfo> getAuthorBooksHeaders(HttpServletRequest request) throws Exception {
+        return authorService.getAuthorBooksHeaders2(
+                    jwtService.getUserId(request));
+
     }
     @GetMapping("books/cover/")
-    public RedirectView getBookCover(@ValidParam String bookCoverPath){
+    public RedirectView getBookCover(@ValidParam String bookCoverPath) throws InputNotLogicallyValidException {
         RedirectView redirectView = new RedirectView();
         redirectView.setUrl(bookService.getPreSignedAsString(bookCoverPath));
         return redirectView;

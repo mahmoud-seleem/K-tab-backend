@@ -8,6 +8,8 @@ import com.example.Backend.s3Connection.S3fileSystem;
 import com.example.Backend.schema.*;
 import com.example.Backend.utils.ImageConverter;
 import com.example.Backend.utils.Utils;
+import com.example.Backend.validation.InputNotLogicallyValidException;
+import com.example.Backend.validation.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -20,7 +22,8 @@ import java.util.*;
 
 @Service
 public class BookService {
-
+    @Autowired
+    private ValidationUtils validationUtils;
     @Autowired
     private BookRepository bookRepository;
 
@@ -82,7 +85,8 @@ public class BookService {
         return book;
     }
 
-    public String getPreSignedAsString(String bookCoverPath) {
+    public String getPreSignedAsString(String bookCoverPath) throws InputNotLogicallyValidException {
+//        validationUtils.checkForValidBookCoverPath(bookCoverPath);
         return s3PreSignedURL.generatePreSignedUrl(
                 bookCoverPath,
                 60,
@@ -348,7 +352,7 @@ public class BookService {
         if (next == null && prev == null) {
             books = getSearchResult(books,
                     "00000000-0000-0000-8000-000000000000",
-                    prev,title,tagName,operation,true,true);
+                    prev, title, tagName, operation, true, true);
             page.setPrev(null);
             if (books.size() == 0 || books.size() != limit + 1) { // the last page or the database is empty
                 page.setNext(null);
@@ -362,8 +366,8 @@ public class BookService {
             page.setPrev(UUID.fromString(prev));
             return page;
         } else {
-            books = getSearchResult(books,next,
-                    prev,title,tagName,operation,true,true);
+            books = getSearchResult(books, next,
+                    prev, title, tagName, operation, true, true);
             page.setPrev(books.get(0).getBookId());
             if (books.size() != limit + 1) { // the last page
                 page.setNext(null);
@@ -384,8 +388,8 @@ public class BookService {
         List<Book> books = null;
         BookPage page = new BookPage();
         if (next == null && prev == null) { // always get the first page
-            books = getSearchResult(books,next,"ffffffff-ffff-ffff-ffff-ffffffffffff",
-                    title,tagName,operation,false,true);
+            books = getSearchResult(books, next, "ffffffff-ffff-ffff-ffff-ffffffffffff",
+                    title, tagName, operation, false, true);
             page.setPrev(null);
             if (books.size() == 0 || books.size() != limit + 1) { // the last page or the database is empty
                 page.setNext(null);
@@ -394,21 +398,18 @@ public class BookService {
                 books.remove(books.size() - 1);
             }
             return createPageBookHeaders(page, books);
-        }
-        else if (prev == null) { // back to the first page while scrolling down to the top
+        } else if (prev == null) { // back to the first page while scrolling down to the top
             page.setPrev(null);
             page.setNext(UUID.fromString(next));
             return page;
-        }
-        else {
-            books = getSearchResult(books,next,prev,
-                    title,tagName,operation,false,false);
+        } else {
+            books = getSearchResult(books, next, prev,
+                    title, tagName, operation, false, false);
             Collections.reverse(books);
             page.setNext(books.get(books.size() - 1).getBookId());
             if (books.size() != limit + 1) { // the first page
                 page.setPrev(null);
-            }
-            else {
+            } else {
                 books.remove(0);
                 page.setPrev(books.get(0).getBookId());
             }
@@ -544,6 +545,7 @@ public class BookService {
             }
         }
     }
+
     private BookPage createPageBookHeaders(BookPage page, List<Book> books) {
         for (Book book : books) {
             page.getBookHeaders().add(new BookHeader(
@@ -568,40 +570,43 @@ public class BookService {
             Map<String, Object> map = new HashMap<>();
             map.put("UUID", book.getBookId());
             map.put("title", book.getTitle());
-            map.put("tags",book.getTagsNames());
+            map.put("tags", book.getTagsNames());
             out.add(map);
         }
         return out;
     }
+
     public List<Map<String, Object>> getAllBookWithTitle(String title) {
         List<Map<String, Object>> out = new ArrayList<>();
         for (Book book : bookRepository.findByTitleContainingOrderByBookId(title)) {
             Map<String, Object> map = new HashMap<>();
             map.put("UUID", book.getBookId());
             map.put("title", book.getTitle());
-            map.put("tags",book.getTagsNames());
+            map.put("tags", book.getTagsNames());
             out.add(map);
         }
         return out;
     }
-    public List<Map<String, Object>> getAllBookWithTitleAndTag(String title,String tagName) {
+
+    public List<Map<String, Object>> getAllBookWithTitleAndTag(String title, String tagName) {
         List<Map<String, Object>> out = new ArrayList<>();
-        for (Book book : bookRepository.findByTags_TagNameAndTitleContainingOrderByBookId(tagName,title)) {
+        for (Book book : bookRepository.findByTags_TagNameAndTitleContainingOrderByBookId(tagName, title)) {
             Map<String, Object> map = new HashMap<>();
             map.put("UUID", book.getBookId());
             map.put("title", book.getTitle());
-            map.put("tags",book.getTagsNames());
+            map.put("tags", book.getTagsNames());
             out.add(map);
         }
         return out;
     }
-    public List<Map<String, Object>> getAllBookWithTitleOrTag(String title,String tagName) {
+
+    public List<Map<String, Object>> getAllBookWithTitleOrTag(String title, String tagName) {
         List<Map<String, Object>> out = new ArrayList<>();
-        for (Book book : bookRepository.findByTags_TagNameOrTitleContainingOrderByBookId(tagName,title)) {
+        for (Book book : bookRepository.findByTags_TagNameOrTitleContainingOrderByBookId(tagName, title)) {
             Map<String, Object> map = new HashMap<>();
             map.put("UUID", book.getBookId());
             map.put("title", book.getTitle());
-            map.put("tags",book.getTagsNames());
+            map.put("tags", book.getTagsNames());
             out.add(map);
         }
         return out;
@@ -612,12 +617,13 @@ public class BookService {
         Student student = studentRepository.findById(studentId).get();
         Book book = bookRepository.findById(bookId).get();
         Payment payment = paymentRepository.findByStudentAndBook(
-                student,book);
-        return createStudentBookInfo(book,payment);
+                student, book);
+        return createStudentBookInfo(book, payment);
     }
+
     private StudentBookInfo createStudentBookInfo(Book book
-            ,Payment payment){
-        if (payment != null){
+            , Payment payment) {
+        if (payment != null) {
             return new StudentBookInfo(
                     book.getBookId(),
                     book.getAuthor().getAuthorId(),
@@ -636,8 +642,7 @@ public class BookService {
                     payment.getRecentOpenedDate().format(Utils.formatter),
                     payment.getRecentOpenedChapterId(),
                     payment.getRatingValue());
-        }
-        else {
+        } else {
             return new StudentBookInfo(
                     book.getBookId(),
                     book.getAuthor().getAuthorId(),
@@ -659,14 +664,14 @@ public class BookService {
         }
     }
 
-    private List<ChapterHeader> createChapterHeaders(Book book){
+    private List<ChapterHeader> createChapterHeaders(Book book) {
         List<ChapterHeader> chapterHeaders = new ArrayList<>();
-        for (Chapter chapter : book.getChapters()){
+        for (Chapter chapter : book.getChapters()) {
             chapterHeaders.add(
                     new ChapterHeader(
-                           chapter.getChapterId(),
-                           chapter.getTitle(),
-                           chapter.getChapterOrder()));
+                            chapter.getChapterId(),
+                            chapter.getTitle(),
+                            chapter.getChapterOrder()));
         }
         return chapterHeaders;
     }
