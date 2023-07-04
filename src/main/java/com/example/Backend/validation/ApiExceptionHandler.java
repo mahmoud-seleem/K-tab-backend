@@ -66,4 +66,13 @@ public class ApiExceptionHandler{
                         ex.getMessage()
                 ));
     }
+    @ExceptionHandler(InputNotLogicallyValidException.class)
+    public ResponseEntity<Object> handleInvalidInputException(InputNotLogicallyValidException ex) {
+        return buildResponseEntity(
+                new ApiError(
+                        HttpStatus.BAD_REQUEST,
+                        ex.getField(),
+                        ex.getMessage()
+                ));
+    }
 }

@@ -20,6 +20,7 @@ import com.example.Backend.utils.ImageConverter;
 import com.example.Backend.utils.Utils;
 import com.example.Backend.validation.InputNotLogicallyValidException;
 import com.example.Backend.validation.ValidationUtils;
+import com.example.Backend.validation.helpers.AuthorValidation;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -36,6 +37,8 @@ import java.util.*;
 
 @Service
 public class AuthorService {
+    @Autowired
+    private AuthorValidation authorValidation;
     @Autowired
     private ValidationUtils validationUtils;
     @Autowired
@@ -67,6 +70,7 @@ public class AuthorService {
     private AppUserDetailsService appUserDetailsService;
 
     public AuthorSignUpResponse saveNewAuthor(AuthorSignUpForm form) throws Exception {
+        validateAuthorSignUpForm(form);
         Author author = createNewAuthor(form);
         String jwtToken = authenticateNewAuthor(form);
         return constructResponse(author, jwtToken);
@@ -220,7 +224,8 @@ public class AuthorService {
         }
     }
 
-    private void ValidateAuthorRequiredData(AuthorSignUpForm form) throws InputNotLogicallyValidException {
-
+    private void validateAuthorSignUpForm(AuthorSignUpForm form) throws InputNotLogicallyValidException {
+        authorValidation.validateRequiredData(form);
+        authorValidation.validateSignUpOptionalData(form);
     }
 }

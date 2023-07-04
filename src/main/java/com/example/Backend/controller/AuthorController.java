@@ -137,14 +137,8 @@ public class AuthorController {
 //    Starting the real endpoints
 //    Starting the real endpoints
     @PostMapping("signup/")
-    public AuthorSignUpResponse saveSignUpData(@ValidJson("AuthorSignUpForm") AuthorSignUpForm authorSignUpForm) {
-        AuthorSignUpResponse response = new AuthorSignUpResponse();
-        try {
-            response =  authorService.saveNewAuthor(authorSignUpForm);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return response;
+    public AuthorSignUpResponse saveSignUpData(@ValidJson("AuthorSignUpForm") AuthorSignUpForm authorSignUpForm) throws Exception {
+        return authorService.saveNewAuthor(authorSignUpForm);
     }
 
     @PutMapping

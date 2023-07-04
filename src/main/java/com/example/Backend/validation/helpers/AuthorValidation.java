@@ -16,7 +16,7 @@ public class AuthorValidation {
     @Autowired
     private ValidationUtils validationUtils;
 
-    public void ValidateRequiredData(AuthorSignUpForm form) throws InputNotLogicallyValidException {
+    public void validateRequiredData(AuthorSignUpForm form) throws InputNotLogicallyValidException {
         ArrayList<String> fieldNames = new ArrayList<>(Arrays.asList(
                 "AuthorName","AuthorEmail","Password"));
         ArrayList<String> fieldValues = new ArrayList<>(Arrays.asList(
@@ -26,6 +26,11 @@ public class AuthorValidation {
                 ));
         validationUtils.checkForNullEmptyBlankItems(fieldNames,fieldValues);
         validationUtils.checkForPasswordLength("Password",form.getPassword());
+        validationUtils.checkAuthorEmailIsNotExisted(form.getAuthorEmail());
     }
-
+    public void validateSignUpOptionalData(AuthorSignUpForm form) throws InputNotLogicallyValidException {
+        validationUtils.checkForValidContact(form.getContact());
+        validationUtils.checkForValidBinaryPhoto("profilePhotoAsBinaryString",
+                form.getProfilePhotoAsBinaryString());
+    }
 }

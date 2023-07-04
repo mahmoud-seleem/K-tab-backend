@@ -9,7 +9,7 @@ import java.util.*;
 
 
 @Entity
-@Table(name = "author")
+@Table(name = "author" , indexes = @Index(columnList = "author_email"))
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler",
         "authorCommentList","authorNotificationList","chaptersList",
         "authorBooksList","authorSettings"} , ignoreUnknown = true)

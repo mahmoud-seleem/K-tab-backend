@@ -3,17 +3,21 @@ package com.example.Backend.validation;
 import com.example.Backend.Repository.AuthorRepository;
 import com.example.Backend.model.Author;
 import com.example.Backend.security.AppUser;
+import com.example.Backend.utils.ImageConverter;
 import com.example.Backend.validation.json.InvalidParameterException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Locale;
 
 @Component
 public class ValidationUtils {
     @Autowired
     private AuthorRepository authorRepository;
 
+    @Autowired
+    private ImageConverter imageConverter;
     public <T> void checkForNull(String fieldName , T fieldValue) throws InputNotLogicallyValidException {
         if (fieldValue == null){
             throw new InputNotLogicallyValidException(
@@ -80,7 +84,34 @@ public class ValidationUtils {
         checkForEmptyItems(fieldNames,fieldValues);
         checkForBlankItems(fieldNames,fieldValues);
     }
-    public void checkEmailIsNotExisted(String email){
-
+    public void checkAuthorEmailIsNotExisted(String email) throws InputNotLogicallyValidException {
+        Author author = null;
+        try{
+            author = authorRepository.findByAuthorEmail(email).get();
+    }catch (Exception ignored){
+        }
+        if (author != null){
+            throw new InputNotLogicallyValidException(
+                    "author email",
+                    "This email is already in use ! pleas, choose another one ");
+        }
+    }
+    public void checkForValidContact(String contact) throws InputNotLogicallyValidException {
+        if (contact != null){
+            try{
+                long number = Long.parseLong(contact);
+            }catch (Exception e){
+                throw new InputNotLogicallyValidException(
+                        "contact",
+                        "contact must be valid number ");
+            }
+        }
+    }
+    public void checkForValidBinaryPhoto(String fieldName , String binary) throws InputNotLogicallyValidException {
+        if (binary != null){
+            checkForEmptyString(fieldName,binary);
+            checkForBlankString(fieldName,binary);
+            imageConverter.checkForValidImage(fieldName,binary);
+        }
     }
 }
