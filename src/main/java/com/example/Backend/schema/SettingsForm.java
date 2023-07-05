@@ -2,6 +2,8 @@ package com.example.Backend.schema;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -17,8 +19,14 @@ public class SettingsForm {
     private UUID studentId;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private UUID studentSettingsId;
+    @Min(value = 0,message = "brightnessLevel can't be less than 0")
+    @Max(value = 10,message = "brightnessLevel can't be more than 10")
     private Integer brightnessLevel;
+    @Min(value = 0,message = "contrastLevel can't be less than 0")
+    @Max(value = 10,message = "contrastLevel can't be more than 10")
     private Integer contrastLevel;
+    @Min(value = 0,message = "fontSize can't be less than 0")
+    @Max(value = 200,message = "fontSize can't be more than 200")
     private Integer fontSize;
     private String fontStyle;
     private Boolean invertColor;

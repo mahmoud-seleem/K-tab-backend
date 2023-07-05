@@ -7,6 +7,7 @@ import com.example.Backend.validation.json.ValidJson;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import static com.example.Backend.security.Role.ADMIN;
@@ -14,6 +15,7 @@ import static com.example.Backend.security.Role.ADMIN;
 @RestController
 @CrossOrigin
 @RequestMapping("/settings/")
+@Validated
 public class SettingsController {
 
     @Autowired
@@ -25,7 +27,7 @@ public class SettingsController {
     private JwtService jwtService;
 
     @PutMapping()
-    public SettingsResponse updateUserSettings(HttpServletRequest request,@ValidJson("SettingsForm") SettingsForm form){
+    public SettingsResponse updateUserSettings(HttpServletRequest request,@Valid @ValidJson("SettingsForm") SettingsForm form){
         String userType = jwtService.getUserType(request);
         if(userType.equals(ADMIN.name())){
             return authorSettingsController.updateAuthorSettingsInfo(

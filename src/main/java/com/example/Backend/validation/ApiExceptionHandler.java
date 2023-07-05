@@ -3,6 +3,8 @@ package com.example.Backend.validation;
 import com.example.Backend.validation.json.InvalidParameterException;
 import com.example.Backend.validation.json.JsonValidationFailedException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.xml.bind.ValidationException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
@@ -48,6 +50,14 @@ public class ApiExceptionHandler{
                     e);
             return buildResponseEntity(error);
         }
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Object> handleBeanValidation2(ConstraintViolationException e){
+        ApiError error = new ApiError(
+                HttpStatus.BAD_REQUEST,
+                e.getConstraintViolations().iterator().next().getMessage(),
+                e);
+        return buildResponseEntity(error);
+    }
     @ExceptionHandler(JsonValidationFailedException.class)
     public ResponseEntity<Object> onJsonValidationFailedException(JsonValidationFailedException ex) {
         return buildResponseEntity(
