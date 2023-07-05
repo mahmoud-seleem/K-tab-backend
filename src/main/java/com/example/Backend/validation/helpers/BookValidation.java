@@ -30,6 +30,7 @@ public class BookValidation {
                 "bookCoverPhotoAsBinaryString",
                 bookInfo.getBookCoverPhotoAsBinaryString()
         );
+        validationUtils.checkForEmptyList("tags",bookInfo.getTags());
         if (update) {
             return validationUtils.checkBookIsExisted(bookInfo.getBookId());
         } else return null;
@@ -48,9 +49,11 @@ public class BookValidation {
                 bookInfo.getBookAbstract(),
                 bookInfo.getPublishDate()
         ));
-        for (int i = 0; i < bookInfo.getTags().size(); i++) {
-            fieldsNames.add("tags[" + i + "]");
-            fieldsValues.add(bookInfo.getTags().get(i));
+        if(bookInfo.getTags() != null){
+            for (int i = 0; i < bookInfo.getTags().size(); i++) {
+                fieldsNames.add("tags[" + i + "]");
+                fieldsValues.add(bookInfo.getTags().get(i));
+            }
         }
         result.put("names", fieldsNames);
         result.put("values", fieldsValues);

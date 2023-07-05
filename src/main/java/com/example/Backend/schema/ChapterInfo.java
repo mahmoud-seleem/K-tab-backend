@@ -9,32 +9,27 @@ import java.util.List;
 import java.util.UUID;
 
 public class ChapterInfo {
-
     private UUID ownerId;
-
     private UUID chapterId;
-
     private UUID bookId;
-
     private String title;
+    private Integer chapterOrder;
+    private List<String> tags;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Double readingDuration;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String contentPath;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String audioPath;
 
-    private Double readingDuration;
-
-    private Integer chapterOrder;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String creationDate;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String lastModified;
-
-    private List<String> tags;
 
     public ChapterInfo() {
     }

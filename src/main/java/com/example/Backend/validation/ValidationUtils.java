@@ -220,12 +220,14 @@ public class ValidationUtils {
         }
         return book;
     }
-    public void checkForValidPrice(double price) throws InputNotLogicallyValidException {
-        if (price < 0 ){
-            throw new InputNotLogicallyValidException(
-                    "price",
-                    "price must be positive number of zero !"
-            );
+    public void checkForValidPrice(Double price) throws InputNotLogicallyValidException {
+        if(price != null){
+            if (price < 0 ){
+                throw new InputNotLogicallyValidException(
+                        "price",
+                        "price must be positive number of zero !"
+                );
+            }
         }
     }
     public void checkForValidDateFormat(String date) throws InputNotLogicallyValidException {
@@ -236,7 +238,8 @@ public class ValidationUtils {
             }catch (Exception e){
                 throw new InputNotLogicallyValidException(
                         "Date",
-                        "Date must be in this format \"yyyy-MM-dd HH:mm:ss\" "
+                        "Date must be in this format: " +
+                                "yyyy-MM-dd HH:mm:ss"
                 );
             }
         }
@@ -251,5 +254,17 @@ public class ValidationUtils {
                     "student does not exist !");
         }
         return student;
+    }
+    public <T> void checkForEmptyList(String listName,List<T> list) throws InputNotLogicallyValidException {
+        if (list != null){
+            if (list.size() == 0 ){
+                throw new InputNotLogicallyValidException(
+                        listName,
+                        listName + " can't be empty list " +
+                                "if you don't want to provide items in the list" +
+                                " please don't send the entire field"
+                );
+            }
+        }
     }
 }
