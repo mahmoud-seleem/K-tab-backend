@@ -10,6 +10,7 @@ import com.example.Backend.utils.ImageConverter;
 import com.example.Backend.utils.Utils;
 import com.example.Backend.validation.InputNotLogicallyValidException;
 import com.example.Backend.validation.ValidationUtils;
+import com.example.Backend.validation.helpers.BookValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,8 @@ import java.util.*;
 
 @Service
 public class BookService {
+    @Autowired
+    private BookValidation bookValidation;
     @Autowired
     private ValidationUtils validationUtils;
     @Autowired
@@ -53,6 +56,8 @@ public class BookService {
     private S3PreSignedURL s3PreSignedURL;
 
     public BookInfo saveNewBook(BookInfo bookInfo) throws Exception {
+        bookValidation.checkForBookMandatoryData(bookInfo);
+        bookValidation.checkForBookOptionalData(false,bookInfo);
         Book book = createNewBook(bookInfo);
         Author author = authorRepository.findById(bookInfo.getAuthorId()).get();
         author.addBook(book);
@@ -62,16 +67,16 @@ public class BookService {
     }
 
     public BookInfo updateBookInfo(BookInfo bookInfo) throws Exception {
-        Book book = bookRepository.findById(bookInfo.getBookId()).get();
+        Book book = bookValidation.checkForBookOptionalData(true,bookInfo);
         updateBookData(book, bookInfo);
         return createBookInfoResponse(
                 bookRepository.save(updateLastEditDate(book)));
     }
 
-    public BookInfo getBookInfo(UUID bookId) {
+    public BookInfo getBookInfo(UUID bookId) throws InputNotLogicallyValidException {
+        validationUtils.checkForNull("bookId",bookId);
         return createBookInfoResponse(
-                bookRepository.findById(bookId).get()
-        );
+                validationUtils.checkBookIsExisted(bookId));
     }
 
     private Book createNewBook(BookInfo bookInfo) throws Exception {
@@ -613,9 +618,11 @@ public class BookService {
     }
 
     public StudentBookInfo getStudentBookInfo(
-            UUID studentId, UUID bookId) {
-        Student student = studentRepository.findById(studentId).get();
-        Book book = bookRepository.findById(bookId).get();
+            UUID studentId, UUID bookId) throws InputNotLogicallyValidException {
+        validationUtils.checkForNull("bookId",bookId);
+        validationUtils.checkForNull("studentId",studentId);
+        Student student = validationUtils.checkStudentIsExisted(studentId);
+        Book book = validationUtils.checkBookIsExisted(bookId);
         Payment payment = paymentRepository.findByStudentAndBook(
                 student, book);
         return createStudentBookInfo(book, payment);

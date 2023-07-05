@@ -6,7 +6,9 @@ import com.example.Backend.schema.BookInfo;
 import com.example.Backend.schema.BookPage;
 import com.example.Backend.security.JwtService;
 import com.example.Backend.service.BookService;
+import com.example.Backend.validation.InputNotLogicallyValidException;
 import com.example.Backend.validation.json.ValidJson;
+import com.example.Backend.validation.json.ValidParam;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -34,31 +36,19 @@ public class BookController {
 //    }
 
     @PostMapping()
-    public BookInfo saveNewBook(HttpServletRequest request,@ValidJson("BookInfo") BookInfo bookInfo) {
+    public BookInfo saveNewBook(HttpServletRequest request,@ValidJson("BookInfo") BookInfo bookInfo) throws Exception {
         bookInfo.setAuthorId(jwtService.getUserId(request));
-        BookInfo response = new BookInfo();
-        try {
-            response = bookService.saveNewBook(bookInfo);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return response;
+        return bookService.saveNewBook(bookInfo);
     }
 
     @PutMapping()
-    public BookInfo updateBookInfo(HttpServletRequest request, @RequestBody BookInfo bookInfo) throws Exception {
+    public BookInfo updateBookInfo(HttpServletRequest request, @ValidJson("BookInfo") BookInfo bookInfo) throws Exception {
         bookInfo.setAuthorId(jwtService.getUserId(request));
-        BookInfo response = new BookInfo();
-        try {
-            response = bookService.updateBookInfo(bookInfo);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return response;
+            return bookService.updateBookInfo(bookInfo);
     }
 
     @GetMapping()
-    public BookInfo getBookInfo(HttpServletRequest request,@RequestParam UUID bookId) {
+    public BookInfo getBookInfo(HttpServletRequest request,@ValidParam UUID bookId) throws InputNotLogicallyValidException {
         if (jwtService.getUserType(request).equals("ADMIN")){
             return bookService.getBookInfo(bookId);
         }else {

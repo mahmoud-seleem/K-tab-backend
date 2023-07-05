@@ -23,7 +23,7 @@ public class BookInfo {
     private List<String> tags;
     private Double price;
     private String publishDate;
-
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private List<ChapterHeader> chapterHeaders;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private UUID authorId;
