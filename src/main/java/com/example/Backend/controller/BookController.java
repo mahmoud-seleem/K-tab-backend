@@ -118,10 +118,5 @@ public class BookController {
                                                                    @RequestParam String title) {
         return bookService.getAllBookWithTitleOrTag(title, tagName);
     }
-    @GetMapping("books/cover/")
-    public RedirectView getBookCover(@ValidParam String bookCoverPath) throws InputNotLogicallyValidException {
-        RedirectView redirectView = new RedirectView();
-        redirectView.setUrl(bookService.getPreSignedAsString(bookCoverPath));
-        return redirectView;
-    }
+
 }

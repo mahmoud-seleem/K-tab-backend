@@ -9,12 +9,14 @@ import com.example.Backend.enums.ImageType;
 import com.example.Backend.schema.*;
 import com.example.Backend.security.JwtService;
 import com.example.Backend.service.S3Service;
+import com.example.Backend.validation.InputNotLogicallyValidException;
 import com.example.Backend.validation.json.ValidJson;
 import com.example.Backend.validation.json.ValidParam;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -87,6 +89,12 @@ public class S3Controller {
         chapterRepository.save(chapter);
     }
 
+    @GetMapping("/resources/")
+    public RedirectView getS3Resource(@ValidParam String resourcePath) throws InputNotLogicallyValidException {
+        RedirectView redirectView = new RedirectView();
+        redirectView.setUrl(s3Service.getPreSignedForRead(resourcePath));
+        return redirectView;
+    }
     @GetMapping("save-content/")
     public String getPreSignedForWriteContent(@ValidParam String contentPath) {
         return s3Service.getPreSignedForWrite(contentPath);
