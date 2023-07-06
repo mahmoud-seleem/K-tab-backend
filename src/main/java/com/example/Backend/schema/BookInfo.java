@@ -1,5 +1,7 @@
 package com.example.Backend.schema;
 
+import com.example.Backend.validation.InputNotLogicallyValidException;
+import com.example.Backend.validation.ValidationUtils;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -16,7 +18,7 @@ import java.util.UUID;
 @JsonIgnoreProperties(value = {"bookCoverPhotoAsBinaryString"}, allowGetters = false, allowSetters = true)
 public class BookInfo {
 
-    private UUID bookId;
+    private String bookId;
     private String title;
     private String bookCoverPhotoAsBinaryString;
     private String bookAbstract;
@@ -55,7 +57,7 @@ public class BookInfo {
                     List<ChapterHeader> chapterHeaders,
                     List<String> contributors) {
         this.authorId = authorId;
-        this.bookId = bookId;
+        this.bookId = bookId.toString();
         this.title = title;
         this.bookCoverPhotoAsBinaryString = bookCoverPhotoAsBinaryString;
         this.bookAbstract = bookAbstract;
@@ -99,10 +101,17 @@ public class BookInfo {
     }
 
     public UUID getBookId() {
-        return bookId;
+        return UUID.fromString(bookId);
     }
 
     public void setBookId(UUID bookId) {
+        this.bookId = bookId.toString();
+    }
+    public void setBookId(String bookId) throws InputNotLogicallyValidException {
+        if (bookId != null){
+            ValidationUtils validationUtils = new ValidationUtils();
+            validationUtils.checkForValidUUIDString("bookId",bookId);
+        }
         this.bookId = bookId;
     }
 

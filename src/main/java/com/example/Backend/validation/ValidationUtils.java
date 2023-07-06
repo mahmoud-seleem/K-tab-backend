@@ -1,15 +1,19 @@
 package com.example.Backend.validation;
+
 import com.example.Backend.Repository.AuthorRepository;
 import com.example.Backend.Repository.BookRepository;
+import com.example.Backend.Repository.ChapterRepository;
 import com.example.Backend.Repository.StudentRepository;
 import com.example.Backend.model.Author;
 import com.example.Backend.model.Book;
+import com.example.Backend.model.Chapter;
 import com.example.Backend.model.Student;
 import com.example.Backend.utils.ImageConverter;
 import com.example.Backend.utils.Utils;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -25,6 +29,8 @@ public class ValidationUtils {
     private BookRepository bookRepository;
     @Autowired
     private ImageConverter imageConverter;
+    @Autowired
+    private ChapterRepository chapterRepository;
 
     public <T> void checkForNull(String fieldName, T fieldValue) throws InputNotLogicallyValidException {
         if (fieldValue == null) {
@@ -47,13 +53,13 @@ public class ValidationUtils {
 
     public void checkForBlankItems(List<String> fieldNames, List<String> fieldValues) throws InputNotLogicallyValidException {
         for (int i = 0; i < fieldNames.size(); i++) {
-            if (fieldValues.get(i) != null){
-            String name = fieldNames.get(i);
-            if (fieldValues.get(i).replace(" ", "").length() == 0) {
-                throw new InputNotLogicallyValidException(
-                        name,
-                        name + " can't be BLANK \" \" !");
-            }
+            if (fieldValues.get(i) != null) {
+                String name = fieldNames.get(i);
+                if (fieldValues.get(i).replace(" ", "").length() == 0) {
+                    throw new InputNotLogicallyValidException(
+                            name,
+                            name + " can't be BLANK \" \" !");
+                }
             }
         }
     }
@@ -220,9 +226,10 @@ public class ValidationUtils {
         }
         return book;
     }
+
     public void checkForValidPrice(Double price) throws InputNotLogicallyValidException {
-        if(price != null){
-            if (price < 0 ){
+        if (price != null) {
+            if (price < 0) {
                 throw new InputNotLogicallyValidException(
                         "price",
                         "price must be positive number of zero !"
@@ -230,12 +237,13 @@ public class ValidationUtils {
             }
         }
     }
+
     public void checkForValidDateFormat(String date) throws InputNotLogicallyValidException {
-        if (date != null){
-            try{
+        if (date != null) {
+            try {
                 LocalDateTime localDateTime =
-                        LocalDateTime.parse(date,Utils.formatter);
-            }catch (Exception e){
+                        LocalDateTime.parse(date, Utils.formatter);
+            } catch (Exception e) {
                 throw new InputNotLogicallyValidException(
                         "Date",
                         "Date must be in this format: " +
@@ -244,6 +252,7 @@ public class ValidationUtils {
             }
         }
     }
+
     public Student checkStudentIsExisted(UUID studentId) throws InputNotLogicallyValidException {
         Student student = null;
         try {
@@ -255,9 +264,21 @@ public class ValidationUtils {
         }
         return student;
     }
-    public <T> void checkForEmptyList(String listName,List<T> list) throws InputNotLogicallyValidException {
-        if (list != null){
-            if (list.size() == 0 ){
+    public Chapter checkChapterIsExisted(UUID chapterId) throws InputNotLogicallyValidException {
+        Chapter chapter = null;
+        try {
+            chapter = chapterRepository.findById(chapterId).get();
+        } catch (Exception e) {
+            throw new InputNotLogicallyValidException(
+                    "studentId",
+                    "chapter does not exist !");
+        }
+        return chapter;
+    }
+
+    public <T> void checkForEmptyList(String listName, List<T> list) throws InputNotLogicallyValidException {
+        if (list != null) {
+            if (list.size() == 0) {
                 throw new InputNotLogicallyValidException(
                         listName,
                         listName + " can't be empty list " +
@@ -267,4 +288,32 @@ public class ValidationUtils {
             }
         }
     }
+
+    public UUID checkForValidUUIDString(String fieldName, String id) throws InputNotLogicallyValidException {
+        UUID res = null;
+        try {
+            res = UUID.fromString(id);
+        } catch (Exception e) {
+            throw new InputNotLogicallyValidException(
+                    fieldName,
+                    fieldName + " is NOT a Valid UUID"
+            );
+        }
+        return res;
+    }
+    public void checkForBookOwner(Author author, Book book) throws InputNotLogicallyValidException {
+        if (!author.getAuthorBooksList().contains(book)){
+            throw new InputNotLogicallyValidException(
+                    "book/author",
+                    "this author is not the owner of this book");
+        }
+    }
+    public void checkForChapterOwner(Author author, Chapter chapter) throws InputNotLogicallyValidException {
+        if (!author.getAuthorBooksList().contains(chapter.getBook())){
+            throw new InputNotLogicallyValidException(
+                    "chapter/author",
+                    "this author is not the owner of this chapter or");
+        }
+    }
+
 }

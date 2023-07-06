@@ -5,6 +5,7 @@ import com.example.Backend.schema.*;
 import com.example.Backend.security.JwtService;
 import com.example.Backend.service.ChapterService;
 import com.example.Backend.service.CommentService;
+import com.example.Backend.validation.InputNotLogicallyValidException;
 import com.example.Backend.validation.json.ValidJson;
 import com.example.Backend.validation.json.ValidParam;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,31 +38,19 @@ public class ChapterController {
 
     @PostMapping()
     public ChapterInfo saveNewChapter(HttpServletRequest request,
-                                      @ValidJson("ChapterInfo") ChapterInfo chapterInfo) {
-        chapterInfo.setOwnerId(jwtService.getUserId(request));
-        ChapterInfo response = new ChapterInfo();
-        try {
-            response = chapterService.saveNewChapter(chapterInfo);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return response;
+                                        @ValidJson("ChapterInfo") ChapterInfo chapterInfo) throws Exception {
+            chapterInfo.setOwnerId(jwtService.getUserId(request));
+            return chapterService.saveNewChapter(chapterInfo);
     }
 
     @PutMapping()
     public ChapterInfo updateChapterInfo(HttpServletRequest request, @ValidJson("ChapterInfo") ChapterInfo chapterInfo) throws Exception {
         chapterInfo.setOwnerId(jwtService.getUserId(request));
-        ChapterInfo response = new ChapterInfo();
-        try {
-            response = chapterService.updateChapterInfo(chapterInfo);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return response;
+        return chapterService.updateChapterInfo(chapterInfo);
     }
 
     @GetMapping()
-    public ChapterInfo getChapterInfo(@ValidParam UUID chapterId) {
+    public ChapterInfo getChapterInfo(@ValidParam UUID chapterId) throws InputNotLogicallyValidException {
         return chapterService.getChapterInfo(chapterId);
     }
 

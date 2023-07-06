@@ -9,6 +9,9 @@ import com.example.Backend.schema.ChapterInfo;
 import com.example.Backend.schema.InteractionInfo;
 import com.example.Backend.utils.ImageConverter;
 import com.example.Backend.utils.Utils;
+import com.example.Backend.validation.InputNotLogicallyValidException;
+import com.example.Backend.validation.ValidationUtils;
+import com.example.Backend.validation.helpers.ChapterValidation;
 import org.aspectj.weaver.ast.Literal;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,9 +53,13 @@ public class ChapterService {
     private InteractionRepository interactionRepository;
     @Autowired
     private S3PreSignedURL s3PreSignedURL;
-
+    @Autowired
+    private ValidationUtils validationUtils;
+    @Autowired
+    private ChapterValidation chapterValidation;
     @Autowired
     private ReadingRepository readingRepository;
+
     public ChapterInfo saveNewChapter(ChapterInfo chapterInfo) throws Exception {
         Chapter chapter = createNewChapter(chapterInfo);
         return createChapterInfoResponse(
@@ -61,15 +68,15 @@ public class ChapterService {
     }
 
     public ChapterInfo updateChapterInfo(ChapterInfo chapterInfo) throws Exception {
-        Chapter chapter = chapterRepository.findById(chapterInfo.getChapterId()).get();
+        Chapter chapter = chapterValidation.validateChapterUpdate(chapterInfo);
         updateChapterData(chapter, chapterInfo);
         return createChapterInfoResponse(
                 chapterRepository.save(updateLaseModifiedDate(chapter)));
     }
 
-    public ChapterInfo getChapterInfo(UUID chapterId) {
+    public ChapterInfo getChapterInfo(UUID chapterId) throws InputNotLogicallyValidException {
         return createChapterInfoResponse(
-                chapterRepository.findById(chapterId).get()
+                validationUtils.checkChapterIsExisted(chapterId)
         );
     }
 
@@ -90,11 +97,10 @@ public class ChapterService {
     }
 
     private Chapter createNewChapter(ChapterInfo chapterInfo) throws Exception {
+        Book book = chapterValidation.validateChapterCreation(chapterInfo);
         Chapter chapter = new Chapter(
                 chapterInfo.getTitle()
         );
-        Book book = bookRepository.
-                findById(chapterInfo.getBookId()).get();
         book.addChapter(chapter);
         bookRepository.save(book);
         updateChapterData(
@@ -210,23 +216,24 @@ public class ChapterService {
                 interactionInfo.getInteractionData()
         );
         Interaction interaction = new Interaction(data);
-        Reading reading = readingRepository.findByStudentAndChapter(student,chapter);
+        Reading reading = readingRepository.findByStudentAndChapter(student, chapter);
         reading.addInteraction(interaction);
         return createInteractionInfo(
                 interactionRepository.save(interaction));
     }
 
     public InteractionInfo updateInteraction(InteractionInfo interactionInfo) {
-        JSONObject data ;
+        JSONObject data;
         Interaction interaction = interactionRepository
                 .findById(interactionInfo.getInteractionId()).get();
-        if(interactionInfo.getInteractionData() != null ){
+        if (interactionInfo.getInteractionData() != null) {
             data = new JSONObject(interactionInfo.getInteractionData());
             interaction.setData(data);
         }
         return createInteractionInfo(
                 interactionRepository.save(interaction));
     }
+
     public void deleteInteraction(UUID interactionId) {
         Interaction interaction = interactionRepository
                 .findById(interactionId).get();
@@ -235,22 +242,23 @@ public class ChapterService {
         interactionRepository.delete(interaction);
     }
 
-    public InteractionInfo getInteraction(UUID interactionId){
+    public InteractionInfo getInteraction(UUID interactionId) {
         Interaction interaction = interactionRepository
                 .findById(interactionId).get();
         return createInteractionInfo(interaction);
     }
-    public List<InteractionInfo> getInteractions(UUID studentId,UUID chapterId){
+
+    public List<InteractionInfo> getInteractions(UUID studentId, UUID chapterId) {
         Student student = studentRepository
                 .findById(studentId).get();
         Chapter chapter = chapterRepository
                 .findById(chapterId).get();
-        Reading reading = readingRepository.findByStudentAndChapter(student,chapter);
+        Reading reading = readingRepository.findByStudentAndChapter(student, chapter);
         return createListOfInteractionInfo(reading.getInteractions());
     }
 
 
-    private InteractionInfo createInteractionInfo(Interaction interaction){
+    private InteractionInfo createInteractionInfo(Interaction interaction) {
         return new InteractionInfo(
                 interaction.getReading().getStudent().getStudentId(),
                 interaction.getReading().getChapter().getChapterId(),
@@ -259,9 +267,9 @@ public class ChapterService {
                 interaction.getData().toMap());
     }
 
-    private List<InteractionInfo> createListOfInteractionInfo(List<Interaction> interactions){
+    private List<InteractionInfo> createListOfInteractionInfo(List<Interaction> interactions) {
         List<InteractionInfo> interactionInfoList = new ArrayList<>();
-        for (Interaction interaction: interactions){
+        for (Interaction interaction : interactions) {
             interactionInfoList.add(
                     createInteractionInfo(interaction));
         }

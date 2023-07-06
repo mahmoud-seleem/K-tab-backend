@@ -69,11 +69,7 @@ public class BookService {
     public BookInfo updateBookInfo(BookInfo bookInfo) throws Exception {
         Book book = bookValidation.checkForBookOptionalData(true,bookInfo);
         Author author = authorRepository.findById(bookInfo.getAuthorId()).get();
-        if (!author.getAuthorBooksList().contains(book)){
-            throw new InputNotLogicallyValidException(
-                    "bookId",
-                    "this author is not the owner of this book");
-        }
+        validationUtils.checkForBookOwner(author,book);
         updateBookData(book, bookInfo);
         return createBookInfoResponse(
                 bookRepository.save(updateLastEditDate(book)));

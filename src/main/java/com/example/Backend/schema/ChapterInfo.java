@@ -1,21 +1,25 @@
 package com.example.Backend.schema;
 
 import com.example.Backend.model.*;
+import com.example.Backend.validation.InputNotLogicallyValidException;
+import com.example.Backend.validation.ValidationUtils;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-
+@Component
 public class ChapterInfo {
+
     private String ownerId;
     private String chapterId;
     private String bookId;
     private String title;
-    private Integer chapterOrder;
     private List<String> tags;
-
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Integer chapterOrder;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Double readingDuration;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
@@ -60,29 +64,54 @@ public class ChapterInfo {
     }
 
     public UUID getOwnerId() {
+        if (ownerId == null){
+            return null;
+        }
         return UUID.fromString(ownerId);
     }
 
+    public void setOwnerId(String ownerId) throws InputNotLogicallyValidException {
+        if(ownerId != null){
+            ValidationUtils validationUtils = new ValidationUtils();
+            validationUtils.checkForValidUUIDString("ownerId",ownerId);
+        }
+        this.ownerId = ownerId;
+    }
     public void setOwnerId(UUID ownerId) {
         this.ownerId = ownerId.toString();
     }
 
     public UUID getChapterId() {
+        if (chapterId == null){
+            return null;
+        }
         return UUID.fromString(chapterId);
     }
 
     public void setChapterId(UUID chapterId) {
         this.chapterId = chapterId.toString();
     }
+    public void setChapterId(String chapterId) throws InputNotLogicallyValidException {
+        if(chapterId != null){
+            ValidationUtils validationUtils = new ValidationUtils();
+            validationUtils.checkForValidUUIDString("chapterId",chapterId);
+        }
+        this.chapterId = chapterId;
+    }
 
     public UUID getBookId() {
+        if (bookId == null){
+            return null;
+        }
         return UUID.fromString(bookId);
     }
 
     public void setBookId(UUID bookId) {
         this.bookId = bookId.toString();
     }
-    public void setBookId(String bookId) {
+    public void setBookId(String bookId) throws InputNotLogicallyValidException {
+        ValidationUtils validationUtils = new ValidationUtils();
+        validationUtils.checkForValidUUIDString("bookId",bookId);
         this.bookId = bookId;
     }
 
