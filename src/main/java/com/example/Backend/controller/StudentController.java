@@ -2,13 +2,13 @@ package com.example.Backend.controller;
 
 import com.example.Backend.Repository.*;
 import com.example.Backend.model.*;
-import com.example.Backend.schema.AuthorSignUpForm;
-import com.example.Backend.schema.AuthorSignUpResponse;
-import com.example.Backend.schema.StudentSignUpForm;
-import com.example.Backend.schema.StudentSignUpResponse;
+import com.example.Backend.schema.*;
 import com.example.Backend.security.JwtService;
 import com.example.Backend.service.StudentService;
+import com.example.Backend.validation.InputNotLogicallyValidException;
 import com.example.Backend.validation.json.ValidJson;
+import com.example.Backend.validation.json.ValidParam;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -68,8 +68,12 @@ public class StudentController {
     }
 
     @GetMapping
-    public StudentSignUpResponse getStudentProfileInfo(HttpServletRequest request) {
+    public StudentSignUpResponse getStudentProfileInfo(HttpServletRequest request) throws InputNotLogicallyValidException {
         return studentService.getStudentInfo(jwtService.getUserId(request));
+    }
+    @GetMapping("/profile/")
+    public StudentProfile getStudentProfileInfo(@ValidParam UUID studentId) throws InputNotLogicallyValidException {
+        return studentService.getAuthorProfileInfo(studentId);
     }
 
 //    @GetMapping("/new")

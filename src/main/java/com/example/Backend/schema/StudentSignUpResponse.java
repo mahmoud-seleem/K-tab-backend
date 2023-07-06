@@ -31,6 +31,14 @@ public class StudentSignUpResponse extends StudentSignUpBasicInfo{
         this.disabilities = disabilities;
     }
 
+    public StudentSignUpResponse(UUID studentSettingsId, String profilePhotoPath, String educationLevel, List<Map<String, Object>> disabilities, String token) {
+        this.studentSettingsId = studentSettingsId;
+        this.profilePhotoPath = profilePhotoPath;
+        this.educationLevel = educationLevel;
+        this.disabilities = disabilities;
+        this.token = token;
+    }
+
     public StudentSignUpResponse() {
 
     }

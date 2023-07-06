@@ -4,6 +4,7 @@ import com.example.Backend.Repository.AuthorNotificationRepository;
 import com.example.Backend.Repository.AuthorRepository;
 import com.example.Backend.Repository.AuthorSettingsRepository;
 import com.example.Backend.s3Connection.S3fileSystem;
+import com.example.Backend.schema.AuthorProfile;
 import com.example.Backend.schema.AuthorSignUpForm;
 import com.example.Backend.schema.AuthorSignUpResponse;
 import com.example.Backend.schema.BookInfo;
@@ -155,6 +156,7 @@ public class AuthorController {
     public AuthorSignUpResponse getAuthorProfileInfo(HttpServletRequest request) throws InputNotLogicallyValidException {
         return authorService.getAuthorInfo(jwtService.getUserId(request));
     }
+//    @GetMapping("/profile/")
 //    @GetMapping("home/")
 //    public List<Map<String,Object>> getAuthorBooksHeaders(@RequestParam UUID authorId,@RequestParam(required = false) String title){
 //        List<Map<String,Object>> response = null;
@@ -172,11 +174,9 @@ public class AuthorController {
                     jwtService.getUserId(request));
 
     }
-    @GetMapping("books/cover/")
-    public RedirectView getBookCover(@ValidParam String bookCoverPath) throws InputNotLogicallyValidException {
-        RedirectView redirectView = new RedirectView();
-        redirectView.setUrl(bookService.getPreSignedAsString(bookCoverPath));
-        return redirectView;
+    @GetMapping("/profile/")
+    public AuthorProfile getAuthorProfileInfo(@ValidParam UUID authorId) throws InputNotLogicallyValidException, JsonProcessingException {
+        return authorService.getAuthorProfileInfo(authorId);
     }
 //    @PostMapping("/img2/")
 //    public String saveSignUpData2(@RequestBody AuthorSignUpForm authorSignUpForm) throws IOException {

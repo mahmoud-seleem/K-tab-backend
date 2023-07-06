@@ -9,10 +9,7 @@ import com.example.Backend.model.Author;
 import com.example.Backend.model.AuthorSettings;
 import com.example.Backend.model.Book;
 import com.example.Backend.s3Connection.S3fileSystem;
-import com.example.Backend.schema.AuthorSignUpForm;
-import com.example.Backend.schema.AuthorSignUpResponse;
-import com.example.Backend.schema.BookInfo;
-import com.example.Backend.schema.SearchInput;
+import com.example.Backend.schema.*;
 import com.example.Backend.security.AppUserDetails;
 import com.example.Backend.security.AppUserDetailsService;
 import com.example.Backend.security.JwtService;
@@ -96,7 +93,10 @@ public class AuthorService {
         return constructResponse(
                 validationUtils.checkAuthorIsExisted(authorId));
     }
-
+    public AuthorProfile getAuthorProfileInfo(UUID authorId) throws InputNotLogicallyValidException, JsonProcessingException {
+        return constructProfile(
+                validationUtils.checkAuthorIsExisted(authorId));
+    }
     private String storeProfilePhotoPath(Author author) {
         String photoPath = ("Authors/" + author.getAuthorId().toString() + "/profilePhoto.png");
         s3fileSystem.reserveEmptyPlace(photoPath);
@@ -191,6 +191,18 @@ public class AuthorService {
                 author.getProfilePhoto(),
                 author.getAuthorSettings().getAuthorSettingsId(),
                 null
+        );
+    }
+    private AuthorProfile constructProfile(Author author) throws InputNotLogicallyValidException, JsonProcessingException {
+        return new AuthorProfile(
+                author.getAuthorId(),
+                author.getAuthorName(),
+                author.getAuthorEmail(),
+                null,
+                author.getProfilePhoto(),
+                null,
+                null,
+                getAuthorBooksHeaders2(author.getAuthorId())
         );
     }
 
