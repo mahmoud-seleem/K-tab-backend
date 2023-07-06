@@ -19,24 +19,25 @@ public class BackendApplication {
     @Value("${ALLOWED_DOMAINS}")
     private String allowedDomains;
 
-	public static void main(String[] args) throws ClassNotFoundException {
-		ApplicationContext context = SpringApplication.run(BackendApplication.class, args);
-		AuthorRepository authorRepository = context.getBean(AuthorRepository.class);
-		StudentRepository studentRepository = context.getBean(StudentRepository.class);
-		DisabilityRepository disabilityRepository = context.getBean(DisabilityRepository.class);
-		AuthorSettingsRepository authorSettingsRepository = context.getBean(AuthorSettingsRepository.class);
-		StudentSettingsRepository studentSettingsRepository = context.getBean(StudentSettingsRepository.class);
-		PasswordUtils passwordUtils = new PasswordUtils();
-		Utils utils = new Utils(
-				passwordUtils.passwordEncoder(),
-				studentRepository,
-				authorRepository,
-				disabilityRepository,
-				studentSettingsRepository,
-				authorSettingsRepository);
-		utils.generateSomeUsers();
-		utils.generateSomeDisabilities();
-	}
+    public static void main(String[] args) throws ClassNotFoundException {
+//		ApplicationContext context =
+        SpringApplication.run(BackendApplication.class, args);
+//		AuthorRepository authorRepository = context.getBean(AuthorRepository.class);
+//		StudentRepository studentRepository = context.getBean(StudentRepository.class);
+//		DisabilityRepository disabilityRepository = context.getBean(DisabilityRepository.class);
+//		AuthorSettingsRepository authorSettingsRepository = context.getBean(AuthorSettingsRepository.class);
+//		StudentSettingsRepository studentSettingsRepository = context.getBean(StudentSettingsRepository.class);
+//		PasswordUtils passwordUtils = new PasswordUtils();
+//		Utils utils = new Utils(
+//				passwordUtils.passwordEncoder(),
+//				studentRepository,
+//				authorRepository,
+//				disabilityRepository,
+//				studentSettingsRepository,
+//				authorSettingsRepository);
+//		utils.generateSomeUsers();
+//		utils.generateSomeDisabilities();
+    }
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {
