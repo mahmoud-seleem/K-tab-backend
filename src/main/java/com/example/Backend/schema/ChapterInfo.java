@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.UUID;
 
 public class ChapterInfo {
-    private UUID ownerId;
-    private UUID chapterId;
-    private UUID bookId;
+    private String ownerId;
+    private String chapterId;
+    private String bookId;
     private String title;
     private Integer chapterOrder;
     private List<String> tags;
@@ -46,9 +46,9 @@ public class ChapterInfo {
             String creationDate,
             String lastModified,
             List<String> tags) {
-        this.ownerId = ownerId;
-        this.chapterId = chapterId;
-        this.bookId = bookId;
+        this.ownerId = ownerId.toString();
+        this.chapterId = chapterId.toString();
+        this.bookId = bookId.toString();
         this.title = title;
         this.contentPath = contentPath;
         this.audioPath = audioPath;
@@ -60,26 +60,29 @@ public class ChapterInfo {
     }
 
     public UUID getOwnerId() {
-        return ownerId;
+        return UUID.fromString(ownerId);
     }
 
     public void setOwnerId(UUID ownerId) {
-        this.ownerId = ownerId;
+        this.ownerId = ownerId.toString();
     }
 
     public UUID getChapterId() {
-        return chapterId;
+        return UUID.fromString(chapterId);
     }
 
     public void setChapterId(UUID chapterId) {
-        this.chapterId = chapterId;
+        this.chapterId = chapterId.toString();
     }
 
     public UUID getBookId() {
-        return bookId;
+        return UUID.fromString(bookId);
     }
 
     public void setBookId(UUID bookId) {
+        this.bookId = bookId.toString();
+    }
+    public void setBookId(String bookId) {
         this.bookId = bookId;
     }
 

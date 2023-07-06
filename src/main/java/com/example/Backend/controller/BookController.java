@@ -12,6 +12,7 @@ import com.example.Backend.validation.json.ValidParam;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.List;
 import java.util.Map;
@@ -116,5 +117,11 @@ public class BookController {
     public List<Map<String, Object>> getAllBooksWithTagNameOrTitle(@RequestParam String tagName,
                                                                    @RequestParam String title) {
         return bookService.getAllBookWithTitleOrTag(title, tagName);
+    }
+    @GetMapping("books/cover/")
+    public RedirectView getBookCover(@ValidParam String bookCoverPath) throws InputNotLogicallyValidException {
+        RedirectView redirectView = new RedirectView();
+        redirectView.setUrl(bookService.getPreSignedAsString(bookCoverPath));
+        return redirectView;
     }
 }

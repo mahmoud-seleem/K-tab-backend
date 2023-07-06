@@ -54,7 +54,7 @@ public class Author extends AppUser {
     }
     public Author(String authorName) {
         this.authorName = authorName;
-        this.authorEmail = "mahmoudsaleem522@gmail.com";
+        this.authorEmail     = "mahmoudsaleem522@gmail.com";
         this.contact = "01061424231";
         this.password = "12345678";
         this.profilePhoto = "profile_photo_link";
