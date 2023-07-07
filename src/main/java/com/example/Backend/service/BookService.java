@@ -11,6 +11,7 @@ import com.example.Backend.utils.Utils;
 import com.example.Backend.validation.InputNotLogicallyValidException;
 import com.example.Backend.validation.ValidationUtils;
 import com.example.Backend.validation.helpers.BookValidation;
+import com.google.j2objc.annotations.AutoreleasePool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -57,7 +58,7 @@ public class BookService {
 
     public BookInfo saveNewBook(BookInfo bookInfo) throws Exception {
         bookValidation.checkForBookMandatoryData(bookInfo);
-        bookValidation.checkForBookOptionalData(false,bookInfo);
+        bookValidation.checkForBookOptionalData(false, bookInfo);
         Book book = createNewBook(bookInfo);
         Author author = authorRepository.findById(bookInfo.getAuthorId()).get();
         author.addBook(book);
@@ -67,16 +68,16 @@ public class BookService {
     }
 
     public BookInfo updateBookInfo(BookInfo bookInfo) throws Exception {
-        Book book = bookValidation.checkForBookOptionalData(true,bookInfo);
+        Book book = bookValidation.checkForBookOptionalData(true, bookInfo);
         Author author = authorRepository.findById(bookInfo.getAuthorId()).get();
-        validationUtils.checkForBookOwner(author,book);
+        validationUtils.checkForBookOwner(author, book);
         updateBookData(book, bookInfo);
         return createBookInfoResponse(
                 bookRepository.save(updateLastEditDate(book)));
     }
 
     public BookInfo getBookInfo(UUID bookId) throws InputNotLogicallyValidException {
-        validationUtils.checkForNull("bookId",bookId);
+        validationUtils.checkForNull("bookId", bookId);
         return createBookInfoResponse(
                 validationUtils.checkBookIsExisted(bookId));
     }
@@ -148,7 +149,7 @@ public class BookService {
                 book.getPrice(),
                 book.calculateAvgRating(),
                 createChapterHeaders(book),
-                book.getContributorsEmails());
+                book.getContributorsIds());
         return response;
     }
 
@@ -203,48 +204,44 @@ public class BookService {
     }
 
     public BookInfo addContribution(ContributionInfo contributionInfo) throws Exception {
-        Book book = bookRepository.findById(
-                contributionInfo.getBookId()).get();
-        if (book.getAuthor().getAuthorId().equals(
-                contributionInfo.getOwnerId())) {
-            Author author = authorRepository.
-                    findByAuthorEmail(
-                            contributionInfo.getContributorEmail()).get();
-            setupNewContribution(book, author, contributionInfo);
-        } else throw new Exception();
+        Book book = validationUtils.checkBookIsExisted(
+                contributionInfo.getBookId());
+        Author author = validationUtils.checkAuthorIsExisted(
+                contributionInfo.getContributorId());
+        Author owner = validationUtils.checkAuthorIsExisted(
+                contributionInfo.getOwnerId());
+        validationUtils.checkForBookOwner(owner, book);
+        setupNewContribution(book, author, contributionInfo);
         return createBookInfoResponse(book);
     }
 
     public BookInfo updateContribution(ContributionInfo contributionInfo) throws Exception {
-        Book book = bookRepository.findById(
-                contributionInfo.getBookId()).get();
-        if (book.getAuthor().getAuthorId().equals(
-                contributionInfo.getOwnerId())) {
-            Author author = authorRepository.
-                    findByAuthorEmail(
-                            contributionInfo.getContributorEmail()).get();
-            updateContributionData(book, author, contributionInfo);
-        } else throw new Exception();
+        Book book = validationUtils.checkBookIsExisted(
+                contributionInfo.getBookId());
+        Author author = validationUtils.checkAuthorIsExisted(
+                contributionInfo.getContributorId());
+        Author owner = validationUtils.checkAuthorIsExisted(
+                contributionInfo.getOwnerId());
+        validationUtils.checkForBookOwner(owner, book);
+        updateContributionData(book, author, contributionInfo);
         return createBookInfoResponse(book);
     }
 
     public BookInfo removeContribution(ContributionInfo contributionInfo) throws Exception {
-        Book book = bookRepository.findById(
-                contributionInfo.getBookId()).get();
-        if (book.getAuthor().getAuthorId().equals(
-                contributionInfo.getOwnerId())) {
-            Author author = authorRepository.
-                    findByAuthorEmail(
-                            contributionInfo.getContributorEmail()).get();
-            deleteContribution(book, author);
-        } else throw new Exception();
+        Book book = validationUtils.checkBookIsExisted(
+                contributionInfo.getBookId());
+        Author author = validationUtils.checkAuthorIsExisted(
+                contributionInfo.getContributorId());
+        Author owner = validationUtils.checkAuthorIsExisted(
+                contributionInfo.getOwnerId());
+        validationUtils.checkForBookOwner(owner,book);
+        deleteContribution(book, author);
         return createBookInfoResponse(book);
-    }
+}
 
-    private void setupNewContribution(Book book, Author author, ContributionInfo contributionInfo) {
+    private void setupNewContribution(Book book, Author author, ContributionInfo contributionInfo) throws InputNotLogicallyValidException {
         Contribution contribution = new Contribution();
-        contribution.setChaptersIds(getChapterIds(
-                book, contributionInfo));
+        contribution.setChaptersIds(getChapterIds(contributionInfo));
         author.addContribution(contribution);
         book.addContribution(contribution);
         bookRepository.save(book);
@@ -252,11 +249,11 @@ public class BookService {
         contributionRepository.save(contribution);
     }
 
-    private void updateContributionData(Book book, Author author, ContributionInfo contributionInfo) {
+    private void updateContributionData(Book book, Author author, ContributionInfo contributionInfo) throws InputNotLogicallyValidException {
         Contribution contribution = contributionRepository
                 .findByAuthorAndBook(author, book).get();
         contribution.setChaptersIds(getChapterIds(
-                book, contributionInfo));
+                contributionInfo));
         contributionRepository.save(contribution);
     }
 
@@ -268,15 +265,12 @@ public class BookService {
         contributionRepository.delete(contribution);
     }
 
-    private List<UUID> getChapterIds(Book book, ContributionInfo contributionInfo) {
+    private List<UUID> getChapterIds(ContributionInfo contributionInfo) throws InputNotLogicallyValidException {
         List<UUID> chapterIds = new ArrayList<>();
-        for (int order : contributionInfo.getChaptersOrders()) {
-            chapterIds
-                    .add(chapterRepository
-                            .findByChapterOrderAndBook(order, book)
-                            .get()
-                            .getChapterId()
-                    );
+        validationUtils.checkForNull("chaptersIds",
+                contributionInfo.getChaptersIds());
+        for (String id : contributionInfo.getChaptersIds()) {
+            chapterIds.add(UUID.fromString(id));
         }
         return chapterIds;
     }
@@ -621,8 +615,8 @@ public class BookService {
 
     public StudentBookInfo getStudentBookInfo(
             UUID studentId, UUID bookId) throws InputNotLogicallyValidException {
-        validationUtils.checkForNull("bookId",bookId);
-        validationUtils.checkForNull("studentId",studentId);
+        validationUtils.checkForNull("bookId", bookId);
+        validationUtils.checkForNull("studentId", studentId);
         Student student = validationUtils.checkStudentIsExisted(studentId);
         Book book = validationUtils.checkBookIsExisted(bookId);
         Payment payment = paymentRepository.findByStudentAndBook(
@@ -646,7 +640,7 @@ public class BookService {
                     book.getPrice(),
                     book.calculateAvgRating(),
                     createChapterHeaders(book),
-                    book.getContributorsEmails(),
+                    book.getContributorsIds(),
                     true,
                     payment.getRecentOpenedDate().format(Utils.formatter),
                     payment.getRecentOpenedChapterId(),
@@ -665,7 +659,7 @@ public class BookService {
                     book.getPrice(),
                     book.calculateAvgRating(),
                     createChapterHeaders(book),
-                    book.getContributorsEmails(),
+                    book.getContributorsIds(),
                     false,
                     null,
                     null,

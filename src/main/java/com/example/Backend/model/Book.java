@@ -291,13 +291,13 @@ public class Book {
         }
         return titles;
     }
-    public List<String> getContributorsEmails(){
-        List<String> contributorsEmails = new ArrayList<>();
+    public List<String> getContributorsIds(){
+        List<String> contributorsIds = new ArrayList<>();
         for(Contribution contribution : getContributions()){
-            contributorsEmails.add(
-                    contribution.getAuthor().getAuthorEmail()
+            contributorsIds.add(
+                    contribution.getAuthor().getAuthorId().toString()
             );
         }
-        return contributorsEmails;
+        return contributorsIds;
     }
 }

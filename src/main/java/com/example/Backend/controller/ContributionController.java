@@ -11,6 +11,7 @@ import com.example.Backend.schema.BookInfo;
 import com.example.Backend.schema.ContributionInfo;
 import com.example.Backend.security.JwtService;
 import com.example.Backend.service.BookService;
+import com.example.Backend.validation.InputNotLogicallyValidException;
 import com.example.Backend.validation.json.ValidJson;
 import com.example.Backend.validation.json.ValidParam;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,7 +39,7 @@ public class ContributionController {
     private BookService bookService;
 
     @PostMapping()
-    public BookInfo addContribution(HttpServletRequest request, @ValidJson("ContributionInfo") ContributionInfo contributionInfo){
+    public BookInfo addContribution(HttpServletRequest request, @ValidJson("ContributionInfo") ContributionInfo contributionInfo) throws InputNotLogicallyValidException {
         contributionInfo.setOwnerId(jwtService.getUserId(request));
         BookInfo response = new BookInfo();
         try {
