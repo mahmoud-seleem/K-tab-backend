@@ -122,7 +122,8 @@ public class BookService {
                         book.setAuthor(authorRepository.findById(bookInfo.getAuthorId()).get());
                         break;
                     }
-                    case "bookCoverPhotoAsBinaryString": {
+                    case "bookCoverPhotoAsBinaryString":
+                    case "bookId": {
                         break;
                     }
                     default: {

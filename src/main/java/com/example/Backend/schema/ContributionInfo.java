@@ -79,6 +79,7 @@ public class ContributionInfo {
         if (bookId == null){
             return null;
         }
+
         return UUID.fromString(bookId);
     }
     private void validateUUIDString(String name,String value) throws InputNotLogicallyValidException {
