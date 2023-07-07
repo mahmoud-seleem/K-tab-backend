@@ -97,17 +97,22 @@ public class PaymentService {
         }
         return paymentInfoList;
     }
-    private BookHeader createBookHeader(Payment payment){
+    private BookHeader createBookHeader(Book book){
         return new BookHeader(
-                payment.getBook().getBookId(),
-                payment.getBook().getBookCover(),
-                payment.getBook().getTitle());
+                book.getBookId(),
+                book.getAuthor().getAuthorId(),
+                book.getAuthor().getAuthorName(),
+                book.getBookCover(),
+                book.getTitle(),
+                book.getTagsNames(),
+                book.getBookAbstract()
+                );
     }
     private List<BookHeader> createBookHeaderList(List<Payment> payments){
         List<BookHeader> bookHeaders = new ArrayList<>();
         for (Payment payment:payments){
             bookHeaders.add(
-                    createBookHeader(payment));
+                    createBookHeader(payment.getBook()));
         }
         return bookHeaders;
     }
@@ -168,7 +173,7 @@ public class PaymentService {
         for (Favourite favourite: favouriteRepository
                 .findAllByStudentOrderByOrder(student)){
             bookHeaders.add(
-                    createBookHeader(favourite));
+                    createBookHeader(favourite.getBook()));
         }
         return bookHeaders;
     }
