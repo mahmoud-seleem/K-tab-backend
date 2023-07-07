@@ -2,6 +2,7 @@ package com.example.Backend.schema;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.stylesheets.LinkStyle;
 import software.amazon.awssdk.regions.servicemetadata.LicenseManagerServiceMetadata;
@@ -39,20 +40,20 @@ public class StudentBookInfo extends BookInfo {
             , Double price
             , Double avgRate
             , List<ChapterHeader> chapterHeaders
-            , List<String> contributors
+            , List<ContributionHeader> contributions
             , boolean isBought
             , String recentOpenedDate
             , UUID recentOpenedChapterId
             , Integer ratingValue) {
-        super(authorId, bookId, title, bookCoverPhotoAsBinaryString, bookAbstract, tags, bookCoverPath, publishDate, lastEditDate, price, avgRate, chapterHeaders, contributors);
+        super(authorId, bookId, title, bookCoverPhotoAsBinaryString, bookAbstract, tags, bookCoverPath, publishDate, lastEditDate, price, avgRate, chapterHeaders, contributions);
         this.isBought = isBought;
         this.recentOpenedDate = recentOpenedDate;
         this.recentOpenedChapterId = recentOpenedChapterId;
         this.ratingValue = ratingValue;
     }
 
-    public StudentBookInfo(UUID authorId, String title, String bookCoverPhotoAsBinaryString, String bookAbstract, List<String> tags, String bookCoverPath, String publishDate, String lastEditDate, Double price, Double avgRate, List<ChapterHeader> chapterHeaders, List<String> contributors, boolean isBought, String recentOpenedDate, Integer ratingValue) {
-        super(authorId, title, bookCoverPhotoAsBinaryString, bookAbstract, tags, bookCoverPath, publishDate, lastEditDate, price, avgRate, chapterHeaders, contributors);
+    public StudentBookInfo(UUID authorId, String title, String bookCoverPhotoAsBinaryString, String bookAbstract, List<String> tags, String bookCoverPath, String publishDate, String lastEditDate, Double price, Double avgRate, List<ChapterHeader> chapterHeaders, List<ContributionHeader> contributions, boolean isBought, String recentOpenedDate, Integer ratingValue) {
+        super(authorId, title, bookCoverPhotoAsBinaryString, bookAbstract, tags, bookCoverPath, publishDate, lastEditDate, price, avgRate, chapterHeaders, contributions);
         this.isBought = isBought;
         this.recentOpenedDate = recentOpenedDate;
         this.ratingValue = ratingValue;

@@ -42,6 +42,18 @@ public class ContributionInfo {
     }
 
     public void setBookId(String bookId) throws InputNotLogicallyValidException {
+        System.out.println("--------------------------------");
+        System.out.println("--------------------------------");
+        System.out.println("--------------------------------");
+        System.out.println("--------------------------------");
+        System.out.println("--------------------------------");
+        System.out.println("--------------------------------");
+        System.out.println("--------------------------------");
+        System.out.println("--------------------------------");
+        System.out.println("--------------------------------");
+        System.out.println("--------------------------------");
+        System.out.println("--------------------------------");
+        System.out.println("--------------------------------");
         validateUUIDString("bookId",bookId);
         this.bookId = bookId;
     }
@@ -76,14 +88,13 @@ public class ContributionInfo {
         this.chaptersIds = chaptersIds;
     }
     private UUID convertStringToUUID(String s){
-        if (bookId == null){
+        if (s == null){
             return null;
         }
-
-        return UUID.fromString(bookId);
+        return UUID.fromString(s);
     }
     private void validateUUIDString(String name,String value) throws InputNotLogicallyValidException {
-        if(ownerId != null){
+        if(name != null){
             ValidationUtils validationUtils = new ValidationUtils();
             validationUtils.checkForValidUUIDString(name,value);
         }

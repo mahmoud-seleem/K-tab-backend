@@ -1,13 +1,7 @@
 package com.example.Backend.validation;
 
-import com.example.Backend.Repository.AuthorRepository;
-import com.example.Backend.Repository.BookRepository;
-import com.example.Backend.Repository.ChapterRepository;
-import com.example.Backend.Repository.StudentRepository;
-import com.example.Backend.model.Author;
-import com.example.Backend.model.Book;
-import com.example.Backend.model.Chapter;
-import com.example.Backend.model.Student;
+import com.example.Backend.Repository.*;
+import com.example.Backend.model.*;
 import com.example.Backend.utils.ImageConverter;
 import com.example.Backend.utils.Utils;
 import org.checkerframework.checker.units.qual.A;
@@ -31,6 +25,8 @@ public class ValidationUtils {
     private ImageConverter imageConverter;
     @Autowired
     private ChapterRepository chapterRepository;
+    @Autowired
+    private ContributionRepository contributionRepository;
 
     public <T> void checkForNull(String fieldName, T fieldValue) throws InputNotLogicallyValidException {
         if (fieldValue == null) {
@@ -270,7 +266,7 @@ public class ValidationUtils {
             chapter = chapterRepository.findById(chapterId).get();
         } catch (Exception e) {
             throw new InputNotLogicallyValidException(
-                    "studentId",
+                    "chapter",
                     "chapter does not exist !");
         }
         return chapter;
@@ -307,6 +303,18 @@ public class ValidationUtils {
                     "book/author",
                     "this author is not the owner of this book");
         }
+    }
+    public Contribution checkForBookContributor(Author author, Book book) throws InputNotLogicallyValidException {
+        Contribution contribution = null;
+        try{
+            contribution = contributionRepository
+                    .findByAuthorAndBook(author, book).get();
+        }catch (Exception e){
+            throw new InputNotLogicallyValidException(
+                    "book/author",
+                    "this author is not a contributor of this book");
+        }
+        return contribution;
     }
     public void checkForChapterOwner(Author author, Chapter chapter) throws InputNotLogicallyValidException {
         if (!author.getAuthorBooksList().contains(chapter.getBook())){

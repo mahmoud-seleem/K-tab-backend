@@ -39,39 +39,23 @@ public class ContributionController {
     private BookService bookService;
 
     @PostMapping()
-    public BookInfo addContribution(HttpServletRequest request, @ValidJson("ContributionInfo") ContributionInfo contributionInfo) throws InputNotLogicallyValidException {
+    public BookInfo addContribution(HttpServletRequest request, @ValidJson("ContributionInfo") ContributionInfo contributionInfo) throws Exception {
         contributionInfo.setOwnerId(jwtService.getUserId(request));
-        BookInfo response = new BookInfo();
-        try {
-            response = bookService.addContribution(contributionInfo);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return response;
+        return bookService.addContribution(contributionInfo);
     }
+
     @PutMapping
-    public BookInfo updateContribution(HttpServletRequest request,@ValidJson("ContributionInfo") ContributionInfo contributionInfo) throws Exception {
+    public BookInfo updateContribution(HttpServletRequest request, @ValidJson("ContributionInfo") ContributionInfo contributionInfo) throws Exception {
         contributionInfo.setOwnerId(jwtService.getUserId(request));
-        BookInfo response = new BookInfo();
-        try {
-            response = bookService.updateContribution(contributionInfo);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return response;
+        return bookService.updateContribution(contributionInfo);
+
     }
 
     @DeleteMapping
-    public BookInfo deleteContribution(HttpServletRequest request,@ValidJson("ContributionInfo") ContributionInfo contributionInfo) throws Exception {
+    public BookInfo deleteContribution(HttpServletRequest request, @ValidJson("ContributionInfo") ContributionInfo contributionInfo) throws Exception {
         contributionInfo.setOwnerId(jwtService.getUserId(request));
-        BookInfo response = new BookInfo();
-        try {
-            response = bookService.removeContribution(contributionInfo);
-        }catch (Exception e){
-            e.printStackTrace();
+            return bookService.removeContribution(contributionInfo);
         }
-        return response;
-    }
 }
 //    @GetMapping("/newchapter")
 //    public Chapter creatNewChapter(){

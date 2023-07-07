@@ -38,7 +38,7 @@ public class BookInfo {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private List<String> chaptersTitles =null;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private List<String> contributors = null;
+    private List<ContributionHeader> contributions = null;
 
     public BookInfo() {
     }
@@ -55,7 +55,7 @@ public class BookInfo {
                     Double price,
                     Double avgRate,
                     List<ChapterHeader> chapterHeaders,
-                    List<String> contributors) {
+                    List<ContributionHeader> contributions) {
         this.authorId = authorId;
         this.bookId = bookId.toString();
         this.title = title;
@@ -68,7 +68,7 @@ public class BookInfo {
         this.price = price;
         this.avgRate = avgRate;
         this.chapterHeaders = chapterHeaders;
-        this.contributors = contributors;
+        this.contributions = contributions;
     }
 
     public BookInfo(UUID authorId, String title,
@@ -76,7 +76,7 @@ public class BookInfo {
                     String bookAbstract, List<String> tags,
                     String bookCoverPath, String publishDate,
                     String lastEditDate, Double price,
-                    Double avgRate, List<ChapterHeader> chapterHeaders, List<String> contributors) {
+                    Double avgRate, List<ChapterHeader> chapterHeaders, List<ContributionHeader> contributions) {
         this.authorId = authorId;
         this.title = title;
         this.bookCoverPhotoAsBinaryString = bookCoverPhotoAsBinaryString;
@@ -88,7 +88,7 @@ public class BookInfo {
         this.price = price;
         this.avgRate = avgRate;
         this.chapterHeaders = chapterHeaders;
-        this.contributors = contributors;
+        this.contributions = contributions;
     }
 
 
@@ -203,11 +203,11 @@ public class BookInfo {
         this.chaptersTitles = chaptersTitles;
     }
 
-    public List<String> getContributors() {
-        return contributors;
+    public List<ContributionHeader> getContributions() {
+        return contributions;
     }
 
-    public void setContributors(List<String> contributors) {
-        this.contributors = contributors;
+    public void setContributions(List<ContributionHeader> contributions) {
+        this.contributions = contributions;
     }
 }

@@ -150,7 +150,7 @@ public class BookService {
                 book.getPrice(),
                 book.calculateAvgRating(),
                 createChapterHeaders(book),
-                book.getContributorsIds());
+                book.getContributionsHeaders());
         return response;
     }
 
@@ -251,16 +251,14 @@ public class BookService {
     }
 
     private void updateContributionData(Book book, Author author, ContributionInfo contributionInfo) throws InputNotLogicallyValidException {
-        Contribution contribution = contributionRepository
-                .findByAuthorAndBook(author, book).get();
+        Contribution contribution = validationUtils.checkForBookContributor(author,book);
         contribution.setChaptersIds(getChapterIds(
                 contributionInfo));
         contributionRepository.save(contribution);
     }
 
-    private void deleteContribution(Book book, Author author) {
-        Contribution contribution = contributionRepository
-                .findByAuthorAndBook(author, book).get();
+    private void deleteContribution(Book book, Author author) throws InputNotLogicallyValidException {
+        Contribution contribution = validationUtils.checkForBookContributor(author,book);
         author.removeContribution(contribution);
         book.removeContribution(contribution);
         contributionRepository.delete(contribution);
@@ -271,7 +269,8 @@ public class BookService {
         validationUtils.checkForNull("chaptersIds",
                 contributionInfo.getChaptersIds());
         for (String id : contributionInfo.getChaptersIds()) {
-            chapterIds.add(UUID.fromString(id));
+            chapterIds.add(validationUtils.checkChapterIsExisted(
+                    UUID.fromString(id)).getChapterId());
         }
         return chapterIds;
     }
@@ -641,7 +640,7 @@ public class BookService {
                     book.getPrice(),
                     book.calculateAvgRating(),
                     createChapterHeaders(book),
-                    book.getContributorsIds(),
+                    book.getContributionsHeaders(),
                     true,
                     payment.getRecentOpenedDate().format(Utils.formatter),
                     payment.getRecentOpenedChapterId(),
@@ -660,7 +659,7 @@ public class BookService {
                     book.getPrice(),
                     book.calculateAvgRating(),
                     createChapterHeaders(book),
-                    book.getContributorsIds(),
+                    book.getContributionsHeaders(),
                     false,
                     null,
                     null,

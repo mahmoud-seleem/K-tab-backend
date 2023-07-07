@@ -66,6 +66,14 @@ public class Contribution {
     public List<UUID> getChaptersIds() {
         return ChaptersIds;
     }
+    public List<String> getChaptersIdsAsStrings() {
+        List<String> res = new ArrayList<>();
+        for(UUID id : ChaptersIds){
+            res.add(id.toString());
+        }
+        return res;
+    }
+
 
     public void setChaptersIds(List<UUID> chaptersIds) {
         ChaptersIds = chaptersIds;

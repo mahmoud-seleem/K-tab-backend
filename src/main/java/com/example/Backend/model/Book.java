@@ -1,5 +1,6 @@
 package com.example.Backend.model;
 
+import com.example.Backend.schema.ContributionHeader;
 import com.example.Backend.utils.Utils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -299,5 +300,15 @@ public class Book {
             );
         }
         return contributorsIds;
+    }
+    public List<ContributionHeader> getContributionsHeaders(){
+        List<ContributionHeader> contributions = new ArrayList<>();
+        for(Contribution contribution : getContributions()){
+            contributions.add(
+                    new ContributionHeader(
+                            contribution.getContributionId().toString(),
+                            contribution.getChaptersIdsAsStrings()));
+        }
+        return contributions;
     }
 }
