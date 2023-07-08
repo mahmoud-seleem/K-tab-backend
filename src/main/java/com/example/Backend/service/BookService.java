@@ -11,12 +11,14 @@ import com.example.Backend.utils.Utils;
 import com.example.Backend.validation.InputNotLogicallyValidException;
 import com.example.Backend.validation.ValidationUtils;
 import com.example.Backend.validation.helpers.BookValidation;
+import com.example.Backend.validation.helpers.StudentValidation;
 import com.google.j2objc.annotations.AutoreleasePool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
+import java.awt.font.LineMetrics;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
@@ -24,6 +26,7 @@ import java.util.*;
 
 @Service
 public class BookService {
+    private final int LIMIT = 2;
     @Autowired
     private BookValidation bookValidation;
     @Autowired
@@ -55,6 +58,8 @@ public class BookService {
     private ChapterRepository chapterRepository;
     @Autowired
     private S3PreSignedURL s3PreSignedURL;
+    @Autowired
+    private StudentValidation studentValidation;
 
     public BookInfo saveNewBook(BookInfo bookInfo) throws Exception {
         bookValidation.checkForBookMandatoryData(bookInfo);
@@ -235,10 +240,10 @@ public class BookService {
                 contributionInfo.getContributorId());
         Author owner = validationUtils.checkAuthorIsExisted(
                 contributionInfo.getOwnerId());
-        validationUtils.checkForBookOwner(owner,book);
+        validationUtils.checkForBookOwner(owner, book);
         deleteContribution(book, author);
         return createBookInfoResponse(book);
-}
+    }
 
     private void setupNewContribution(Book book, Author author, ContributionInfo contributionInfo) throws InputNotLogicallyValidException {
         Contribution contribution = new Contribution();
@@ -251,14 +256,14 @@ public class BookService {
     }
 
     private void updateContributionData(Book book, Author author, ContributionInfo contributionInfo) throws InputNotLogicallyValidException {
-        Contribution contribution = validationUtils.checkForBookContributor(author,book);
+        Contribution contribution = validationUtils.checkForBookContributor(author, book);
         contribution.setChaptersIds(getChapterIds(
                 contributionInfo));
         contributionRepository.save(contribution);
     }
 
     private void deleteContribution(Book book, Author author) throws InputNotLogicallyValidException {
-        Contribution contribution = validationUtils.checkForBookContributor(author,book);
+        Contribution contribution = validationUtils.checkForBookContributor(author, book);
         author.removeContribution(contribution);
         book.removeContribution(contribution);
         contributionRepository.delete(contribution);
@@ -340,6 +345,36 @@ public class BookService {
         }
     }
 
+    public BookPage getStudentHome(UUID next,
+                                   UUID prev,
+                                   int limit,
+                                   String title,
+                                   String tagName,
+                                   String operation) throws InputNotLogicallyValidException {
+        studentValidation.validateStudentHomeInputs(next,
+                prev, limit, title, tagName, operation);
+        BookPage res = null;
+        try{
+            if (operation.equals("next")) {
+                res = getNextPageWithSearch(
+                        (next == null)? null:next.toString(),
+                        (prev == null)? null:prev.toString(),
+                        LIMIT, title, tagName, operation);
+            } else {
+                res = getPrevPageWithSearch(
+                        (next == null)? null:next.toString(),
+                        (prev == null)? null:prev.toString(),
+                        LIMIT, title, tagName, operation);
+            }
+        }catch (Exception e){
+            throw new InputNotLogicallyValidException(
+                    "prev/next",
+                    "bad input ! make sure you pass the correct values or" +
+                            " discard them to go back to the first page"
+            );
+        }
+        return res;
+    }
 
     public BookPage getNextPageWithSearch(
             String next,

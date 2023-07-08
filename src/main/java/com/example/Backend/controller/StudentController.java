@@ -4,8 +4,10 @@ import com.example.Backend.Repository.*;
 import com.example.Backend.model.*;
 import com.example.Backend.schema.*;
 import com.example.Backend.security.JwtService;
+import com.example.Backend.service.BookService;
 import com.example.Backend.service.StudentService;
 import com.example.Backend.validation.InputNotLogicallyValidException;
+import com.example.Backend.validation.json.InvalidParameterException;
 import com.example.Backend.validation.json.ValidJson;
 import com.example.Backend.validation.json.ValidParam;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -41,6 +43,8 @@ public class StudentController {
     @Autowired
     private DisabilityRepository disabilityRepository;
 
+    @Autowired
+    private BookService bookService;
     @PostMapping("signup/")
     public StudentSignUpResponse saveSignUpData(@ValidJson("StudentSignUpForm") StudentSignUpForm studentSignUpForm) throws Exception {
             return studentService.saveNewStudent(studentSignUpForm);
@@ -61,7 +65,20 @@ public class StudentController {
     public StudentProfile getStudentProfileInfo(@ValidParam UUID studentId) throws InputNotLogicallyValidException {
         return studentService.getAuthorProfileInfo(studentId);
     }
-
+    @GetMapping("/home/")
+    public BookPage getStudentHome(@ValidParam UUID next,
+                                   @ValidParam UUID prev,
+                                   @ValidParam String title,
+                                   @ValidParam String tag,
+                                   @ValidParam String operation) throws Exception{
+        return bookService.getStudentHome(
+                next,
+                prev,
+                2,
+                title,
+                tag,
+                operation);
+    }
 //    @GetMapping("/new")
 //    public Student saveNewStudent() {
 //        Student student = new Student("mahmoud");

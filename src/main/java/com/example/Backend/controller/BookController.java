@@ -37,7 +37,7 @@ public class BookController {
 //    }
 
     @PostMapping()
-    public BookInfo saveNewBook(HttpServletRequest request,@ValidJson("BookInfo") BookInfo bookInfo) throws Exception {
+    public BookInfo saveNewBook(HttpServletRequest request, @ValidJson("BookInfo") BookInfo bookInfo) throws Exception {
         bookInfo.setAuthorId(jwtService.getUserId(request));
         return bookService.saveNewBook(bookInfo);
     }
@@ -45,53 +45,37 @@ public class BookController {
     @PutMapping()
     public BookInfo updateBookInfo(HttpServletRequest request, @ValidJson("BookInfo") BookInfo bookInfo) throws Exception {
         bookInfo.setAuthorId(jwtService.getUserId(request));
-            return bookService.updateBookInfo(bookInfo);
+        return bookService.updateBookInfo(bookInfo);
     }
 
     @GetMapping()
-    public BookInfo getBookInfo(HttpServletRequest request,@ValidParam UUID bookId) throws InputNotLogicallyValidException {
-        if (jwtService.getUserType(request).equals("ADMIN")){
+    public BookInfo getBookInfo(HttpServletRequest request, @ValidParam UUID bookId) throws InputNotLogicallyValidException {
+        if (jwtService.getUserType(request).equals("ADMIN")) {
             return bookService.getBookInfo(bookId);
-        }else {
-            return bookService.getStudentBookInfo(jwtService.getUserId(request),bookId);
+        } else {
+            return bookService.getStudentBookInfo(jwtService.getUserId(request), bookId);
         }
 
     }
 
-    @GetMapping("/page/")
-    public BookPage getPage(@RequestBody Map<String, Object> body) {
-        if (((String) body.get("op")).equals("next")) {
-            return bookService.getNextPage(
-                    (String) body.get("next"),
-                    (String) body.get("prev"),
-                    (int) body.get("limit"));
-        } else {
-            return bookService.getPrevPage(
-                    (String) body.get("next"),
-                    (String) body.get("prev"),
-                    (int) body.get("limit"));
-        }
-    }
-    @PostMapping("/search/")
-    public BookPage search(@RequestBody Map<String, Object> body) {
-        if (((String) body.get("op")).equals("next")) {
-            return bookService.getNextPageWithSearch(
-                    (String) body.get("next"),
-                    (String) body.get("prev"),
-                    (int) body.get("limit"),
-                    (String) body.get("title"),
-                    (String) body.get("tagName"),
-                    (String) body.get("operation"));
-        } else {
-            return bookService.getPrevPageWithSearch(
-                    (String) body.get("next"),
-                    (String) body.get("prev"),
-                    (int) body.get("limit"),
-                    (String) body.get("title"),
-                    (String) body.get("tag"),
-                    (String) body.get("operation"));
-        }
-    }
+//    @GetMapping("/page/")
+//    public BookPage getPage(
+//            @ValidParam String op,
+//            @ValidParam String next,
+//            @ValidParam String prev) {
+//        if (((String) body.get("op")).equals("next")) {
+//            return bookService.getNextPage(
+//                    (String) body.get("next"),
+//                    (String) body.get("prev"),
+//                    (int) body.get("limit"));
+//        } else {
+//            return bookService.getPrevPage(
+//                    (String) body.get("next"),
+//                    (String) body.get("prev"),
+//                    (int) body.get("limit"));
+//        }
+//    }
+
     @GetMapping("/all/")
     public List<UUID> getAllBookIds() {
         return bookService.getAllBookIds();

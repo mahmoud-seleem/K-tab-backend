@@ -71,4 +71,24 @@ public class StudentValidation {
     public Student validateStudentUpdateForm(StudentSignUpForm form) throws InputNotLogicallyValidException, IllegalAccessException {
         return validateStudentUpdateData(form);
     }
+    public void validateStudentHomeInputs(UUID next,
+                                          UUID prev,
+                                          int limit,
+                                          String title,
+                                          String tagName,
+                                          String operation) throws InputNotLogicallyValidException {
+        validationUtils.checkForValidOperationName(operation);
+        validationUtils.checkForEmptyAndBlankString("tag",tagName);
+        validationUtils.checkForEmptyAndBlankString("title",title);
+        validationUtils.checkForPositiveQuantity("limit",limit);
+        if (next != null){
+            validationUtils.checkBookIsExisted(next);
+        }
+        if (prev != null){
+            validationUtils.checkBookIsExisted(prev);
+        }
+        if (next != null && prev != null){
+            validationUtils.validateNextIsGreaterThanPrev(next,prev);
+        }
+    }
 }

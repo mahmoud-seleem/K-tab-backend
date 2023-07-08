@@ -361,7 +361,7 @@ public class ValidationUtils {
         }
     }
 
-    public void checkForValidDisabilityName(String name) throws InputNotLogicallyValidException {
+    private void checkForValidDisabilityName(String name) throws InputNotLogicallyValidException {
         checkForNullEmptyAndBlankString("disability name",name);
         checkForKnownDisability(name);
     }
@@ -376,5 +376,30 @@ public class ValidationUtils {
     public void checkForValidDisabilityHeader(DisabilityHeader header) throws InputNotLogicallyValidException {
         checkForValidDisabilityName(header.getName());
         checkForEmptyAndBlankString("disability details",header.getDetails());
+    }
+    public void checkForValidOperationName(String operation) throws InputNotLogicallyValidException {
+        checkForNullEmptyAndBlankString("operation",operation);
+        if (!(operation.equals("next") || operation.equals("prev"))){
+            throw new InputNotLogicallyValidException(
+                    "operation",
+                    "operation name must be next or prev"
+            );
+        }
+    }
+    public void checkForPositiveQuantity(String fieldName,int value) throws InputNotLogicallyValidException {
+        if (value < 0){
+            throw new InputNotLogicallyValidException(
+                    fieldName,
+                    fieldName +" can't be negative !"
+            );
+        }
+    }
+    public void validateNextIsGreaterThanPrev(UUID next,UUID prev) throws InputNotLogicallyValidException {
+        if (next.compareTo(prev) < 0){
+            throw new InputNotLogicallyValidException(
+                    "next/prev",
+                    "next pointer can't be less than prev pointer "
+            );
+        }
     }
 }
