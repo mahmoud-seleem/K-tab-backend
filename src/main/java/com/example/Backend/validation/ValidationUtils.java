@@ -35,6 +35,9 @@ public class ValidationUtils {
     @Autowired
     private FavouriteRepository favouriteRepository;
 
+    @Autowired
+    private InteractionRepository interactionRepository;
+
     public <T> void checkForNull(String fieldName, T fieldValue) throws InputNotLogicallyValidException {
         if (fieldValue == null) {
             throw new InputNotLogicallyValidException(
@@ -458,4 +461,19 @@ public class ValidationUtils {
             );
         }else return favourite;
     }
+    public Interaction checkInteractionIsExisted(UUID interactionId) throws InputNotLogicallyValidException {
+        Interaction interaction = null;
+        try {
+            interaction = interactionRepository.findById(interactionId).get();
+        }catch (Exception ignored){
+        }
+        if (interaction == null){
+            throw new InputNotLogicallyValidException(
+                    "interactionId",
+                    "interaction is not existed !"
+            );
+        }else return interaction;
+    }
+
+
 }

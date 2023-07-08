@@ -206,53 +206,53 @@ public class ChapterService {
         return chapterRepository.save(chapter);
     }
 
-    public InteractionInfo addInteraction(InteractionInfo interactionInfo) {
-
-        Student student = studentRepository
-                .findById(interactionInfo.getStudentId()).get();
-        Chapter chapter = chapterRepository
-                .findById(interactionInfo.getChapterId()).get();
+    public InteractionInfo addInteraction(InteractionInfo interactionInfo) throws InputNotLogicallyValidException {
+        Student student = validationUtils.checkStudentIsExisted(interactionInfo.getStudentId());
+        Chapter chapter = validationUtils.checkChapterIsExisted(interactionInfo.getChapterId());
+        validationUtils.checkPaymentIsExisted(student, chapter.getBook());
+        validationUtils.checkForNull("interactionData", interactionInfo.getInteractionData());
+        Reading reading = readingRepository.findByStudentAndChapter(student, chapter);
         JSONObject data = new JSONObject(
                 interactionInfo.getInteractionData()
         );
         Interaction interaction = new Interaction(data);
-        Reading reading = readingRepository.findByStudentAndChapter(student, chapter);
         reading.addInteraction(interaction);
         return createInteractionInfo(
                 interactionRepository.save(interaction));
     }
 
-    public InteractionInfo updateInteraction(InteractionInfo interactionInfo) {
+    public InteractionInfo updateInteraction(InteractionInfo interactionInfo) throws InputNotLogicallyValidException {
         JSONObject data;
-        Interaction interaction = interactionRepository
-                .findById(interactionInfo.getInteractionId()).get();
-        if (interactionInfo.getInteractionData() != null) {
-            data = new JSONObject(interactionInfo.getInteractionData());
-            interaction.setData(data);
-        }
+        Interaction interaction = validationUtils.checkInteractionIsExisted(interactionInfo.getInteractionId());
+        validationUtils.checkForNull("interactionData", interactionInfo.getInteractionData());
+        data = new JSONObject(interactionInfo.getInteractionData());
+        interaction.setData(data);
         return createInteractionInfo(
                 interactionRepository.save(interaction));
     }
 
-    public void deleteInteraction(UUID interactionId) {
-        Interaction interaction = interactionRepository
-                .findById(interactionId).get();
+    public List<InteractionInfo> deleteInteraction(UUID studentId,UUID interactionId) throws InputNotLogicallyValidException {
+        Student student = validationUtils.checkStudentIsExisted(studentId);
+        Interaction interaction = validationUtils.checkInteractionIsExisted(interactionId);
         Reading reading = interaction.getReading();
+        validationUtils.checkPaymentIsExisted(student,reading.getChapter().getBook());
         reading.removeInteraction(interaction);
         interactionRepository.delete(interaction);
+        return createListOfInteractionInfo(reading.getInteractions());
     }
 
-    public InteractionInfo getInteraction(UUID interactionId) {
-        Interaction interaction = interactionRepository
-                .findById(interactionId).get();
+    public InteractionInfo getInteraction(UUID studentId,UUID interactionId) throws InputNotLogicallyValidException {
+        Student student = validationUtils.checkStudentIsExisted(studentId);
+        Interaction interaction = validationUtils.checkInteractionIsExisted(interactionId);
+        Reading reading = interaction.getReading();
+        validationUtils.checkPaymentIsExisted(student,reading.getChapter().getBook());
         return createInteractionInfo(interaction);
     }
 
-    public List<InteractionInfo> getInteractions(UUID studentId, UUID chapterId) {
-        Student student = studentRepository
-                .findById(studentId).get();
-        Chapter chapter = chapterRepository
-                .findById(chapterId).get();
+    public List<InteractionInfo> getInteractions(UUID studentId, UUID chapterId) throws InputNotLogicallyValidException {
+        Student student = validationUtils.checkStudentIsExisted(studentId);
+        Chapter chapter = validationUtils.checkChapterIsExisted(chapterId);
+        validationUtils.checkPaymentIsExisted(student, chapter.getBook());
         Reading reading = readingRepository.findByStudentAndChapter(student, chapter);
         return createListOfInteractionInfo(reading.getInteractions());
     }

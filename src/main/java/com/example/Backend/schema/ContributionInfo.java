@@ -42,18 +42,6 @@ public class ContributionInfo {
     }
 
     public void setBookId(String bookId) throws InputNotLogicallyValidException {
-        System.out.println("--------------------------------");
-        System.out.println("--------------------------------");
-        System.out.println("--------------------------------");
-        System.out.println("--------------------------------");
-        System.out.println("--------------------------------");
-        System.out.println("--------------------------------");
-        System.out.println("--------------------------------");
-        System.out.println("--------------------------------");
-        System.out.println("--------------------------------");
-        System.out.println("--------------------------------");
-        System.out.println("--------------------------------");
-        System.out.println("--------------------------------");
         validateUUIDString("bookId",bookId);
         this.bookId = bookId;
     }
