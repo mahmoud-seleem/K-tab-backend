@@ -10,6 +10,7 @@ import com.example.Backend.schema.*;
 import com.example.Backend.security.JwtService;
 import com.example.Backend.service.S3Service;
 import com.example.Backend.validation.InputNotLogicallyValidException;
+import com.example.Backend.validation.ValidationUtils;
 import com.example.Backend.validation.json.ValidJson;
 import com.example.Backend.validation.json.ValidParam;
 import jakarta.servlet.http.HttpServletRequest;
@@ -49,10 +50,13 @@ public class S3Controller {
 
     @Autowired
     private PaymentRepository paymentRepository;
+    @Autowired
+    private ValidationUtils validationUtils;
     @GetMapping("image/")
-    public ImageUploadResponse getPerSignedForWriteImage(@ValidParam UUID chapterId) {
+    public ImageUploadResponse getPerSignedForWriteImage(@ValidParam UUID chapterId) throws InputNotLogicallyValidException {
+        validationUtils.checkForNull("chapterId",chapterId);
+        validationUtils.checkChapterIsExisted(chapterId);
         ImageUploadResponse response = new ImageUploadResponse();
-        try {
             String imagePath = s3Service
                     .createNewImagePath(chapterId);
             response.setImagePath(imagePath);
@@ -60,9 +64,6 @@ public class S3Controller {
                     .getPreSignedForWrite(s3Service
                             .createEmptyPlace(imagePath));
             response.setImageUrl(imageUrl);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         return response;
     }
 
