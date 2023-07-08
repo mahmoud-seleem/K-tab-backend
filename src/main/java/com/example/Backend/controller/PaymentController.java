@@ -77,8 +77,8 @@ public class PaymentController {
     }
 
     @GetMapping("add-to-fav/")
-    public Favourite addToFavourites(@ValidParam UUID bookId
-            ,HttpServletRequest request) {
+    public List<BookHeader> addToFavourites(@ValidParam UUID bookId
+            , HttpServletRequest request) throws InputNotLogicallyValidException {
         return paymentService.addBookToFavourite(
                 jwtService.getUserId(request),
                 bookId
@@ -86,8 +86,8 @@ public class PaymentController {
     }
 
     @GetMapping("remove-from-fav/")
-    public String removeFromFavourites(@ValidParam UUID bookId
-            ,HttpServletRequest request) {
+    public List<BookHeader> removeFromFavourites(@ValidParam UUID bookId
+            , HttpServletRequest request) throws InputNotLogicallyValidException {
         return paymentService.removeBookFromFavourite(
                 jwtService.getUserId(request),
                 bookId
@@ -95,10 +95,10 @@ public class PaymentController {
     }
 
     @PutMapping("update-fav/")
-    public void updateFavourites(
+    public List<BookHeader> updateFavourites(
             @ValidJson("FavouritesOrder") FavouritesOrder favouriteOrders
-            , HttpServletRequest request) {
-        paymentService.updateFavouritesOrder(
+            , HttpServletRequest request) throws InputNotLogicallyValidException {
+        return paymentService.updateFavouritesOrder(
                 jwtService.getUserId(request),
                 favouriteOrders.getFavouriteOrders()
         );

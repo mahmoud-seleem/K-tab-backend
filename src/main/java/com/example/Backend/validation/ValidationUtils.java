@@ -32,6 +32,8 @@ public class ValidationUtils {
     private ContributionRepository contributionRepository;
     @Autowired
     private PaymentRepository paymentRepository;
+    @Autowired
+    private FavouriteRepository favouriteRepository;
 
     public <T> void checkForNull(String fieldName, T fieldValue) throws InputNotLogicallyValidException {
         if (fieldValue == null) {
@@ -416,5 +418,44 @@ public class ValidationUtils {
                     "student have already bought this book !"
             );
         }
+    }
+    public void checkFavIsNotExisted(Student student,Book book) throws InputNotLogicallyValidException {
+        Favourite favourite = null;
+        try {
+            favourite = favouriteRepository.findByBookAndStudent(book,student);
+        }catch (Exception ignored){
+        }
+        if (favourite != null){
+            throw new InputNotLogicallyValidException(
+                    "student/book",
+                    "this book is already in student's favourites !"
+            );
+        }
+    }
+    public Payment checkPaymentIsExisted(Student student,Book book) throws InputNotLogicallyValidException {
+        Payment payment = null;
+        try {
+            payment = paymentRepository.findByStudentAndBook(student,book);
+        }catch (Exception ignored){
+        }
+        if (payment == null){
+            throw new InputNotLogicallyValidException(
+                    "student/book",
+                    "student didn't buy this book !"
+            );
+        }else return payment;
+    }
+    public Favourite checkFavIsExisted(Student student,Book book) throws InputNotLogicallyValidException {
+        Favourite favourite = null;
+        try {
+            favourite = favouriteRepository.findByBookAndStudent(book,student);
+        }catch (Exception ignored){
+        }
+        if (favourite == null){
+            throw new InputNotLogicallyValidException(
+                    "student/book",
+                    "this book is not in student's favourites !"
+            );
+        }else return favourite;
     }
 }
