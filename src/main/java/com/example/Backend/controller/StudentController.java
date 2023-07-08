@@ -42,29 +42,15 @@ public class StudentController {
     private DisabilityRepository disabilityRepository;
 
     @PostMapping("signup/")
-    public StudentSignUpResponse saveSignUpData(@ValidJson("StudentSignUpForm") StudentSignUpForm studentSignUpForm) {
-        StudentSignUpResponse response = new StudentSignUpResponse();
-        try {
-            response = studentService.saveNewStudent(studentSignUpForm);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return response;
+    public StudentSignUpResponse saveSignUpData(@ValidJson("StudentSignUpForm") StudentSignUpForm studentSignUpForm) throws Exception {
+            return studentService.saveNewStudent(studentSignUpForm);
     }
 
     @PutMapping
     public StudentSignUpResponse updateStudentProfileInfo(HttpServletRequest request
-            , @ValidJson("StudentSignUpForm") StudentSignUpForm studentSignUpForm) {
-        studentSignUpForm
-                .setStudentId(
-                        jwtService.getUserId(request));
-        StudentSignUpResponse response = new StudentSignUpResponse();
-        try {
-            response = studentService.updateStudentInfo(studentSignUpForm);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return response;
+            , @ValidJson("StudentSignUpForm") StudentSignUpForm studentSignUpForm) throws Exception {
+        studentSignUpForm.setStudentId(jwtService.getUserId(request));
+        return studentService.updateStudentInfo(studentSignUpForm);
     }
 
     @GetMapping

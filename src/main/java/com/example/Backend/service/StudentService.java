@@ -11,6 +11,7 @@ import com.example.Backend.utils.ImageConverter;
 import com.example.Backend.utils.Utils;
 import com.example.Backend.validation.InputNotLogicallyValidException;
 import com.example.Backend.validation.ValidationUtils;
+import com.example.Backend.validation.helpers.StudentValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -61,8 +62,11 @@ public class StudentService {
 
     @Autowired
     private ValidationUtils validationUtils;
+    @Autowired
+    private StudentValidation studentValidation;
 
     public StudentSignUpResponse saveNewStudent(StudentSignUpForm form) throws Exception {
+        studentValidation.validateStudentSignUpForm(form);
         Student student = createNewStudent(form);
         String jwtToken = authenticateNewStudent(form);
         return constructResponse(student, jwtToken);
@@ -79,7 +83,7 @@ public class StudentService {
     }
 
     public StudentSignUpResponse updateStudentInfo(StudentSignUpForm form) throws Exception {
-        Student student = studentRepository.findById(form.getStudentId()).get();
+        Student student = studentValidation.validateStudentUpdateForm(form);
         updateStudentData(form, student);
         return constructResponse(studentRepository.save(student));
     }
@@ -135,11 +139,13 @@ public class StudentService {
             field.setAccessible(true);
             if (field.get(form) != null &&
                     (!field.getName().equals(
-                                    "profilePhotoAsBinaryString"))) {
+                            "profilePhotoAsBinaryString")) &&
+                    (!field.getName().equals(
+                            "studentId"))) {
                 updateField(field, form, student);
             }
         }
-        setupProfilePhoto(student,form);
+        setupProfilePhoto(student, form);
         return studentRepository.save(student);
     }
 
@@ -162,22 +168,22 @@ public class StudentService {
     }
 
     private void updateStudentDisabilities(StudentSignUpForm form, Student student) {
-        List<Map<String, Object>> disabilitiesInfo = form.getDisabilities();
+        List<DisabilityHeader> disabilitiesInfo = form.getDisabilities();
         List<StudentDisability> studentDisabilityList = student.getStudentDisabilityList();
         for (StudentDisability studentDisability : studentDisabilityList) {
             studentDisabilityRepository.delete(studentDisability);
         }
         student.getStudentDisabilityList().clear();
-        for (Map<String, Object> disability : disabilitiesInfo) {
-            connectStudentWithDisabilities(disability, student);
+        for (DisabilityHeader disabilityHeader : disabilitiesInfo) {
+            connectStudentWithDisabilities(disabilityHeader, student);
         }
     }
 
-    private void connectStudentWithDisabilities(Map<String, Object> disability, Student student) {
+    private void connectStudentWithDisabilities(DisabilityHeader disabilityHeader, Student student) {
         Disability defaultDisability = disabilityRepository.
-                findByDisabilityName(disability.get("name").toString());
+                findByDisabilityName(disabilityHeader.getName());
         StudentDisability studentDisability = new StudentDisability(
-                disability.get("details").toString(),
+                disabilityHeader.getDetails(),
                 student, defaultDisability);
         studentDisability = studentDisabilityRepository.save(studentDisability);
         student.addStudentDisability(studentDisability);

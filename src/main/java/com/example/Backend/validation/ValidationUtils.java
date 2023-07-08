@@ -2,6 +2,7 @@ package com.example.Backend.validation;
 
 import com.example.Backend.Repository.*;
 import com.example.Backend.model.*;
+import com.example.Backend.schema.DisabilityHeader;
 import com.example.Backend.utils.ImageConverter;
 import com.example.Backend.utils.Utils;
 import org.checkerframework.checker.units.qual.A;
@@ -9,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Component
@@ -117,6 +120,18 @@ public class ValidationUtils {
         if (author != null) {
             throw new InputNotLogicallyValidException(
                     "author email",
+                    "This email is already in use ! pleas, choose another one ");
+        }
+    }
+    public void checkStudentEmailIsNotExisted(String email) throws InputNotLogicallyValidException {
+        Student student = null;
+        try {
+            student = studentRepository.findByStudentEmail(email).get();
+        } catch (Exception ignored) {
+        }
+        if (student != null) {
+            throw new InputNotLogicallyValidException(
+                    "student email",
                     "This email is already in use ! pleas, choose another one ");
         }
     }
@@ -284,6 +299,28 @@ public class ValidationUtils {
             }
         }
     }
+    public <T> void checkForListSize(String listName, List<T> list,int size) throws InputNotLogicallyValidException {
+        if (list != null) {
+            if (list.size() > size) {
+                throw new InputNotLogicallyValidException(
+                        listName,
+                        listName + " size can't be more than " + size
+                );
+            }
+        }
+    }
+    public <T>void checkForDuplicationInList(String listName , List<T> list) throws InputNotLogicallyValidException {
+        if(list != null){
+            Set<T> items = new HashSet<T>();
+            items.addAll(list);
+            if (items.size() != list.size()) {
+                throw new InputNotLogicallyValidException(
+                        listName,
+                        listName + " can't have duplicate items !"
+                );
+            }
+        }
+    }
 
     public UUID checkForValidUUIDString(String fieldName, String id) throws InputNotLogicallyValidException {
         UUID res = null;
@@ -324,4 +361,20 @@ public class ValidationUtils {
         }
     }
 
+    public void checkForValidDisabilityName(String name) throws InputNotLogicallyValidException {
+        checkForNullEmptyAndBlankString("disability name",name);
+        checkForKnownDisability(name);
+    }
+    private void checkForKnownDisability(String name) throws InputNotLogicallyValidException {
+        if (!(name.equals("Blind") || name.equals("Visually_Impaired") || name.equals("Dyslexia"))){
+            throw new InputNotLogicallyValidException(
+                    "disability name",
+                    "disability name must be one of these values : [Blind ,Visually_Impaired ,Dyslexia] !"
+            );
+        }
+    }
+    public void checkForValidDisabilityHeader(DisabilityHeader header) throws InputNotLogicallyValidException {
+        checkForValidDisabilityName(header.getName());
+        checkForEmptyAndBlankString("disability details",header.getDetails());
+    }
 }

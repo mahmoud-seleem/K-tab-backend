@@ -10,19 +10,19 @@ public class StudentSignUpForm extends StudentSignUpBasicInfo{
     private String password;
     private String profilePhotoAsBinaryString;
     private String educationLevel;
-    private List<Map<String,Object>> disabilities;
+    private List<DisabilityHeader> disabilities;
 
     public StudentSignUpForm() {
     }
 
-    public StudentSignUpForm(String password, String profilePhotoAsBinaryString, String educationLevel, List<Map<String, Object>> disabilities) {
+    public StudentSignUpForm(String password, String profilePhotoAsBinaryString, String educationLevel, List<DisabilityHeader> disabilities) {
         this.password = password;
         this.profilePhotoAsBinaryString = profilePhotoAsBinaryString;
         this.educationLevel = educationLevel;
         this.disabilities = disabilities;
     }
 
-    public StudentSignUpForm(UUID studentId, String studentName, String studentEmail, String contact, String password, String profilePhotoAsBinaryString, String educationLevel, List<Map<String, Object>> disabilities) {
+    public StudentSignUpForm(UUID studentId, String studentName, String studentEmail, String contact, String password, String profilePhotoAsBinaryString, String educationLevel, List<DisabilityHeader> disabilities) {
         super(studentId, studentName, studentEmail, contact);
         this.password = password;
         this.profilePhotoAsBinaryString = profilePhotoAsBinaryString;
@@ -54,11 +54,11 @@ public class StudentSignUpForm extends StudentSignUpBasicInfo{
         this.educationLevel = educationLevel;
     }
 
-    public List<Map<String, Object>> getDisabilities() {
+    public List<DisabilityHeader> getDisabilities() {
         return disabilities;
     }
 
-    public void setDisabilities(List<Map<String, Object>> disabilities) {
+    public void setDisabilities(List<DisabilityHeader> disabilities) {
         this.disabilities = disabilities;
     }
 }
