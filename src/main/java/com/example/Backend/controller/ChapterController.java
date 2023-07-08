@@ -38,9 +38,9 @@ public class ChapterController {
 
     @PostMapping()
     public ChapterInfo saveNewChapter(HttpServletRequest request,
-                                        @ValidJson("ChapterInfo") ChapterInfo chapterInfo) throws Exception {
-            chapterInfo.setOwnerId(jwtService.getUserId(request));
-            return chapterService.saveNewChapter(chapterInfo);
+                                      @ValidJson("ChapterInfo") ChapterInfo chapterInfo) throws Exception {
+        chapterInfo.setOwnerId(jwtService.getUserId(request));
+        return chapterService.saveNewChapter(chapterInfo);
     }
 
     @PutMapping()
@@ -94,24 +94,23 @@ public class ChapterController {
     public List<CommentInfo> getAllChapterComments(@ValidParam UUID chapterId) {
         return commentService.getAllChapterComments(chapterId);
     }
-
-    @GetMapping("/page/")
-    public CommentPage getPage(@RequestBody Map<String, Object> body) {
-        if (((String) body.get("op")).equals("next")) {
-            return commentService.getNextPage(
-                    UUID.fromString((String) body.get("chapterId")),
-                    (String) body.get("next"),
-                    (String) body.get("prev"),
-                    (int) body.get("limit"));
-        } else {
-            return commentService.getPrevPage(
-                    UUID.fromString((String) body.get("chapterId")),
-                    (String) body.get("next"),
-                    (String) body.get("prev"),
-                    (int) body.get("limit"));
-        }
-    }
 }
+//    @GetMapping("/page/")
+//    public CommentPage getPage(@RequestBody Map<String, Object> body) {
+//        if (((String) body.get("op")).equals("next")) {
+//            return commentService.getNextPage(
+//                    UUID.fromString((String) body.get("chapterId")),
+//                    (String) body.get("next"),
+//                    (String) body.get("prev"),
+//                    (int) body.get("limit"));
+//        } else {
+//            return commentService.getPrevPage(
+//                    UUID.fromString((String) body.get("chapterId")),
+//                    (String) body.get("next"),
+//                    (String) body.get("prev"),
+//                    (int) body.get("limit"));
+//        }
+//    }
 //
 //    @Value("${ACCESS_KEY}")
 //    private  String ACCESS_KEY;

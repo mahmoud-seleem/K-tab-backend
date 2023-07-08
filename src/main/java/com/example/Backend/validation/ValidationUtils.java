@@ -30,6 +30,8 @@ public class ValidationUtils {
     private ChapterRepository chapterRepository;
     @Autowired
     private ContributionRepository contributionRepository;
+    @Autowired
+    private PaymentRepository paymentRepository;
 
     public <T> void checkForNull(String fieldName, T fieldValue) throws InputNotLogicallyValidException {
         if (fieldValue == null) {
@@ -399,6 +401,19 @@ public class ValidationUtils {
             throw new InputNotLogicallyValidException(
                     "next/prev",
                     "next pointer can't be less than prev pointer "
+            );
+        }
+    }
+    public void checkPaymentIsNotExisted(Student student,Book book) throws InputNotLogicallyValidException {
+        Payment payment = null;
+        try {
+            payment = paymentRepository.findByStudentAndBook(student,book);
+        }catch (Exception ignored){
+        }
+        if (payment != null){
+            throw new InputNotLogicallyValidException(
+                    "student/book",
+                    "student have already bought this book !"
             );
         }
     }

@@ -7,9 +7,10 @@ import com.example.Backend.schema.FavouriteOrder;
 import com.example.Backend.schema.PaymentInfo;
 import com.example.Backend.security.JwtService;
 import com.example.Backend.utils.Utils;
+import com.example.Backend.validation.InputNotLogicallyValidException;
+import com.example.Backend.validation.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +34,12 @@ public class PaymentService {
     @Autowired
     private ReadingRepository readingRepository;
 
-    public PaymentInfo buyBook(UUID studentId,UUID bookId){
-        Student student = studentRepository.findById(studentId).get();
-        Book book = bookRepository.findById(bookId).get();
+    @Autowired
+    private ValidationUtils validationUtils;
+    public PaymentInfo buyBook(UUID studentId,UUID bookId) throws InputNotLogicallyValidException {
+        Student student = validationUtils.checkStudentIsExisted(studentId);
+        Book book = validationUtils.checkBookIsExisted(bookId);
+        validationUtils.checkPaymentIsNotExisted(student,book);
         Payment payment = new Payment(
                 "this book is bought in "+
                         LocalDateTime.now().format(Utils.formatter)

@@ -8,6 +8,7 @@ import com.example.Backend.schema.FavouritesOrder;
 import com.example.Backend.schema.PaymentInfo;
 import com.example.Backend.security.JwtService;
 import com.example.Backend.service.PaymentService;
+import com.example.Backend.validation.InputNotLogicallyValidException;
 import com.example.Backend.validation.json.ValidJson;
 import com.example.Backend.validation.json.ValidParam;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,7 +42,7 @@ public class PaymentController {
 
     @PostMapping("buy/")
     public PaymentInfo buyBook(@ValidParam UUID bookId,
-                               HttpServletRequest request) {
+                               HttpServletRequest request) throws InputNotLogicallyValidException {
         return paymentService.buyBook(jwtService.getUserId(request), bookId);
     }
 
