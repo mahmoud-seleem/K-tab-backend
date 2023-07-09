@@ -3,10 +3,13 @@ package com.example.Backend.security;
 import com.example.Backend.model.Student;
 import com.example.Backend.schema.LoginForm;
 import com.example.Backend.schema.LoginResponse;
+import com.example.Backend.validation.InputNotLogicallyValidException;
+import com.example.Backend.validation.ValidationUtils;
 import com.example.Backend.validation.json.ValidJson;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,14 +31,15 @@ public class SecurityController {
 
     @Autowired
     private AppUserDetailsService appUserDetailsService;
-    private final List<Student>  students = Arrays.asList(
-            new Student("mahmoud"),
-            new Student("mohamed"),
-            new Student("ahmed mohamed")
-    );
+
+    @Autowired
+    private ValidationUtils validationUtils;
 
     @PostMapping(path = "login/")
-    public LoginResponse login(@ValidJson("LoginForm") LoginForm loginForm){
+    public LoginResponse login(@ValidJson("LoginForm") LoginForm loginForm) throws InputNotLogicallyValidException {
+        validationUtils.checkForNullEmptyAndBlankString("email",loginForm.getEmail());
+        validationUtils.checkForNullEmptyAndBlankString("password",loginForm.getPassword());
+        validationUtils.checkForPasswordLength("password",loginForm.getPassword());
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginForm.getEmail(),
@@ -55,28 +59,28 @@ public class SecurityController {
         return response;
     }
 
-    @GetMapping(path = "students/{id}")
-    @PostAuthorize(value = "hasAuthority('chapter_write')")
-    public Student getStudent(@PathVariable int id) {
-        Student student = new Student();
-        try {
-            student = students.get(id);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return student;
-    }
-    @GetMapping(path ="admin/")
-    public List<String> getStudents(){
-        List<String> names = new ArrayList<>();
-        for (Student student: students){
-            names.add(student.getStudentName());
-    }
-        return names;
-    }
-    @PutMapping(path ="user/")
-    public UUID getUser(HttpServletRequest request){
-        return jwtService.getUserId(request);
-    }
+//    @GetMapping(path = "students/{id}")
+//    @PostAuthorize(value = "hasAuthority('chapter_write')")
+//    public Student getStudent(@PathVariable int id) {
+//        Student student = new Student();
+//        try {
+//            student = students.get(id);
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+//        return student;
+//    }
+//    @GetMapping(path ="admin/")
+//    public List<String> getStudents(){
+//        List<String> names = new ArrayList<>();
+//        for (Student student: students){
+//            names.add(student.getStudentName());
+//    }
+//        return names;
+//    }
+//    @PutMapping(path ="user/")
+//    public UUID getUser(HttpServletRequest request){
+//        return jwtService.getUserId(request);
+//    }
 
 }
