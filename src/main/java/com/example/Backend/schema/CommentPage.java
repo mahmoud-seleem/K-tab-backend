@@ -15,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Component
 public class CommentPage {
-    private LocalDateTime next;
-    private LocalDateTime prev;
+    private String next;
+    private String prev;
     private List<CommentInfo> commentInfoList = new ArrayList<>();
 }

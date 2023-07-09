@@ -137,4 +137,13 @@ public class Comment {
         author.getAuthorCommentList().remove(this);
         this.setAuthor(null);
     }
+    public List<String> getMentionedUsersAsStrings(){
+        List<String> res = new ArrayList<>();
+        if (this.getMentionedUsers() != null){
+            for(UUID s : this.getMentionedUsers()){
+                res.add(s.toString());
+            }
+        }
+        return res;
+    }
 }

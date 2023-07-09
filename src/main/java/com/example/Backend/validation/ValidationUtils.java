@@ -3,6 +3,7 @@ package com.example.Backend.validation;
 import com.example.Backend.Repository.*;
 import com.example.Backend.model.*;
 import com.example.Backend.schema.DisabilityHeader;
+import com.example.Backend.security.AppUser;
 import com.example.Backend.utils.ImageConverter;
 import com.example.Backend.utils.Utils;
 import org.checkerframework.checker.units.qual.A;
@@ -37,6 +38,8 @@ public class ValidationUtils {
 
     @Autowired
     private InteractionRepository interactionRepository;
+    @Autowired
+    private CommentRepository commentRepository;
 
     public <T> void checkForNull(String fieldName, T fieldValue) throws InputNotLogicallyValidException {
         if (fieldValue == null) {
@@ -271,6 +274,21 @@ public class ValidationUtils {
         }
     }
 
+    public void checkForValidNextAndPrevDates(String next,String prev) throws InputNotLogicallyValidException {
+        LocalDateTime nextDate =
+                LocalDateTime.parse(next, Utils.formatter);
+        LocalDateTime prevData =
+                LocalDateTime.parse(prev, Utils.formatter);
+        if (!nextDate.isAfter(prevData)){
+        throw new InputNotLogicallyValidException(
+                        "next/prev",
+                        "next pointer must be less than prev pointer "
+                );
+            }
+        }
+
+
+
     public Student checkStudentIsExisted(UUID studentId) throws InputNotLogicallyValidException {
         Student student = null;
         try {
@@ -346,6 +364,13 @@ public class ValidationUtils {
             throw new InputNotLogicallyValidException(
                     "book/author",
                     "this author is not the owner of this book");
+        }
+    }
+    public void checkForBookOwnerOrContributor(Author author, Book book) throws InputNotLogicallyValidException {
+        if (!author.getAuthorBooksList().contains(book)  && !(book.getContributorsIds().contains(author.getAuthorId().toString()))){
+            throw new InputNotLogicallyValidException(
+                    "book/author",
+                    "this author is not the owner or contributor of this book");
         }
     }
     public Contribution checkForBookContributor(Author author, Book book) throws InputNotLogicallyValidException {
@@ -474,6 +499,46 @@ public class ValidationUtils {
             );
         }else return interaction;
     }
+    public Comment checkCommentIsExisted(UUID commentId) throws InputNotLogicallyValidException {
+        Comment comment = null;
+        try {
+            comment = commentRepository.findById(commentId).get();
+        }catch (Exception ignored){
+        }
+        if (comment == null){
+            throw new InputNotLogicallyValidException(
+                    "commentId",
+                    "comment is not existed !"
+            );
+        }else return comment;
+    }
 
+    public void checkUserIsExisted(String userName,UUID userId) throws InputNotLogicallyValidException {
+        AppUser user = null;
+        try{
+            user = this.checkAuthorIsExisted(userId);
+        }catch (Exception ignored){}
+        if (user != null){}
+        else {
+            try{
+                user = checkStudentIsExisted(userId);
+            }catch (Exception ignored){}
+            if (user != null){}
+            else {
+                throw new InputNotLogicallyValidException(
+                        userName,
+                        userName +" is not existed !"
+                );
+            }
+        }
+    }
+    public void checkForValidCommentsLimit(int limit) throws InputNotLogicallyValidException {
+        if (limit <= 0){
+            throw new InputNotLogicallyValidException(
+                    "limit",
+                    "comments limit can't be less than 1"
+            );
+        }
+    }
 
 }

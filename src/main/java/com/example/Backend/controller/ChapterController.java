@@ -57,7 +57,7 @@ public class ChapterController {
 
     @PostMapping("comment/")
     public CommentInfo addNewComment(HttpServletRequest request
-            , @ValidJson("CommentInfo") CommentInfo commentInfo) {
+            , @ValidJson("CommentInfo") CommentInfo commentInfo) throws InputNotLogicallyValidException {
         if (jwtService.getUserType(request).equals("STUDENT")) {
             commentInfo.setCommenterType("STUDENT");
             commentInfo.setStudentId(
@@ -71,12 +71,12 @@ public class ChapterController {
     }
 
     @GetMapping("comment/")
-    public CommentInfo getCommentInfo(@ValidParam UUID commentId) {
+    public CommentInfo getCommentInfo(@ValidParam UUID commentId) throws InputNotLogicallyValidException {
         return commentService.getComment(commentId);
     }
 
     @DeleteMapping("comment/")
-    public void deleteComment(HttpServletRequest request, @RequestParam UUID commentId) {
+    public void deleteComment(HttpServletRequest request, @ValidParam UUID commentId) throws InputNotLogicallyValidException {
         commentService.deleteComment(
                 jwtService.getUserId(request),
                 commentId);
@@ -84,33 +84,31 @@ public class ChapterController {
 
     @PutMapping("comment/")
     public CommentInfo updateCommentInfo(HttpServletRequest request
-            , @ValidJson("CommentInfo") CommentInfo commentInfo) {
+            , @ValidJson("CommentInfo") CommentInfo commentInfo) throws InputNotLogicallyValidException {
         return commentService.updateComment(
                 jwtService.getUserId(request),
                 commentInfo);
     }
 
     @GetMapping("all-comments/")
-    public List<CommentInfo> getAllChapterComments(@ValidParam UUID chapterId) {
+    public List<CommentInfo> getAllChapterComments(@ValidParam UUID chapterId) throws InputNotLogicallyValidException {
         return commentService.getAllChapterComments(chapterId);
     }
+
+    @GetMapping("/comment-page/")
+    public CommentPage getPage(@ValidParam String operation,
+                               @ValidParam String next,
+                               @ValidParam String prev,
+                               @ValidParam UUID chapterId,
+                               @ValidParam int limit) throws InputNotLogicallyValidException {
+        return commentService.getCommentPage(
+                operation,
+                next,
+                prev,
+                chapterId,
+                limit);
+    }
 }
-//    @GetMapping("/page/")
-//    public CommentPage getPage(@RequestBody Map<String, Object> body) {
-//        if (((String) body.get("op")).equals("next")) {
-//            return commentService.getNextPage(
-//                    UUID.fromString((String) body.get("chapterId")),
-//                    (String) body.get("next"),
-//                    (String) body.get("prev"),
-//                    (int) body.get("limit"));
-//        } else {
-//            return commentService.getPrevPage(
-//                    UUID.fromString((String) body.get("chapterId")),
-//                    (String) body.get("next"),
-//                    (String) body.get("prev"),
-//                    (int) body.get("limit"));
-//        }
-//    }
 //
 //    @Value("${ACCESS_KEY}")
 //    private  String ACCESS_KEY;

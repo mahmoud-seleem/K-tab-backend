@@ -28,6 +28,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
     public boolean supportsParameter(MethodParameter parameter) {
         return parameter.getParameterAnnotation(ValidParam.class) != null;
     }
+
     @Override
     public Object resolveArgument(MethodParameter parameter
             , ModelAndViewContainer mavContainer
@@ -39,7 +40,11 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
         System.out.println(type.getName());
         System.out.println(paramValue);
         if (paramValue == null) {
-            return null;
+            if (type.getName().equals("int")) {
+                return 0;
+            }else {
+                return null;
+            }
         } else {
             switch (type.getName()) {
                 case "java.lang.String":
