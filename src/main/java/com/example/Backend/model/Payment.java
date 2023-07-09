@@ -39,6 +39,10 @@ public class Payment {
     public Payment() {
     }
 
+    // time axis - y book or books -> payment count.
+    // books - y views -> views count today.
+    // categorize the student of some author.
+    // top 3 books in terms of number of payment of students
     public Payment(UUID paymentId, Book book, Student student, String paymentInfo, LocalDateTime recentOpenedDate, Integer ratingValue) {
         this.paymentId = paymentId;
         this.book = book;
