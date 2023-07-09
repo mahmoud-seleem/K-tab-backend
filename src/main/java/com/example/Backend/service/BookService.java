@@ -141,7 +141,7 @@ public class BookService {
         setupBookCover(book, bookInfo);
     }
 
-    private BookInfo createBookInfoResponse(Book book) {
+    public BookInfo createBookInfoResponse(Book book) {
         BookInfo response = new BookInfo(
                 book.getAuthor().getAuthorId(),
                 book.getBookId(),

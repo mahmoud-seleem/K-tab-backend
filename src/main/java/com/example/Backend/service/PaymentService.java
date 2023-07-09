@@ -165,13 +165,18 @@ public class PaymentService {
 
     public List<BookHeader> updateFavouritesOrder(UUID studentId, List<FavouriteOrder> favouriteOrders) throws InputNotLogicallyValidException {
         Student student = checkFavouriteUpdateData(studentId,favouriteOrders);
+        List<Favourite> favouriteList = new ArrayList<>();
         for (FavouriteOrder favouriteOrder : favouriteOrders) {
             Book book = validationUtils.checkBookIsExisted(favouriteOrder.getBookId());
             validationUtils.checkPaymentIsExisted(student,book);
             Favourite favourite = validationUtils.checkFavIsExisted(student,book);
-            favourite.setOrder(favouriteOrder.getOrder());
-            favouriteRepository.save(favourite);
+            favouriteList.add(favourite);
         }
+        for(int i = 0; i< favouriteList.size();i++){
+            favouriteList.get(i).setOrder(favouriteOrders.get(i).getOrder());
+            favouriteRepository.save(favouriteList.get(i));
+        }
+
         return getFavourites(studentId);
     }
 

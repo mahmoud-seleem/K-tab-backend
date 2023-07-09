@@ -4,9 +4,7 @@ import com.example.Backend.Repository.*;
 import com.example.Backend.model.*;
 import com.example.Backend.s3Connection.S3PreSignedURL;
 import com.example.Backend.s3Connection.S3fileSystem;
-import com.example.Backend.schema.BookInfo;
-import com.example.Backend.schema.ChapterInfo;
-import com.example.Backend.schema.InteractionInfo;
+import com.example.Backend.schema.*;
 import com.example.Backend.utils.ImageConverter;
 import com.example.Backend.utils.Utils;
 import com.example.Backend.validation.InputNotLogicallyValidException;
@@ -19,10 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class ChapterService {
@@ -274,5 +269,50 @@ public class ChapterService {
                     createInteractionInfo(interaction));
         }
         return interactionInfoList;
+    }
+    public BookInfo updateChaptersOrder(UUID authorId,UUID bookId, List<ChapterOrder> chapterOrders) throws InputNotLogicallyValidException {
+        Author author = checkChapterUpdateData(authorId,bookId,chapterOrders);
+        Book book = validationUtils.checkBookIsExisted(bookId);
+        List<Chapter> chapters = new ArrayList<>();
+        for (int i = 0 ; i < chapterOrders.size();i++) {
+            Chapter chapter = validationUtils.checkChapterIsExisted(chapterOrders.get(i).getChapterId());
+            if (!(chapter.getBook().getBookId().equals(bookId))){
+                throw new InputNotLogicallyValidException(
+                        "chapterOrders["+i+"]",
+                        "chapterOrders["+i+"]"+" is not in this book !"
+                );
+            }
+            chapters.add(chapter);
+        }
+        for (int i = 0 ; i < chapters.size();i++) {
+            chapters.get(i).setChapterOrder(chapterOrders.get(i).getOrder());
+            chapterRepository.save(chapters.get(i));
+        }
+        return bookService.createBookInfoResponse(book);
+    }
+    private Author checkChapterUpdateData(UUID authorId,UUID bookId,List<ChapterOrder> chapterOrders) throws InputNotLogicallyValidException {
+        Author author = validationUtils.checkAuthorIsExisted(authorId);
+        Book book = validationUtils.checkBookIsExisted(bookId);
+        validationUtils.checkForNull("chapterOrders",chapterOrders);
+        validationUtils.checkForEmptyList("chapterOrders",chapterOrders);
+        validationUtils.checkForDuplicationInList("chapterOrders",
+                createSortedOrders(chapterOrders));
+        validationUtils.checkForListSize("chapterOrders",chapterOrders,book.getChapters().size());
+        validationUtils.checkForBookOwner(author,book);
+        return author;
+    }
+    private List<Integer> createSortedOrders(List<ChapterOrder> chapterOrders) throws InputNotLogicallyValidException {
+        List<Integer> orders = new ArrayList<>();
+        for (ChapterOrder chapterOrder : chapterOrders){
+            orders.add(chapterOrder.getOrder());
+        }
+        Collections.sort(orders);
+        if (orders.get(0) != 0 || orders.get(orders.size()-1) !=  (orders.size() - 1)){
+            throw new InputNotLogicallyValidException(
+                    "order",
+                    "orders is invalid !! "
+            );
+        }
+        return orders;
     }
 }

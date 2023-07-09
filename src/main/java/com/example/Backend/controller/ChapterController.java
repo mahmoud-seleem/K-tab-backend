@@ -54,6 +54,13 @@ public class ChapterController {
         return chapterService.getChapterInfo(chapterId);
     }
 
+    @PutMapping("chapter-orders/")
+    public BookInfo updateChaptersOrders(HttpServletRequest request,@ValidJson("ChapterOrder") ChapterOrders chapterOrders) throws InputNotLogicallyValidException {
+        return chapterService.updateChaptersOrder(
+                jwtService.getUserId(request),
+                chapterOrders.getBookId(),
+                chapterOrders.getChapterOrders());
+    }
 
     @PostMapping("comment/")
     public CommentInfo addNewComment(HttpServletRequest request
