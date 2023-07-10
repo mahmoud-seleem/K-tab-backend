@@ -111,6 +111,25 @@ public class PaymentService {
         return paymentInfoList;
     }
 
+    private BookHeader createBookHeader(Payment payment) {
+        Book book = payment.getBook();
+        Student student = payment.getStudent();
+        BookHeader bookHeader = new BookHeader(
+                book.getBookId(),
+                book.getAuthor().getAuthorId(),
+                book.getAuthor().getAuthorName(),
+                book.getBookCover(),
+                book.getTitle(),
+                book.getTagsNames(),
+                book.getBookAbstract());
+        try {
+            validationUtils.checkFavIsExisted(student,book);
+            bookHeader.setFav(true);
+        }catch (Exception e){
+            bookHeader.setFav(false);
+        }
+        return bookHeader;
+    }
     private BookHeader createBookHeader(Book book) {
         return new BookHeader(
                 book.getBookId(),
@@ -119,15 +138,14 @@ public class PaymentService {
                 book.getBookCover(),
                 book.getTitle(),
                 book.getTagsNames(),
-                book.getBookAbstract()
-        );
+                book.getBookAbstract());
     }
 
     private List<BookHeader> createBookHeaderList(List<Payment> payments) {
         List<BookHeader> bookHeaders = new ArrayList<>();
         for (Payment payment : payments) {
             bookHeaders.add(
-                    createBookHeader(payment.getBook()));
+                    createBookHeader(payment));
         }
         return bookHeaders;
     }
@@ -180,13 +198,6 @@ public class PaymentService {
         return getFavourites(studentId);
     }
 
-    private BookHeader createBookHeader(Favourite favourite) {
-        return new BookHeader(
-                favourite.getBook().getBookId(),
-                favourite.getBook().getBookCover(),
-                favourite.getBook().getTitle());
-    }
-
     public List<BookHeader> getFavourites(UUID studentId) {
         Student student = studentRepository.findById(studentId).get();
         List<BookHeader> bookHeaders = new ArrayList<>();
@@ -197,6 +208,13 @@ public class PaymentService {
         }
         return bookHeaders;
     }
+
+//    private BookHeader createBookHeader(Favourite favourite) {
+//        return new BookHeader(
+//                favourite.getBook().getBookId(),
+//                favourite.getBook().getBookCover(),
+//                favourite.getBook().getTitle());
+//    }
     private Student checkFavouriteUpdateData(UUID studentId,List<FavouriteOrder> favouriteOrders) throws InputNotLogicallyValidException {
         Student student = validationUtils.checkStudentIsExisted(studentId);
         validationUtils.checkForNull("favouriteOrders",favouriteOrders);

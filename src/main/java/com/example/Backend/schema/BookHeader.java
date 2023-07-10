@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Component
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BookHeader {
 
     private UUID bookId;
@@ -22,6 +23,7 @@ public class BookHeader {
 
     private List<String> tags;
     private String bookAbstract;
+    private Boolean fav;
 
     public BookHeader() {
     }
@@ -32,6 +34,16 @@ public class BookHeader {
         this.title = title;
     }
 
+    public BookHeader(UUID bookId, UUID authorId, String authorName, String bookCoverPath, String title, List<String> tags, String bookAbstract, Boolean fav) {
+        this.bookId = bookId;
+        this.authorId = authorId;
+        this.authorName = authorName;
+        this.bookCoverPath = bookCoverPath;
+        this.title = title;
+        this.tags = tags;
+        this.bookAbstract = bookAbstract;
+        this.fav = fav;
+    }
     public BookHeader(UUID bookId, UUID authorId, String authorName, String bookCoverPath, String title, List<String> tags, String bookAbstract) {
         this.bookId = bookId;
         this.authorId = authorId;
@@ -96,5 +108,13 @@ public class BookHeader {
 
     public void setBookAbstract(String bookAbstract) {
         this.bookAbstract = bookAbstract;
+    }
+
+    public Boolean getFav() {
+        return fav;
+    }
+
+    public void setFav(Boolean fav) {
+        this.fav = fav;
     }
 }
