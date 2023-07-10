@@ -45,7 +45,7 @@ public class Author extends AppUser {
     private List<Contribution> contributions = new ArrayList<>();
 
     @OneToMany(mappedBy = "author")
-    private List<Book> authorBooksList;
+    private List<Book> authorBooksList = new ArrayList<>();
 
     @OneToOne(mappedBy = "author")
     private AuthorSettings authorSettings;

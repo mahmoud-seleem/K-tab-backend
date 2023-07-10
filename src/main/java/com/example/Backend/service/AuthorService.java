@@ -63,9 +63,6 @@ public class AuthorService {
     @Autowired
     private JwtService jwtService;
 
-    @Autowired
-    private AppUserDetailsService appUserDetailsService;
-
     public AuthorSignUpResponse saveNewAuthor(AuthorSignUpForm form) throws Exception {
         validateAuthorSignUpForm(form);
         Author author = createNewAuthor(form);
