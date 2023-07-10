@@ -1,5 +1,6 @@
 package com.example.Backend.controller;
 
+import com.example.Backend.schema.DisabilityCount;
 import com.example.Backend.schema.PaymentCount;
 import com.example.Backend.security.JwtService;
 import com.example.Backend.service.AuthorDashboardService;
@@ -16,7 +17,7 @@ import java.util.List;
 @RestController
 @CrossOrigin
 @RequestMapping("/Author-Dashboard/")
-public class AuthorDashboard {
+public class AuthorDashboardController {
     @Autowired
     private JwtService jwtService;
     @Autowired
@@ -24,6 +25,12 @@ public class AuthorDashboard {
     @GetMapping("top3-books/")
     public List<PaymentCount> getTop3BooksWithMostPayments(HttpServletRequest request) throws InputNotLogicallyValidException {
         return authorDashboardService.getTop3BookWithMostPayments(
+                jwtService.getUserId(request)
+        );
+    }
+    @GetMapping("disabilities-count/")
+    public List<DisabilityCount> getDisabilitiesStatistics(HttpServletRequest request) throws InputNotLogicallyValidException {
+        return authorDashboardService.getDisabilityStatistics(
                 jwtService.getUserId(request)
         );
     }

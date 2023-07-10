@@ -226,4 +226,16 @@ public class Author extends AppUser {
         }
         return books;
     }
+    public List<Student> getAuthorStudents(){
+        List<Student> studentsWithDuplications = new ArrayList<>();
+        for (Book book: this.getAuthorBooksList()){
+            for(Payment payment : book.getPaymentList()){
+                studentsWithDuplications.add(payment.getStudent());
+            }
+        }
+        Set<Student> set = new HashSet<>(studentsWithDuplications);
+        System.out.println(studentsWithDuplications.size());
+        System.out.println(set.size());
+        return set.stream().toList();
+    }
 }

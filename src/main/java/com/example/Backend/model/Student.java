@@ -308,4 +308,12 @@ public class Student extends AppUser {
         }
         return disabilitiesInfo;
     }
+    public List<String> getDisabilitiesNames(){
+        List<String> disabilitiesNames = new ArrayList<>();
+        for (StudentDisability studentDisability : this.getStudentDisabilityList()){
+            disabilitiesNames.add(
+                    studentDisability.getDisability().getDisabilityName());
+        }
+        return disabilitiesNames;
+    }
 }

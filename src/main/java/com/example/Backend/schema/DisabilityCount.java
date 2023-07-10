@@ -8,12 +8,18 @@ import org.springframework.stereotype.Component;
 public class DisabilityCount {
     private String disabilityName;
     private int studentsCount;
-    private double studentsPercentage;
+    private String studentsPercentage;
 
-    public DisabilityCount(String disabilityName, int studentsCount, double studentsPercentage) {
+    public DisabilityCount(String disabilityName, int studentsCount, String studentsPercentage) {
         this.disabilityName = disabilityName;
         this.studentsCount = studentsCount;
         this.studentsPercentage = studentsPercentage;
+    }
+
+    public DisabilityCount(String disabilityName) {
+        this.disabilityName = disabilityName;
+        this.studentsCount = 0;
+        this.studentsPercentage = null;
     }
 
     public DisabilityCount() {
