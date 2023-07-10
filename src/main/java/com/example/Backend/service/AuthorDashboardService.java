@@ -29,16 +29,28 @@ public class AuthorDashboardService {
     @Autowired
     private BookRepository bookRepository;
 
-//    public List<PaymentCount> getTop3BookWithMostPayments(UUID authorId) throws InputNotLogicallyValidException {
-//        Author author = validationUtils.checkAuthorIsExisted(authorId);
-//        List<Book> books = author.getAuthorBooksList();
-//        List<PaymentCount> result = new ArrayList<>();
-//            for (Book book: books){
-//                result.add( new PaymentCount(
-//                        book.getBookId().toString(),
-//                        book.getPaymentList().size()));
-//            }
-//        Collections.sort(result);
-//        }
-//    }
+    public List<PaymentCount> getTop3BookWithMostPayments(UUID authorId) throws InputNotLogicallyValidException {
+        Author author = validationUtils.checkAuthorIsExisted(authorId);
+        List<Book> books = author.getAuthorBooksList();
+        List<PaymentCount> result = new ArrayList<>();
+        List<PaymentCount> finalResult = new ArrayList<>();
+        for (Book book : books) {
+            result.add(new PaymentCount(
+                    book.getBookId().toString(),
+                    book.getPaymentList().size()));
+        }
+        Collections.sort(result);
+        Collections.reverse(result);
+        int counter = 0;
+        for (PaymentCount paymentCount : result) {
+            if (counter < 3) {
+                finalResult.add(paymentCount);
+                counter++;
+            } else {
+                break;
+            }
+        }
+        return finalResult;
+    }
 }
+
