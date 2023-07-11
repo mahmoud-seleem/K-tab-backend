@@ -1,0 +1,26 @@
+
+[{  
+  "name": "k-tab-backend",  
+  "command": ["java","-jar","/app.jar"],  
+  "cpu": 10,  
+  "memory": 512,  
+  "image": "${ecr_repository}",  
+  "essential": true,  
+  "links": [],  
+  "portMappings": [  
+    {  
+      "containerPort": 80,  
+      "protocol": "tcp",  
+      "hostPort": 0  
+    }  
+  ],  
+  "environment": [],  
+  "logConfiguration": {  
+    "logDriver": "awslogs",  
+    "options": {  
+      "awslogs-group": "/ecs/k-tab-production",  
+      "awslogs-region": "${region}",  
+      "awslogs-stream-prefix": "k-tab-backend-production-log-stream"  
+    }  
+  }  
+}]

@@ -32,6 +32,12 @@ build/
 ### VS Code ###
 .vscode/
 
-src/main/resources/secrets.properties
-src/main/resources/user.properties
-src/main/resources/data.sql
+
+
+backend/src/main/resources/secrets.properties
+backend/src/main/resources/user.properties
+backend/src/main/resources/data.sql
+
+### Terraform ### 
+/terraform/.terraform.lock.hcl
+/terraform/.terraform
