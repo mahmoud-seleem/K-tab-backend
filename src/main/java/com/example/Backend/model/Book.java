@@ -273,16 +273,15 @@ public class Book {
     }
 
     public Double calculateAvgRating() {
-//        Double sum = 0.0;
-//        for (Rating rating : getRatings()) {
-//            sum += rating.getRatingValue();
-//        }
-//        if (getRatings().size() == 0) {
-//            return 0.0;
-//        } else {
-//            return sum / (double) getRatings().size();
-//        }
-        return 0.0;
+        Double sum = 0.0;
+        for (Payment payment : getPaymentList()) {
+            sum += payment.getRatingValue();
+        }
+        if (getPaymentList().size() == 0) {
+            return 0.0;
+        } else {
+            return sum / ((double) getPaymentList().size());
+        }
     }
 
     public List<String> getChaptersTitles() {

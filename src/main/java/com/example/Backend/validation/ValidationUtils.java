@@ -541,4 +541,13 @@ public class ValidationUtils {
         }
     }
 
+    public void checkForValidRatingValue(int value) throws InputNotLogicallyValidException {
+        if (value < 1 || value > 5 ){
+            throw new InputNotLogicallyValidException(
+                    "rating",
+                    "rating must be from 1 to 5 "
+            );
+        }
+    }
+
 }

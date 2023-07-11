@@ -586,8 +586,14 @@ public class BookService {
         for (Book book : books) {
             page.getBookHeaders().add(new BookHeader(
                     book.getBookId(),
+                    book.getAuthor().getAuthorId(),
+                    book.getAuthor().getAuthorName(),
                     book.getBookCover(),
-                    book.getTitle()));
+                    book.getTitle(),
+                    book.getTagsNames(),
+                    book.getBookAbstract(),
+                    book.calculateAvgRating(),
+                    book.getPrice()));
         }
         return page;
     }
@@ -712,5 +718,14 @@ public class BookService {
                             chapter.getChapterOrder()));
         }
         return chapterHeaders;
+    }
+
+    public StudentBookInfo addRatingValue(UUID studentId, UUID bookId, int rating) throws InputNotLogicallyValidException {
+        Student student = validationUtils.checkStudentIsExisted(studentId);
+        Book book = validationUtils.checkBookIsExisted(bookId);
+        Payment payment = validationUtils.checkPaymentIsExisted(student,book);
+        validationUtils.checkForValidRatingValue(rating);
+        payment.setRatingValue(rating);
+        return createStudentBookInfo(book,paymentRepository.save(payment));
     }
 }

@@ -4,6 +4,8 @@ package com.example.Backend.controller;
 import com.example.Backend.Repository.BookRepository;
 import com.example.Backend.schema.BookInfo;
 import com.example.Backend.schema.BookPage;
+import com.example.Backend.schema.PaymentInfo;
+import com.example.Backend.schema.StudentBookInfo;
 import com.example.Backend.security.JwtService;
 import com.example.Backend.service.BookService;
 import com.example.Backend.validation.InputNotLogicallyValidException;
@@ -57,24 +59,15 @@ public class BookController {
         }
 
     }
-
-//    @GetMapping("/page/")
-//    public BookPage getPage(
-//            @ValidParam String op,
-//            @ValidParam String next,
-//            @ValidParam String prev) {
-//        if (((String) body.get("op")).equals("next")) {
-//            return bookService.getNextPage(
-//                    (String) body.get("next"),
-//                    (String) body.get("prev"),
-//                    (int) body.get("limit"));
-//        } else {
-//            return bookService.getPrevPage(
-//                    (String) body.get("next"),
-//                    (String) body.get("prev"),
-//                    (int) body.get("limit"));
-//        }
-//    }
+    @PostMapping("rating/")
+    public StudentBookInfo addRatingValue(HttpServletRequest request ,
+                                          @ValidParam UUID bookId,
+                                          @ValidParam int rating) throws InputNotLogicallyValidException {
+        return bookService.addRatingValue(
+                jwtService.getUserId(request),
+                bookId,rating
+        );
+    }
 
     @GetMapping("/all/")
     public List<UUID> getAllBookIds() {

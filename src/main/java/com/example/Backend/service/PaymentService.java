@@ -59,6 +59,9 @@ public class PaymentService {
             chapter.addReading(reading);
             readingRepository.save(reading);
         }
+        payment.setRatingValue(0);
+        bookRepository.save(book);
+        studentRepository.save(student);
         return createPaymentInfo(
                 paymentRepository.save(payment));
     }

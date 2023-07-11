@@ -24,6 +24,8 @@ public class BookHeader {
     private List<String> tags;
     private String bookAbstract;
     private Boolean fav;
+    private Double avgRating;
+    private Double price;
 
     public BookHeader() {
     }
@@ -52,6 +54,18 @@ public class BookHeader {
         this.title = title;
         this.tags = tags;
         this.bookAbstract = bookAbstract;
+    }
+
+    public BookHeader(UUID bookId, UUID authorId, String authorName, String bookCoverPath, String title, List<String> tags, String bookAbstract, Double avgRating, Double price) {
+        this.bookId = bookId;
+        this.authorId = authorId;
+        this.authorName = authorName;
+        this.bookCoverPath = bookCoverPath;
+        this.title = title;
+        this.tags = tags;
+        this.bookAbstract = bookAbstract;
+        this.avgRating = avgRating;
+        this.price = price;
     }
 
     public UUID getBookId() {
@@ -116,5 +130,21 @@ public class BookHeader {
 
     public void setFav(Boolean fav) {
         this.fav = fav;
+    }
+
+    public Double getAvgRating() {
+        return avgRating;
+    }
+
+    public void setAvgRating(Double avgRating) {
+        this.avgRating = avgRating;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
     }
 }
