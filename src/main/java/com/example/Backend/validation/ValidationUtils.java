@@ -418,6 +418,17 @@ public class ValidationUtils {
             );
         }
     }
+    public void checkForValidFilterName(String filter) throws InputNotLogicallyValidException {
+        checkForEmptyAndBlankString("filter",filter);
+        if (filter != null){
+            if (!(filter.equals("AND") || filter.equals("OR"))){
+                throw new InputNotLogicallyValidException(
+                        "filter",
+                        "filter name must be AND / OR [case sensitive]"
+                );
+            }
+        }
+    }
     public void checkForPositiveQuantity(String fieldName,int value) throws InputNotLogicallyValidException {
         if (value < 0){
             throw new InputNotLogicallyValidException(

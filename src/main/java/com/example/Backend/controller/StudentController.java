@@ -70,14 +70,16 @@ public class StudentController {
                                    @ValidParam UUID prev,
                                    @ValidParam String title,
                                    @ValidParam String tag,
-                                   @ValidParam String operation) throws Exception{
+                                   @ValidParam String operation,
+                                   @ValidParam String filter) throws Exception{
         return bookService.getStudentHome(
                 next,
                 prev,
                 2,
                 title,
                 tag,
-                operation);
+                operation,
+                filter);
     }
 //    @GetMapping("/new")
 //    public Student saveNewStudent() {

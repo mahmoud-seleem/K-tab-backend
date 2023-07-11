@@ -350,23 +350,24 @@ public class BookService {
                                    int limit,
                                    String title,
                                    String tagName,
-                                   String operation) throws InputNotLogicallyValidException {
+                                   String operation,
+                                   String filter) throws InputNotLogicallyValidException {
         studentValidation.validateStudentHomeInputs(next,
-                prev, limit, title, tagName, operation);
+                prev, limit, title, tagName, operation, filter);
         BookPage res = null;
-        try{
+        try {
             if (operation.equals("next")) {
                 res = getNextPageWithSearch(
-                        (next == null)? null:next.toString(),
-                        (prev == null)? null:prev.toString(),
-                        LIMIT, title, tagName, operation);
+                        (next == null) ? null : next.toString(),
+                        (prev == null) ? null : prev.toString(),
+                        LIMIT, title, tagName, filter);
             } else {
                 res = getPrevPageWithSearch(
-                        (next == null)? null:next.toString(),
-                        (prev == null)? null:prev.toString(),
-                        LIMIT, title, tagName, operation);
+                        (next == null) ? null : next.toString(),
+                        (prev == null) ? null : prev.toString(),
+                        LIMIT, title, tagName, filter);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new InputNotLogicallyValidException(
                     "prev/next",
                     "bad input ! make sure you pass the correct values or" +
@@ -382,13 +383,13 @@ public class BookService {
             int limit,
             String title,
             String tagName,
-            String operation) {
+            String filter) {
         List<Book> books = null;
         BookPage page = new BookPage();
         if (next == null && prev == null) {
             books = getSearchResult(books,
                     "00000000-0000-0000-8000-000000000000",
-                    prev, title, tagName, operation, true, true);
+                    prev, title, tagName, filter, true, true);
             page.setPrev(null);
             if (books.size() == 0 || books.size() != limit + 1) { // the last page or the database is empty
                 page.setNext(null);
@@ -403,7 +404,7 @@ public class BookService {
             return page;
         } else {
             books = getSearchResult(books, next,
-                    prev, title, tagName, operation, true, true);
+                    prev, title, tagName, filter, true, true);
             page.setPrev(books.get(0).getBookId());
             if (books.size() != limit + 1) { // the last page
                 page.setNext(null);
@@ -420,12 +421,12 @@ public class BookService {
                                           int limit,
                                           String title,
                                           String tagName,
-                                          String operation) {
+                                          String filter) {
         List<Book> books = null;
         BookPage page = new BookPage();
         if (next == null && prev == null) { // always get the first page
             books = getSearchResult(books, next, "ffffffff-ffff-ffff-ffff-ffffffffffff",
-                    title, tagName, operation, false, true);
+                    title, tagName, filter, false, true);
             page.setPrev(null);
             if (books.size() == 0 || books.size() != limit + 1) { // the last page or the database is empty
                 page.setNext(null);
@@ -440,7 +441,7 @@ public class BookService {
             return page;
         } else {
             books = getSearchResult(books, next, prev,
-                    title, tagName, operation, false, false);
+                    title, tagName, filter, false, false);
             Collections.reverse(books);
             page.setNext(books.get(books.size() - 1).getBookId());
             if (books.size() != limit + 1) { // the first page
@@ -459,13 +460,14 @@ public class BookService {
             String prev,
             String title,
             String tagName,
-            String operation,
+            String filter,
             boolean isNext,
             boolean asc) {
         if (title != null && tagName != null) {
-            if (operation.equals("AND")) { // searching with tag and title
+            if (filter == null || filter.equals("AND")) { // default behavior is AND
                 return searchTitleAndTag(title, tagName, isNext, asc, next, prev);
-            } else { // searching with tag or title
+            } else {
+                // searching with tag or title
                 return searchTitleOrTag(title, tagName, isNext, asc, next, prev);
             }
         } else if (title == null && tagName != null) { // searching only with tagName
@@ -723,9 +725,9 @@ public class BookService {
     public StudentBookInfo addRatingValue(UUID studentId, UUID bookId, int rating) throws InputNotLogicallyValidException {
         Student student = validationUtils.checkStudentIsExisted(studentId);
         Book book = validationUtils.checkBookIsExisted(bookId);
-        Payment payment = validationUtils.checkPaymentIsExisted(student,book);
+        Payment payment = validationUtils.checkPaymentIsExisted(student, book);
         validationUtils.checkForValidRatingValue(rating);
         payment.setRatingValue(rating);
-        return createStudentBookInfo(book,paymentRepository.save(payment));
+        return createStudentBookInfo(book, paymentRepository.save(payment));
     }
 }

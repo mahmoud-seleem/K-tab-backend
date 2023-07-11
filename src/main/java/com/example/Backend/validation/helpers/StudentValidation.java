@@ -76,8 +76,10 @@ public class StudentValidation {
                                           int limit,
                                           String title,
                                           String tagName,
-                                          String operation) throws InputNotLogicallyValidException {
+                                          String operation,
+                                          String filter) throws InputNotLogicallyValidException {
         validationUtils.checkForValidOperationName(operation);
+        validationUtils.checkForValidFilterName(filter);
         validationUtils.checkForEmptyAndBlankString("tag",tagName);
         validationUtils.checkForEmptyAndBlankString("title",title);
         validationUtils.checkForPositiveQuantity("limit",limit);
