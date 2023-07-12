@@ -42,6 +42,7 @@ public class CommentService {
     @Autowired
     private CommentValidation commentValidation;
 
+
     public CommentInfo addComment(CommentInfo commentInfo) throws InputNotLogicallyValidException {
         AppUser appUser = commentValidation.validateCommentCreationData(commentInfo);
         Chapter chapter = validationUtils.checkChapterIsExisted(commentInfo.getChapterId());
@@ -135,7 +136,7 @@ public class CommentService {
             } else {
                 page.setNext(comments.get(comments.size() - 2).getDate().format(Utils.formatter));       comments.remove(comments.size() - 1);
             }
-            return createCommentPage(page, comments);
+            return createCommentPage(page, comments,limit);
         } else if (next == null) {
             page.setNext(null);
             page.setPrev(LocalDateTime.parse(prev).format(Utils.formatter));
@@ -155,7 +156,7 @@ public class CommentService {
                 comments.remove(
                         comments.size() - 1);
             }
-            return createCommentPage(page, comments);
+            return createCommentPage(page, comments,limit);
         }
     }
     public CommentPage getPrevPage(UUID chapterId,String next, String prev, int limit) {
@@ -171,7 +172,7 @@ public class CommentService {
                 page.setNext(comments.get(comments.size() - 2).getDate().format(Utils.formatter));
                 comments.remove(comments.size() - 1);
             }
-            return createCommentPage(page, comments);
+            return createCommentPage(page, comments,limit);
         } else if (prev == null) { // back to the first page while scrolling down to the top
             page.setPrev(null);
             page.setNext(LocalDateTime.parse(next).format(Utils.formatter));
@@ -187,14 +188,20 @@ public class CommentService {
                 comments.remove(0);
                 page.setPrev(comments.get(0).getDate().format(Utils.formatter));
             }
-            return createCommentPage(page, comments);
+            return createCommentPage(page, comments,limit);
         }
     }
 
 
-    private CommentPage createCommentPage(CommentPage page,List<Comment> comments){
+    private CommentPage createCommentPage(CommentPage page,List<Comment> comments,int limit){
         page.setCommentInfoList(
                 createListOfCommentInfo(comments));
+        if (comments.size() != 0){
+            page.setNumOfPages(getNumberOfCommentPages(limit,comments.get(0).getChapter()));
+        }else {
+            page.setNumOfPages(0);
+        }
+
         return page;
     }
     private boolean userIsTheCommenter(UUID userId,Comment comment) throws InputNotLogicallyValidException {
@@ -274,5 +281,13 @@ public class CommentService {
                 comment.getHasMentions(),
                 comment.getMentionedUsersAsStrings());
     }
-
+    private int getNumberOfCommentPages(int limit,Chapter chapter){
+        long comments = chapter.getCommentList().size();
+        if (comments == 0){
+            return 0;
+        }else {
+            return ((int)Math.ceil(
+                    ((double) comments) / limit));
+        }
+    }
 }

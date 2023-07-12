@@ -17,5 +17,6 @@ import java.util.UUID;
 public class CommentPage {
     private String next;
     private String prev;
+    private int numOfPages;
     private List<CommentInfo> commentInfoList = new ArrayList<>();
 }
