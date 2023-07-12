@@ -7,6 +7,7 @@ import com.example.Backend.utils.Utils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -52,6 +53,12 @@ public class BackendApplication {
             }
         };
     }
+//    @Bean
+//    public LocalValidatorFactoryBean getValidatorFactory() {
+//        LocalValidatorFactoryBean localValidatorFactoryBean = new LocalValidatorFactoryBean();
+//        localValidatorFactoryBean.getValidationPropertyMap().put("hibernate.validator.fail_fast", "false");
+//        return localValidatorFactoryBean;
+//    }
 
 //	@Autowired
 //	private RequestMappingHandlerAdapter adapter;

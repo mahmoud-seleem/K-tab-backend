@@ -94,7 +94,7 @@ public class S3Controller {
     public ResourceUrl getS3Resource(@ValidParam String resourcePath) throws InputNotLogicallyValidException {
         validationUtils.checkForNullEmptyAndBlankString("resourcePath",resourcePath);
 //        RedirectView redirectView = new RedirectView();
-        return new ResourceUrl(s3Service.getPreSignedForRead(resourcePath));    
+        return new ResourceUrl(s3Service.getPreSignedForRead(resourcePath));
     }
     @GetMapping("save-content/")
     public String getPreSignedForWriteContent(@ValidParam String contentPath) {

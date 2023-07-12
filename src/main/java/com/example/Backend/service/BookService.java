@@ -597,7 +597,17 @@ public class BookService {
                     book.calculateAvgRating(),
                     book.getPrice()));
         }
+        page.setNumOfPages(getNumberOfBookPages());
         return page;
+    }
+    private int getNumberOfBookPages(){
+        long books = bookRepository.count();
+        if (books == 0){
+            return 0;
+        }else {
+            return ((int)Math.ceil(
+                    ((double) books) /  LIMIT));
+        }
     }
 
     public List<UUID> getAllBookIds() {

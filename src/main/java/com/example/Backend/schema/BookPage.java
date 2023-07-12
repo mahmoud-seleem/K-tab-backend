@@ -12,6 +12,7 @@ public class BookPage {
     private UUID prev;
     private List<BookHeader> bookHeaders = new ArrayList<>();
 
+    private int numOfPages;
     public BookPage() {
     }
 
@@ -44,5 +45,13 @@ public class BookPage {
 
     public void setBookHeaders(List<BookHeader> bookHeaders) {
         this.bookHeaders = bookHeaders;
+    }
+
+    public int getNumOfPages() {
+        return numOfPages;
+    }
+
+    public void setNumOfPages(int numOfPages) {
+        this.numOfPages = numOfPages;
     }
 }
