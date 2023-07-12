@@ -22,6 +22,7 @@ public class CommentInfo {
 
     private String studentId;
 
+    private String commenterId;
     private String chapterId;
 
     private String content;
@@ -44,6 +45,17 @@ public class CommentInfo {
         this.date = date;
         this.hasMentions = hasMentions;
         this.mentionedUsers = mentionedUsers;
+    }
+
+    public CommentInfo(UUID commentId, UUID commenterId, UUID chapterId, String content, Boolean hasMentions, List<String> mentionedUsers, String date, String commenterType) {
+        this.commentId = commentId.toString();
+        this.commenterId =(commenterId == null) ? null : (commenterId.toString());
+        this.chapterId = chapterId.toString();
+        this.content = content;
+        this.hasMentions = hasMentions;
+        this.mentionedUsers = mentionedUsers;
+        this.date = date;
+        this.commenterType = commenterType;
     }
 
     public CommentInfo() {
@@ -154,5 +166,13 @@ public class CommentInfo {
             ValidationUtils validationUtils = new ValidationUtils();
             validationUtils.checkForValidUUIDString(name,value);
         }
+    }
+
+    public String getCommenterId() {
+        return commenterId;
+    }
+
+    public void setCommenterId(String commenterId) {
+        this.commenterId = commenterId;
     }
 }

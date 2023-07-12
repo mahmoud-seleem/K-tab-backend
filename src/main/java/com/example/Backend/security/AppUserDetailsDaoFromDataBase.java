@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import static com.example.Backend.security.Role.ADMIN;
+import static com.example.Backend.security.Role.AUTHOR;
 import static com.example.Backend.security.Role.STUDENT;
 
 @Service("DataBase")
@@ -51,9 +51,9 @@ public class AppUserDetailsDaoFromDataBase implements AppUserDetailsDao{
         return new AppUserDetails(
                 author.getAuthorEmail(),
                 author.getPassword(),
-                ADMIN.name(),
+                AUTHOR.name(),
                 author.getAuthorId(),
-                ADMIN.getGrantedAuthorities().stream().toList(),
+                AUTHOR.getGrantedAuthorities().stream().toList(),
                 author.isAccountNonExpired(),
                 author.isAccountNonLocked(),
                 author.isCredentialsNonExpired(),

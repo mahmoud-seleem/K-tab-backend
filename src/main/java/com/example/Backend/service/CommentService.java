@@ -267,7 +267,7 @@ public class CommentService {
         }
         return commentInfoList;
     }
-    private CommentInfo createCommentInfo(Comment comment) {
+    private CommentInfo createCommentInfo1(Comment comment) {
         return new CommentInfo(
                 comment.getCommentId(),
                 comment.getCommenterType(),
@@ -280,6 +280,18 @@ public class CommentService {
                 comment.getDate().format(Utils.formatter),
                 comment.getHasMentions(),
                 comment.getMentionedUsersAsStrings());
+    }
+    private CommentInfo createCommentInfo(Comment comment) {
+        return new CommentInfo(
+                comment.getCommentId(),
+                ((comment.getStudent() != null) ?
+                        comment.getStudent().getStudentId() : comment.getAuthor().getAuthorId()),
+                comment.getChapter().getChapterId(),
+                comment.getContent(),
+                comment.getHasMentions(),
+                comment.getMentionedUsersAsStrings(),
+                comment.getDate().format(Utils.formatter),
+                comment.getCommenterType());
     }
     private int getNumberOfCommentPages(int limit,Chapter chapter){
         long comments = chapter.getCommentList().size();

@@ -70,7 +70,7 @@ public class ChapterController {
             commentInfo.setStudentId(
                     jwtService.getUserId(request));
         } else {
-            commentInfo.setCommenterType("ADMIN");
+            commentInfo.setCommenterType("AUTHOR");
             commentInfo.setAuthorId(
                     jwtService.getUserId(request));
         }

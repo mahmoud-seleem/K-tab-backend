@@ -44,7 +44,7 @@ public class UserService {
                 author.getAuthorId(),
                 author.getAuthorName(),
                 author.getAuthorEmail(),
-                "ADMIN",
+                "AUTHOR",
                 author.getContact(),
                 author.getProfilePhoto()
         );

@@ -11,7 +11,7 @@ import java.util.Set;
 public enum Role {
     STUDENT(new HashSet<>(
             Arrays.asList(CHAPTER_READ))),
-    ADMIN(new HashSet<>(
+    AUTHOR(new HashSet<>(
             Arrays.asList(CHAPTER_READ, CHAPTER_WRITE)));
 
     private Set<Permission> permissions;

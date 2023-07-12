@@ -93,7 +93,7 @@ public class SecurityConfiguration {
 //        UserDetails mahmoudDetails = User.builder()
 //                .username("mahmoud")
 //                .password(passwordEncoder.encode("123"))
-//                .authorities(ADMIN.getGrantedAuthorities()).build();
+//                .authorities(AUTHOR.getGrantedAuthorities()).build();
 //        UserDetails mohamedDetails = User.builder()
 //                .username("mohamed")
 //                .password(passwordEncoder.encode("456"))

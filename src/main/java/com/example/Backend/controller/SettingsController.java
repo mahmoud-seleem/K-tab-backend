@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import static com.example.Backend.security.Role.ADMIN;
+import static com.example.Backend.security.Role.AUTHOR;
 
 @RestController
 @CrossOrigin
@@ -29,7 +29,7 @@ public class SettingsController {
     @PutMapping()
     public SettingsResponse updateUserSettings(HttpServletRequest request,@Valid @ValidJson("SettingsForm") SettingsForm form){
         String userType = jwtService.getUserType(request);
-        if(userType.equals(ADMIN.name())){
+        if(userType.equals(AUTHOR.name())){
             return authorSettingsController.updateAuthorSettingsInfo(
                     request,form);
         }else {
@@ -41,7 +41,7 @@ public class SettingsController {
     @GetMapping()
     public SettingsResponse getUserSettings(HttpServletRequest request){
         String userType = jwtService.getUserType(request);
-        if(userType.equals(ADMIN.name())){
+        if(userType.equals(AUTHOR.name())){
             return authorSettingsController.
                     getAuthorSettingsInfo(request);
         }else {

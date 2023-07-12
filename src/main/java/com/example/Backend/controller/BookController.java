@@ -52,7 +52,7 @@ public class BookController {
 
     @GetMapping()
     public BookInfo getBookInfo(HttpServletRequest request, @ValidParam UUID bookId) throws InputNotLogicallyValidException {
-        if (jwtService.getUserType(request).equals("ADMIN")) {
+        if (jwtService.getUserType(request).equals("AUTHOR")) {
             return bookService.getBookInfo(bookId);
         } else {
             return bookService.getStudentBookInfo(jwtService.getUserId(request), bookId);

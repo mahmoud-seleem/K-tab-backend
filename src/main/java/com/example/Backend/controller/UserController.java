@@ -25,7 +25,7 @@ public class UserController {
     public UserInfo getUserInfo(HttpServletRequest request) throws InputNotLogicallyValidException {
         String type = jwtService.getUserType(request);
         UUID userId = jwtService.getUserId(request);
-        if (type.equals("ADMIN")){
+        if (type.equals("AUTHOR")){
             return userService.getAuthorInfo(userId);
         }else {
             return userService.getStudentInfo(userId);
