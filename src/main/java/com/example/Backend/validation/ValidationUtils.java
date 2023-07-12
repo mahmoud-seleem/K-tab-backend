@@ -524,17 +524,22 @@ public class ValidationUtils {
         }else return comment;
     }
 
-    public void checkUserIsExisted(String userName,UUID userId) throws InputNotLogicallyValidException {
+    public String checkUserIsExisted(String userName,UUID userId) throws InputNotLogicallyValidException {
+        String type;
         AppUser user = null;
         try{
             user = this.checkAuthorIsExisted(userId);
         }catch (Exception ignored){}
-        if (user != null){}
+        if (user != null){
+            type = "AUTHOR";
+        }
         else {
             try{
                 user = checkStudentIsExisted(userId);
             }catch (Exception ignored){}
-            if (user != null){}
+            if (user != null){
+                type = "STUDENT";
+            }
             else {
                 throw new InputNotLogicallyValidException(
                         userName,
@@ -542,6 +547,7 @@ public class ValidationUtils {
                 );
             }
         }
+        return type;
     }
     public void checkForValidCommentsLimit(int limit) throws InputNotLogicallyValidException {
         if (limit <= 0){

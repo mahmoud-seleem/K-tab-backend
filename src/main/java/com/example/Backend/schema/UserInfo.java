@@ -1,10 +1,12 @@
 package com.example.Backend.schema;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
 @Component
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserInfo {
     private UUID userId;
     private String userName;

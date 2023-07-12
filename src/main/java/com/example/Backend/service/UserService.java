@@ -35,7 +35,7 @@ public class UserService {
                 student.getStudentName(),
                 student.getStudentEmail(),
                 "STUDENT",
-                student.getContact(),
+                null,
                 student.getProfilePhoto()
         );
     }
@@ -45,7 +45,7 @@ public class UserService {
                 author.getAuthorName(),
                 author.getAuthorEmail(),
                 "AUTHOR",
-                author.getContact(),
+                null,
                 author.getProfilePhoto()
         );
     }

@@ -4,12 +4,11 @@ import com.example.Backend.schema.UserInfo;
 import com.example.Backend.security.JwtService;
 import com.example.Backend.service.UserService;
 import com.example.Backend.validation.InputNotLogicallyValidException;
+import com.example.Backend.validation.ValidationUtils;
+import com.example.Backend.validation.json.ValidParam;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -21,14 +20,24 @@ public class UserController {
     private JwtService jwtService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private ValidationUtils validationUtils;
     @GetMapping()
-    public UserInfo getUserInfo(HttpServletRequest request) throws InputNotLogicallyValidException {
-        String type = jwtService.getUserType(request);
-        UUID userId = jwtService.getUserId(request);
-        if (type.equals("AUTHOR")){
-            return userService.getAuthorInfo(userId);
+    public UserInfo getUserInfo(HttpServletRequest request,@ValidParam UUID userId) throws InputNotLogicallyValidException {
+        UUID id;
+        String type;
+        if (userId == null){
+            id = jwtService.getUserId(request);
+            type = jwtService.getUserType(request);
         }else {
-            return userService.getStudentInfo(userId);
+            type = validationUtils.checkUserIsExisted("userId",userId);
+            id = userId;
+        }
+        if (type.equals("AUTHOR")){
+            return userService.getAuthorInfo(id);
+        }else {
+            return userService.getStudentInfo(id);
         }
     }
+
 }
