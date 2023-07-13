@@ -96,4 +96,8 @@ public class BookController {
         return bookService.getAllBookWithTitleOrTag(title, tagName);
     }
 
+    @GetMapping("tags/")
+    public List<String> getAllBookTags(){
+        return bookService.getAllBookTags();
+    }
 }

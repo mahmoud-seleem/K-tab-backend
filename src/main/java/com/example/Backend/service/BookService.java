@@ -740,4 +740,13 @@ public class BookService {
         payment.setRatingValue(rating);
         return createStudentBookInfo(book, paymentRepository.save(payment));
     }
+
+    public List<String> getAllBookTags() {
+        List<String> tagsNames = new ArrayList<>();
+        List<Tag> tags = tagRepository.findAll();
+        for (Tag tag : tags){
+            tagsNames.add(tag.getTagName());
+        }
+        return tagsNames;
+    }
 }
