@@ -681,8 +681,8 @@ public class BookService {
             , Payment payment) {
         if (payment != null) {
             return new StudentBookInfo(
-                    book.getBookId(),
                     book.getAuthor().getAuthorId(),
+                    book.getBookId(),
                     book.getTitle(),
                     null,
                     book.getBookAbstract(),
@@ -700,8 +700,8 @@ public class BookService {
                     payment.getRatingValue());
         } else {
             return new StudentBookInfo(
-                    book.getBookId(),
                     book.getAuthor().getAuthorId(),
+                    book.getBookId(),
                     book.getTitle(),
                     null,
                     book.getBookAbstract(),
