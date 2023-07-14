@@ -79,7 +79,7 @@ JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         } catch (Exception e) {
-            logger.error("Cannot set user authentication: {}", e);
+            logger.info("Invalid JWT token" + e.getMessage());
         }
         filterChain.doFilter(request, response);
     }

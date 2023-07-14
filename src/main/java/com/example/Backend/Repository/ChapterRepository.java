@@ -5,10 +5,12 @@ import com.example.Backend.model.Book;
 import com.example.Backend.model.Chapter;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 import java.util.UUID;
 
+@Repository
 public interface ChapterRepository extends JpaRepository<Chapter, UUID> {
 
     @Query(

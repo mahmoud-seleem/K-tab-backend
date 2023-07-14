@@ -6,6 +6,8 @@ import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.activation.spi.MailcapRegistryProvider;
 import jakarta.servlet.http.HttpServletRequest;
+
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -13,6 +15,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
+import org.slf4j.Logger;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -26,7 +30,6 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
-
     @Autowired
     @Value("${SIGNATURE_SECRET_KEY}")
     private String signatureKey;
@@ -137,19 +140,11 @@ public class JwtService {
             Jwts.parserBuilder().setSigningKey(getSecretKey()).build().parseClaimsJws(jwtToken);
             return isTokenValid(jwtToken,userDetails);
         } catch (SignatureException e) {
-            System.out.println("Invalid JWT signature: {}"+ e.getMessage());
         } catch (MalformedJwtException e) {
-            System.out.println("Invalid JWT token: {}"+e.getMessage());
         } catch (ExpiredJwtException e) {
-            System.out.println("JWT token is expired: {}"+e.getMessage());
         } catch (UnsupportedJwtException e) {
-            System.out.println("JWT token is unsupported: {}" +e.getMessage());
         } catch (IllegalArgumentException e) {
-            System.out.println("JWT claims string is empty: {}" +e.getMessage());
         }
         return false;
-    }
-    private byte[] getSigningKey() {
-        return Decoders.BASE64.decode(signatureKey);
     }
 }
