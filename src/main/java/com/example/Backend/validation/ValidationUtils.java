@@ -438,7 +438,7 @@ public class ValidationUtils {
         }
     }
     public void validateNextIsGreaterThanPrev(UUID next,UUID prev) throws InputNotLogicallyValidException {
-        if (next.compareTo(prev) > 0){
+        if (next.compareTo(prev) < 0){
             throw new InputNotLogicallyValidException(
                     "next/prev",
                     "next pointer can't be less than prev pointer "
