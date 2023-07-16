@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.time.LocalDateTime;
@@ -67,15 +68,20 @@ public class S3Controller {
         return response;
     }
 
+
     @GetMapping("description/")
     public ImageDescriptionDto getImageDescription(@ValidParam String imagePath) {
         String url = s3Service.getPreSignedForRead(imagePath);
-        // calling the AI server getImageDescription() and
-        // give it the url for the image
-        // AI server will respond with json which will be
-        // returned to the frontend
-        return new ImageDescriptionDto(ImageType.SCENE, url);
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("img_url", url);
+
+        Map<String, Object> aiResponse = restTemplate.postForObject("http://localhost:8000/math", requestBody , Map.class);
+        return new ImageDescriptionDto(ImageType.MATH, aiResponse.get("text").toString());
     }
+
 
     @PostMapping("audio/")
     public void saveAudio(@ValidJson("AudioInfo") AudioInfo audioInfo) {
