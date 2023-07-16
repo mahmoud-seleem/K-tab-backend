@@ -2,6 +2,7 @@ package com.example.Backend.service;
 
 import com.example.Backend.Repository.AuthorRepository;
 import com.example.Backend.Repository.BookRepository;
+import com.example.Backend.Repository.PaymentRepository;
 import com.example.Backend.model.Author;
 import com.example.Backend.model.Book;
 import com.example.Backend.model.Payment;
@@ -14,8 +15,10 @@ import com.example.Backend.validation.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.services.s3.model.GetBucketRequestPaymentRequest;
 
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -30,6 +33,9 @@ public class AuthorDashboardService {
     @Autowired
     private BookRepository bookRepository;
 
+    @Autowired
+    private PaymentRepository paymentRepository;
+
     private static final DecimalFormat FORMAT = new DecimalFormat("0.00");
 
     public List<PaymentCount> getTop3BookWithMostPayments(UUID authorId) throws InputNotLogicallyValidException {
@@ -40,6 +46,7 @@ public class AuthorDashboardService {
         for (Book book : books) {
             result.add(new PaymentCount(
                     book.getBookId().toString(),
+                    book.getTitle(),
                     book.getPaymentList().size()));
         }
         Collections.sort(result);
@@ -121,5 +128,20 @@ private void calculateDisabilitiesPercentage(int total,List<DisabilityCount> lis
         }
         }
         }
+
+    public PaymentCount getBookViews(UUID userId, UUID bookId) throws InputNotLogicallyValidException {
+        Book book = validationUtils.checkBookIsExisted(bookId);
+        Author author = validationUtils.checkAuthorIsExisted(userId);
+        validationUtils.checkForBookOwner(author,book);
+        List<Payment> payments = paymentRepository.findAllByBookAndRecentOpenedDateGreaterThan(
+                book, LocalDateTime.now().minusMinutes(1));
+        PaymentCount paymentCount = new PaymentCount();
+        if (payments != null){
+            paymentCount.setNumberOfStudents(payments.size());
         }
+        paymentCount.setBookTitle(book.getTitle());
+        paymentCount.setBookId(bookId);
+        return paymentCount;
+    }
+}
 

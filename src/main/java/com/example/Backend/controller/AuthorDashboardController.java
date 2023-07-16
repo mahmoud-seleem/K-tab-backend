@@ -5,6 +5,7 @@ import com.example.Backend.schema.PaymentCount;
 import com.example.Backend.security.JwtService;
 import com.example.Backend.service.AuthorDashboardService;
 import com.example.Backend.validation.InputNotLogicallyValidException;
+import com.example.Backend.validation.json.ValidParam;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @CrossOrigin
@@ -32,6 +34,14 @@ public class AuthorDashboardController {
     public List<DisabilityCount> getDisabilitiesStatistics(HttpServletRequest request) throws InputNotLogicallyValidException {
         return authorDashboardService.getDisabilityStatistics(
                 jwtService.getUserId(request)
+        );
+    }
+    @GetMapping("views/")
+    public PaymentCount getBookViews(HttpServletRequest request, @ValidParam
+                                              UUID bookId) throws InputNotLogicallyValidException {
+        return authorDashboardService.getBookViews(
+                jwtService.getUserId(request),
+                bookId
         );
     }
 }

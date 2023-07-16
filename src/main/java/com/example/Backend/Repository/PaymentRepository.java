@@ -6,6 +6,7 @@ import com.example.Backend.model.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,4 +15,5 @@ public interface PaymentRepository extends JpaRepository<Payment, UUID> {
     List<Payment> findAllByStudentOrderByRecentOpenedDate(Student student);
     List<Payment> findAllByStudentOrderByRecentOpenedDateDesc(Student student);
     Payment findByStudentAndBook(Student student, Book book);
+    List<Payment> findAllByBookAndRecentOpenedDateGreaterThan(Book book, LocalDateTime date);
 }

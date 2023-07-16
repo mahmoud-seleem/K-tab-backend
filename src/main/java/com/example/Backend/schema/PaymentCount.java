@@ -9,14 +9,24 @@ import java.util.UUID;
 @Component
 public class PaymentCount implements Comparable<PaymentCount> {
     private String bookId;
+    private String bookTitle;
     private int numberOfStudents;
 
-    public PaymentCount(String bookId, int numberOfStudents) {
+    public PaymentCount(String bookId,String bookTitle, int numberOfStudents) {
         this.bookId = bookId;
+        this.bookTitle = bookTitle;
         this.numberOfStudents = numberOfStudents;
     }
 
     public PaymentCount() {
+    }
+
+    public String getBookTitle() {
+        return bookTitle;
+    }
+
+    public void setBookTitle(String bookTitle) {
+        this.bookTitle = bookTitle;
     }
 
     public UUID getBookId() {

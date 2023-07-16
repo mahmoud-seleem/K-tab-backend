@@ -77,7 +77,6 @@ public class S3Controller {
 
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("img_url", url);
-
         Map<String, Object> aiResponse = restTemplate.postForObject("http://localhost:8000/math", requestBody , Map.class);
         return new ImageDescriptionDto(ImageType.MATH, aiResponse.get("text").toString());
     }

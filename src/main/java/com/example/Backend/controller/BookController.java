@@ -16,9 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.time.chrono.ChronoLocalDate;
+import java.util.*;
 
 @RestController
 @CrossOrigin()
@@ -42,6 +41,21 @@ public class BookController {
     public BookInfo saveNewBook(HttpServletRequest request, @ValidJson("BookInfo") BookInfo bookInfo) throws Exception {
         bookInfo.setAuthorId(jwtService.getUserId(request));
         return bookService.saveNewBook(bookInfo);
+    }
+    @PostMapping("/random/")
+    public String saveNewBook(HttpServletRequest request) throws Exception {
+        BookInfo bookInfo = new BookInfo();
+        Random random = new Random();
+        bookInfo.setTags(Arrays.asList("Math","AI"));
+        bookInfo.setAuthorId(jwtService.getUserId(request));
+        for (int i = 0  ; i < 24; i++){
+            bookInfo.setPrice((double) (random.nextInt(200 - 50 + 1) + 50));
+            bookInfo.setBookCoverPhotoAsBinaryString(
+                    bookService.downloadAndEncodeImage());
+            bookInfo.setTitle(bookService.generateRandomTitle());
+            bookService.saveNewBook(bookInfo);
+        }
+        return "DONE";
     }
 
     @PutMapping()
