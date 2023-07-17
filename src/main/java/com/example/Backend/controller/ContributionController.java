@@ -44,6 +44,13 @@ public class ContributionController {
         return bookService.addContribution(contributionInfo);
     }
 
+    public BookInfo addContribution(@ValidJson("ContributionInfo") ContributionInfo contributionInfo) throws Exception {
+        return bookService.addContribution(contributionInfo);
+    }
+    public void addContributionWithoutRes(@ValidJson("ContributionInfo") ContributionInfo contributionInfo) throws Exception {
+        bookService.addContributionWithoutRes(contributionInfo);
+    }
+
     @PutMapping
     public BookInfo updateContribution(HttpServletRequest request, @ValidJson("ContributionInfo") ContributionInfo contributionInfo) throws Exception {
         contributionInfo.setOwnerId(jwtService.getUserId(request));

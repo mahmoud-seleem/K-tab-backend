@@ -45,6 +45,9 @@ public class PaymentController {
                                HttpServletRequest request) throws InputNotLogicallyValidException {
         return paymentService.buyBook(jwtService.getUserId(request), bookId);
     }
+    public void buyBook(@ValidParam UUID bookId,UUID studentId) throws InputNotLogicallyValidException {
+        paymentService.buyBookWithRandomRating(studentId, bookId);
+    }
 
     @GetMapping("all-student-payments/")
     public List<PaymentInfo> getAllStudentPayments(HttpServletRequest request) {

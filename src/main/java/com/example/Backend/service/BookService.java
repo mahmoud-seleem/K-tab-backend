@@ -119,9 +119,10 @@ public class BookService {
                 AccessType.READ
         ).toString();
     }
-    public String downloadAndEncodeImage(int index) throws IOException, URISyntaxException {
+
+    public String downloadAndEncodeImage(String link) throws IOException, URISyntaxException {
         RestTemplate restTemplate = new RestTemplate();
-        URI url = new URI(Utils.IMAGES[index]);
+        URI url = new URI(link);
         byte[] imageBytes = restTemplate.getForObject(url, byte[].class);
 //        URLConnection connection = url.openConnection();
 //        InputStream inputStream =  connection.getInputStream();
@@ -261,6 +262,16 @@ public class BookService {
         validationUtils.checkForBookOwner(owner, book);
         setupNewContribution(book, author, contributionInfo);
         return createBookInfoResponse(book);
+    }
+    public void addContributionWithoutRes(ContributionInfo contributionInfo) throws Exception {
+        Book book = validationUtils.checkBookIsExisted(
+                contributionInfo.getBookId());
+        Author author = validationUtils.checkAuthorIsExisted(
+                contributionInfo.getContributorId());
+        Author owner = validationUtils.checkAuthorIsExisted(
+                contributionInfo.getOwnerId());
+        validationUtils.checkForBookOwner(owner, book);
+        setupNewContribution(book, author, contributionInfo);
     }
 
     public BookInfo updateContribution(ContributionInfo contributionInfo) throws Exception {

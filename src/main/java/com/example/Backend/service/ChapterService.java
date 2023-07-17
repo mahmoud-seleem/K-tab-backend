@@ -57,9 +57,10 @@ public class ChapterService {
 
     public ChapterInfo saveNewChapter(ChapterInfo chapterInfo) throws Exception {
         Chapter chapter = createNewChapter(chapterInfo);
-        return createChapterInfoResponse(
+        ChapterInfo result =  createChapterInfoResponse(
                 chapterRepository.save(
                         updateLaseModifiedDate(chapter)));
+        return result;
     }
 
     public ChapterInfo updateChapterInfo(ChapterInfo chapterInfo) throws Exception {

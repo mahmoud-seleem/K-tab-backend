@@ -14,10 +14,7 @@ import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class PaymentService {
@@ -64,6 +61,30 @@ public class PaymentService {
         studentRepository.save(student);
         return createPaymentInfo(
                 paymentRepository.save(payment));
+    }
+    public void buyBookWithRandomRating(UUID studentId, UUID bookId) throws InputNotLogicallyValidException {
+        Student student = validationUtils.checkStudentIsExisted(studentId);
+        Book book = validationUtils.checkBookIsExisted(bookId);
+        validationUtils.checkPaymentIsNotExisted(student, book);
+        Payment payment = new Payment(
+                "this book is bought in " +
+                        LocalDateTime.now().format(Utils.formatter)
+                        + "by student " + student.getStudentName());
+        payment.setRecentOpenedDate(LocalDateTime.now());
+        student.addPayment(payment);
+        book.addPayment(payment);
+        List<Chapter> chapters = book.getChapters();
+        for (Chapter chapter : chapters) {
+            Reading reading = new Reading(
+                    chapter, student, 0);
+            student.addReading(reading);
+            chapter.addReading(reading);
+            readingRepository.save(reading);
+        }
+        Random random = new Random();
+        payment.setRatingValue(random.nextInt(5)+1);
+        bookRepository.save(book);
+        studentRepository.save(student);
     }
 
     public List<PaymentInfo> getAllStudentPayments(UUID studentId) {

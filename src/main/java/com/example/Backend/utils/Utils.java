@@ -144,4 +144,30 @@ public class Utils {
             "Applied Missing Data Analysis in the Health Sciences",
             "Elements of Computational Systems Biology"
     };
+
+    public static final String[] authorNames = {
+            "Mohamed Ibrahim",
+            "Mariam Ashraf",
+            "Nada Ahmed"
+    };
+    public static final String [] authorEmails = {
+            "mohamed-ibrahim@k-tab.live",
+            "mariam-ashraf@k-tab.live",
+            "nada-ahmed@k-tab.live"
+    };
+    public static final String[] authorPasswords = {
+            "12345678",
+            "12345678",
+            "12345678",
+    };
+    public static final String[] authorPhotos = {
+    "https://randomuser.me/api/portraits/men/24.jpg",
+    "https://randomuser.me/api/portraits/women/76.jpg",
+    "https://randomuser.me/api/portraits/women/85.jpg"
+    };
+
+    public static final String studentName = "7amada";
+    public static final String studentEmail = "7amada@k-tab.live";
+    public static final String studentPassword = "12345678";
+    public static final String studentImage = "https://randomuser.me/api/portraits/men/22.jpg";
 }

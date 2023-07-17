@@ -43,6 +43,10 @@ public class ChapterController {
         return chapterService.saveNewChapter(chapterInfo);
     }
 
+    public ChapterInfo saveNewChapter(@ValidJson("ChapterInfo") ChapterInfo chapterInfo) throws Exception {
+        return chapterService.saveNewChapter(chapterInfo);
+    }
+
     @PutMapping()
     public ChapterInfo updateChapterInfo(HttpServletRequest request, @ValidJson("ChapterInfo") ChapterInfo chapterInfo) throws Exception {
         chapterInfo.setOwnerId(jwtService.getUserId(request));
