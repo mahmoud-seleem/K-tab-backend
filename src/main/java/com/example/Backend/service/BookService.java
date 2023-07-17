@@ -17,6 +17,7 @@ import jdk.jshell.execution.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import javax.imageio.ImageIO;
@@ -26,6 +27,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.SecureRandom;
@@ -34,7 +37,7 @@ import java.util.*;
 
 @Service
 public class BookService {
-    private final int LIMIT = 8;
+    private final int LIMIT = 6;
     private final String[] IMAGES = {Utils.image1,Utils.image2,Utils.image3,Utils.image4,Utils.image5};
     private SecureRandom random = null;
     @Autowired
@@ -116,8 +119,10 @@ public class BookService {
                 AccessType.READ
         ).toString();
     }
-    public String downloadAndEncodeImage() throws IOException {
-//        URL url = new URL("https://picsum.photos/200/300");
+    public String downloadAndEncodeImage() throws IOException, URISyntaxException {
+        RestTemplate restTemplate = new RestTemplate();
+        URI url = new URI("https://picsum.photos/200/300");
+        byte[] imageBytes = restTemplate.getForObject(url, byte[].class);
 //        URLConnection connection = url.openConnection();
 //        InputStream inputStream =  connection.getInputStream();
 //        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -129,10 +134,10 @@ public class BookService {
 //        }
 //
 //        byte[] byteArray = outputStream.toByteArray();
-//        return Base64.getEncoder().encodeToString(byteArray);
-        Random random = new Random();
-        int x = random.nextInt(4);
-        return IMAGES[x];
+        return Base64.getEncoder().encodeToString(imageBytes);
+//        Random random = new Random();
+//        int x = random.nextInt(4);
+//        return IMAGES[x];
     }
     public String generateRandomTitle(){
         random = new SecureRandom();
@@ -321,7 +326,7 @@ public class BookService {
         List<Book> books = null;
         BookPage page = new BookPage();
         if (next == null && prev == null) {
-            books = bookRepository.findTop9ByBookIdGreaterThanOrderByBookId(
+            books = bookRepository.findTop7ByBookIdGreaterThanOrderByBookId(
                     UUID.fromString("00000000-0000-0000-8000-000000000000"));
             page.setPrev(null);
             if (books.size() == 0 || books.size() != limit + 1) { // the last page or the database is empty
@@ -336,7 +341,7 @@ public class BookService {
             page.setPrev(UUID.fromString(prev));
             return page;
         } else {
-            books = bookRepository.findTop9ByBookIdGreaterThanOrderByBookId(
+            books = bookRepository.findTop7ByBookIdGreaterThanOrderByBookId(
                     UUID.fromString(next));
             page.setPrev(books.get(0).getBookId());
             if (books.size() != limit + 1) { // the last page
@@ -353,7 +358,7 @@ public class BookService {
         List<Book> books = null;
         BookPage page = new BookPage();
         if (next == null && prev == null) { // always get the first page
-            books = bookRepository.findTop9ByBookIdLessThanOrderByBookId(
+            books = bookRepository.findTop7ByBookIdLessThanOrderByBookId(
                     UUID.fromString("ffffffff-ffff-ffff-ffff-ffffffffffff"));
             page.setPrev(null);
             if (books.size() == 0 || books.size() != limit + 1) { // the last page or the database is empty
@@ -368,7 +373,7 @@ public class BookService {
             page.setNext(UUID.fromString(next));
             return page;
         } else {
-            books = bookRepository.findTop9ByBookIdLessThanOrderByBookIdDesc(
+            books = bookRepository.findTop7ByBookIdLessThanOrderByBookIdDesc(
                     UUID.fromString(prev));
             Collections.reverse(books);
             page.setNext(books.get(books.size() - 1).getBookId());
@@ -524,14 +529,14 @@ public class BookService {
                                         String prev) {
         if (isNext) {
             return bookRepository
-                    .findTop9ByTitleContainingOrTags_TagNameAndBookIdGreaterThanOrderByBookId(
+                    .findTop7ByTitleContainingOrTags_TagNameAndBookIdGreaterThanOrderByBookId(
                             title, tagName, UUID.fromString(next));
         } else {
             if (asc) {
-                return bookRepository.findTop9ByTitleContainingOrTags_TagNameAndBookIdLessThanOrderByBookId(
+                return bookRepository.findTop7ByTitleContainingOrTags_TagNameAndBookIdLessThanOrderByBookId(
                         title, tagName, UUID.fromString(prev));
             } else {
-                return bookRepository.findTop9ByTitleContainingOrTags_TagNameAndBookIdLessThanOrderByBookIdDesc(
+                return bookRepository.findTop7ByTitleContainingOrTags_TagNameAndBookIdLessThanOrderByBookIdDesc(
                         title, tagName, UUID.fromString(prev));
             }
         }
@@ -545,14 +550,14 @@ public class BookService {
                                    String prev) {
         if (isNext) {
             return bookRepository
-                    .findTop9ByTitleContainingAndBookIdGreaterThanOrderByBookId(
+                    .findTop7ByTitleContainingAndBookIdGreaterThanOrderByBookId(
                             title, UUID.fromString(next));
         } else {
             if (asc) {
-                return bookRepository.findTop9ByTitleContainingAndBookIdLessThanOrderByBookId(
+                return bookRepository.findTop7ByTitleContainingAndBookIdLessThanOrderByBookId(
                         title, UUID.fromString(prev));
             } else {
-                return bookRepository.findTop9ByTitleContainingAndBookIdLessThanOrderByBookIdDesc(
+                return bookRepository.findTop7ByTitleContainingAndBookIdLessThanOrderByBookIdDesc(
                         title, UUID.fromString(prev));
             }
         }
@@ -566,14 +571,14 @@ public class BookService {
                                  String prev) {
         if (isNext) {
             return bookRepository
-                    .findTop9ByTags_TagNameAndBookIdGreaterThanOrderByBookId(
+                    .findTop7ByTags_TagNameAndBookIdGreaterThanOrderByBookId(
                             tagName, UUID.fromString(next));
         } else {
             if (asc) {
-                return bookRepository.findTop9ByTags_TagNameAndBookIdLessThanOrderByBookId(
+                return bookRepository.findTop7ByTags_TagNameAndBookIdLessThanOrderByBookId(
                         tagName, UUID.fromString(prev));
             } else {
-                return bookRepository.findTop9ByTags_TagNameAndBookIdLessThanOrderByBookIdDesc(
+                return bookRepository.findTop7ByTags_TagNameAndBookIdLessThanOrderByBookIdDesc(
                         tagName, UUID.fromString(prev));
             }
         }
@@ -587,14 +592,14 @@ public class BookService {
                                          String prev) {
         if (isNext) {
             return bookRepository
-                    .findTop9ByTitleContainingAndTags_TagNameAndBookIdGreaterThanOrderByBookId(
+                    .findTop7ByTitleContainingAndTags_TagNameAndBookIdGreaterThanOrderByBookId(
                             title, tagName, UUID.fromString(next));
         } else {
             if (asc) {
-                return bookRepository.findTop9ByTitleContainingAndTags_TagNameAndBookIdLessThanOrderByBookId(
+                return bookRepository.findTop7ByTitleContainingAndTags_TagNameAndBookIdLessThanOrderByBookId(
                         title, tagName, UUID.fromString(prev));
             } else {
-                return bookRepository.findTop9ByTitleContainingAndTags_TagNameAndBookIdLessThanOrderByBookIdDesc(
+                return bookRepository.findTop7ByTitleContainingAndTags_TagNameAndBookIdLessThanOrderByBookIdDesc(
                         title, tagName, UUID.fromString(prev));
             }
         }
@@ -608,14 +613,14 @@ public class BookService {
                                  String prev) {
         if (isNext) {
             return bookRepository
-                    .findTop9ByBookIdGreaterThanOrderByBookId(
+                    .findTop7ByBookIdGreaterThanOrderByBookId(
                             UUID.fromString(next));
         } else {
             if (asc) {
-                return bookRepository.findTop9ByBookIdLessThanOrderByBookId(
+                return bookRepository.findTop7ByBookIdLessThanOrderByBookId(
                         UUID.fromString(prev));
             } else {
-                return bookRepository.findTop9ByBookIdLessThanOrderByBookIdDesc(
+                return bookRepository.findTop7ByBookIdLessThanOrderByBookIdDesc(
                         UUID.fromString(prev));
             }
         }

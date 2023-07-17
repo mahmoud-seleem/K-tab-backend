@@ -50,42 +50,42 @@ public interface BookRepository extends JpaRepository<Book, UUID> {
 
     List<Book> getPrevPageASC(@Param("bookId") UUID bookId,@Param("limit") int limit);
     // the normal pagination methods without search
-    List<Book> findTop9ByBookIdGreaterThanOrderByBookId(UUID bookId);
-    List<Book> findTop9ByBookIdLessThanOrderByBookId(UUID bookId);
-    List<Book> findTop9ByBookIdLessThanOrderByBookIdDesc(UUID bookId);
+    List<Book> findTop7ByBookIdGreaterThanOrderByBookId(UUID bookId);
+    List<Book> findTop7ByBookIdLessThanOrderByBookId(UUID bookId);
+    List<Book> findTop7ByBookIdLessThanOrderByBookIdDesc(UUID bookId);
 
     // searching with only tags
-    List<Book> findTop9ByTags_TagNameAndBookIdGreaterThanOrderByBookId(
+    List<Book> findTop7ByTags_TagNameAndBookIdGreaterThanOrderByBookId(
             String tagName,UUID bookId);
 
-    List<Book> findTop9ByTags_TagNameAndBookIdLessThanOrderByBookId(
+    List<Book> findTop7ByTags_TagNameAndBookIdLessThanOrderByBookId(
             String tagName,UUID bookId);
-    List<Book> findTop9ByTags_TagNameAndBookIdLessThanOrderByBookIdDesc(
+    List<Book> findTop7ByTags_TagNameAndBookIdLessThanOrderByBookIdDesc(
             String tagName,UUID bookId);
     // searching with title only
-    List<Book> findTop9ByTitleContainingAndBookIdGreaterThanOrderByBookId(
+    List<Book> findTop7ByTitleContainingAndBookIdGreaterThanOrderByBookId(
             String infix,UUID bookId);
 
-    List<Book> findTop9ByTitleContainingAndBookIdLessThanOrderByBookId(
+    List<Book> findTop7ByTitleContainingAndBookIdLessThanOrderByBookId(
             String infix,UUID bookId);
-    List<Book> findTop9ByTitleContainingAndBookIdLessThanOrderByBookIdDesc(
+    List<Book> findTop7ByTitleContainingAndBookIdLessThanOrderByBookIdDesc(
             String infix,UUID bookId);
     // searching with title and tag
-    List<Book> findTop9ByTitleContainingAndTags_TagNameAndBookIdGreaterThanOrderByBookId(
+    List<Book> findTop7ByTitleContainingAndTags_TagNameAndBookIdGreaterThanOrderByBookId(
             String infix,String tagName,UUID bookId);
 
-    List<Book> findTop9ByTitleContainingAndTags_TagNameAndBookIdLessThanOrderByBookId(
+    List<Book> findTop7ByTitleContainingAndTags_TagNameAndBookIdLessThanOrderByBookId(
             String infix,String tagName,UUID bookId);
-    List<Book> findTop9ByTitleContainingAndTags_TagNameAndBookIdLessThanOrderByBookIdDesc(
+    List<Book> findTop7ByTitleContainingAndTags_TagNameAndBookIdLessThanOrderByBookIdDesc(
             String infix,String tagName,UUID bookId);
 
     // searching with tags or title
-    List<Book> findTop9ByTitleContainingOrTags_TagNameAndBookIdGreaterThanOrderByBookId(
+    List<Book> findTop7ByTitleContainingOrTags_TagNameAndBookIdGreaterThanOrderByBookId(
             String infix,String tagName,UUID bookId);
 
-    List<Book> findTop9ByTitleContainingOrTags_TagNameAndBookIdLessThanOrderByBookId(
+    List<Book> findTop7ByTitleContainingOrTags_TagNameAndBookIdLessThanOrderByBookId(
             String infix,String tagName,UUID bookId);
-    List<Book> findTop9ByTitleContainingOrTags_TagNameAndBookIdLessThanOrderByBookIdDesc(
+    List<Book> findTop7ByTitleContainingOrTags_TagNameAndBookIdLessThanOrderByBookIdDesc(
             String infix,String tagName,UUID bookId);
 
 
