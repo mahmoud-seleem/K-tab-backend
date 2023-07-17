@@ -137,13 +137,21 @@ public class BookController {
                 contributionController.addContributionWithoutRes(contributionInfo);
             }
         }
+        Student student = studentRepository.findByName("7amada");
         for (Book book : bookRepository.findAll()){
-            Student student = studentRepository.findByName("7amada");
             paymentController.buyBook(book.getBookId(),student.getStudentId());
         }
         return "DONE";
     }
 
+    @PostMapping("/random-r/")
+    public String makeRandomRatings() throws InputNotLogicallyValidException {
+        Student student = studentRepository.findByStudentName(Utils.studentName);
+        for (Book book : bookRepository.findAll()){
+            paymentController.buyBook(book.getBookId(),student.getStudentId());
+        }
+        return "DONE";
+    }
 
     @PutMapping()
     public BookInfo updateBookInfo(HttpServletRequest request, @ValidJson("BookInfo") BookInfo bookInfo) throws Exception {

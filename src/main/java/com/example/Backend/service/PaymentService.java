@@ -85,6 +85,7 @@ public class PaymentService {
         payment.setRatingValue(random.nextInt(5)+1);
         bookRepository.save(book);
         studentRepository.save(student);
+        paymentRepository.save(payment);
     }
 
     public List<PaymentInfo> getAllStudentPayments(UUID studentId) {
