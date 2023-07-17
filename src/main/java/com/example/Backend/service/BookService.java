@@ -38,7 +38,7 @@ import java.util.*;
 @Service
 public class BookService {
     private final int LIMIT = 6;
-    private final String[] IMAGES = {Utils.image1,Utils.image2,Utils.image3,Utils.image4,Utils.image5};
+    //private final String[] IMAGES = {Utils.image1,Utils.image2,Utils.image3,Utils.image4,Utils.image5};
     private SecureRandom random = null;
     @Autowired
     private BookValidation bookValidation;
@@ -119,9 +119,9 @@ public class BookService {
                 AccessType.READ
         ).toString();
     }
-    public String downloadAndEncodeImage() throws IOException, URISyntaxException {
+    public String downloadAndEncodeImage(int index) throws IOException, URISyntaxException {
         RestTemplate restTemplate = new RestTemplate();
-        URI url = new URI("https://picsum.photos/200/300");
+        URI url = new URI(Utils.IMAGES[index]);
         byte[] imageBytes = restTemplate.getForObject(url, byte[].class);
 //        URLConnection connection = url.openConnection();
 //        InputStream inputStream =  connection.getInputStream();

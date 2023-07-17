@@ -8,6 +8,7 @@ import com.example.Backend.schema.PaymentInfo;
 import com.example.Backend.schema.StudentBookInfo;
 import com.example.Backend.security.JwtService;
 import com.example.Backend.service.BookService;
+import com.example.Backend.utils.Utils;
 import com.example.Backend.validation.InputNotLogicallyValidException;
 import com.example.Backend.validation.json.ValidJson;
 import com.example.Backend.validation.json.ValidParam;
@@ -48,11 +49,12 @@ public class BookController {
         Random random = new Random();
         bookInfo.setTags(Arrays.asList("Math","AI"));
         bookInfo.setAuthorId(jwtService.getUserId(request));
-        for (int i = 0  ; i < 24; i++){
+        bookInfo.setBookAbstract("Master the math needed to excel in data science, machine learning. In this book author Thomas Nield guides you through areas like calculus, probability, linear algebra, and statistics and how they apply to techniques like neural networks.");
+        for (int i = 0  ; i < 14; i++){
             bookInfo.setPrice((double) (random.nextInt(200 - 50 + 1) + 50));
             bookInfo.setBookCoverPhotoAsBinaryString(
-                    bookService.downloadAndEncodeImage());
-            bookInfo.setTitle(bookService.generateRandomTitle());
+                    bookService.downloadAndEncodeImage(i));
+            bookInfo.setTitle(Utils.TITLES[i]);
             bookService.saveNewBook(bookInfo);
         }
         return "DONE";
