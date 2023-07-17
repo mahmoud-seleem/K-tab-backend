@@ -639,6 +639,7 @@ public class BookService {
 
     private BookPage createPageBookHeaders(BookPage page, List<Book> books) {
         for (Book book : books) {
+            Random random = new Random();
             page.getBookHeaders().add(new BookHeader(
                     book.getBookId(),
                     book.getAuthor().getAuthorId(),
@@ -647,7 +648,7 @@ public class BookService {
                     book.getTitle(),
                     book.getTagsNames(),
                     book.getBookAbstract(),
-                    book.calculateAvgRating(),
+                    ((double)(random.nextInt(5)+1)),
                     book.getPrice()));
         }
         page.setNumOfPages(getNumberOfBookPages());
