@@ -82,7 +82,7 @@ public class S3Controller {
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("img_url", url);
 
-        Map<String, Object> aiResponse = restTemplate.postForObject(AI_DOMAIN, requestBody , Map.class);
+        Map<String, Object> aiResponse = restTemplate.postForObject(AI_DOMAIN + "/math", requestBody , Map.class);
         System.out.println( aiResponse.get("type"));
         if( aiResponse.get("type").equals("math")){
             Map<String, String> data = (Map<String, String>) aiResponse.get("data");
