@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -27,6 +28,9 @@ import java.util.*;
 @CrossOrigin
 @RequestMapping("/s3/")
 public class S3Controller {
+
+    @Value("${AI_DOMAIN}")
+    private String AI_DOMAIN;
 
     @Autowired
     private BookRepository bookRepository;
@@ -77,8 +81,14 @@ public class S3Controller {
 
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("img_url", url);
-        Map<String, Object> aiResponse = restTemplate.postForObject("http://localhost:8000/math", requestBody , Map.class);
-        return new ImageDescriptionDto(ImageType.MATH, aiResponse.get("text").toString());
+
+        Map<String, Object> aiResponse = restTemplate.postForObject(AI_DOMAIN, requestBody , Map.class);
+        System.out.println( aiResponse.get("type"));
+        if( aiResponse.get("type").equals("math")){
+            Map<String, String> data = (Map<String, String>) aiResponse.get("data");
+            return new ImageDescriptionDto(ImageType.MATH, data.get("text").toString());
+        }
+        return new ImageDescriptionDto(ImageType.SCENE, aiResponse.get("data").toString());
     }
 
 
