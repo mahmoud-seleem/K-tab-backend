@@ -170,4 +170,5 @@ public class Utils {
     public static final String studentEmail = "7amada@k-tab.live";
     public static final String studentPassword = "12345678";
     public static final String studentImage = "https://randomuser.me/api/portraits/men/22.jpg";
+    public static final String[] TagsNames = {"MATH","SCIENCE","TECH","BIO","ENG","LIT","CODE","DEV"};
 }

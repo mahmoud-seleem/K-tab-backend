@@ -99,7 +99,8 @@ public class JwtService {
                 .claim("userId",userPrincipal.getUserId())
                 .claim("userType",userPrincipal.getUserType())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusWeeks(2)))                .signWith(getSecretKey())
+                .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusWeeks(48)))
+                .signWith(getSecretKey())
                 .compact();
     }
 

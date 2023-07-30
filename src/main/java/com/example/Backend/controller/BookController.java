@@ -1,13 +1,11 @@
 package com.example.Backend.controller;
 
 
-import com.example.Backend.Repository.AuthorRepository;
-import com.example.Backend.Repository.BookRepository;
-import com.example.Backend.Repository.ChapterRepository;
-import com.example.Backend.Repository.StudentRepository;
+import com.example.Backend.Repository.*;
 import com.example.Backend.model.Author;
 import com.example.Backend.model.Book;
 import com.example.Backend.model.Student;
+import com.example.Backend.model.Tag;
 import com.example.Backend.schema.*;
 import com.example.Backend.security.JwtService;
 import com.example.Backend.service.BookService;
@@ -32,6 +30,8 @@ public class BookController {
 
     @Autowired
     private BookService bookService;
+    @Autowired
+    private TagRepository tagRepository;
 
     @Autowired
     private AuthorController authorController;
@@ -76,7 +76,7 @@ public class BookController {
         authorRepository.save(author);
         BookInfo bookInfo = new BookInfo();
         Random random = new Random();
-        bookInfo.setTags(Arrays.asList("Math", "AI"));
+        bookInfo.setTags(Arrays.asList("MATH", "AI"));
         bookInfo.setAuthorId(authorId);
         bookInfo.setBookAbstract("Master the math needed to excel in data science, machine learning. In this book author Thomas Nield guides you through areas like calculus, probability, linear algebra, and statistics and how they apply to techniques like neural networks.");
         for (int i = 0; i < 14; i++) {
@@ -116,6 +116,11 @@ public class BookController {
                         Utils.studentImage
                 ));
         studentController.saveSignUpData(form);
+
+        for (String tagName : Utils.TagsNames){
+            Tag tag = new Tag(tagName);
+            tagRepository.save(tag);
+        }
         return "DONE";
     }
 

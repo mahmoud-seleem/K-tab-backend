@@ -124,21 +124,7 @@ public class BookService {
         RestTemplate restTemplate = new RestTemplate();
         URI url = new URI(link);
         byte[] imageBytes = restTemplate.getForObject(url, byte[].class);
-//        URLConnection connection = url.openConnection();
-//        InputStream inputStream =  connection.getInputStream();
-//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-//        byte[] buffer = new byte[1024];
-//        int length;
-//
-//        while ((length = inputStream.read(buffer)) != -1) {
-//            outputStream.write(buffer, 0, length);
-//        }
-//
-//        byte[] byteArray = outputStream.toByteArray();
         return Base64.getEncoder().encodeToString(imageBytes);
-//        Random random = new Random();
-//        int x = random.nextInt(4);
-//        return IMAGES[x];
     }
     public String generateRandomTitle(){
         random = new SecureRandom();
